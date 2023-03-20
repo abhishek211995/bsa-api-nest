@@ -7,7 +7,14 @@ import {
 } from "class-validator";
 import { BreederDto } from "src/breeder/breeder.dto";
 
-//
+//Login User DTO
+export class LoginUserDto {
+  @IsString()
+  email: string;
+
+  @IsString()
+  password: string;
+}
 
 export class CreateUserDto extends BreederDto {
   @IsString()

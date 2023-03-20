@@ -1,4 +1,5 @@
 import { IsNumber, IsString } from "class-validator";
+import { BreUser } from "src/users/users.entity";
 
 
 export class BreederDto{
@@ -7,7 +8,6 @@ export class BreederDto{
 
     @IsString()
     breeder_license_no: string;
-
-    @IsNumber()
-    user_id: number;
+    
+    user_id: BreUser;
 }
