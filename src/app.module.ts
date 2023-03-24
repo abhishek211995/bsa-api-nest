@@ -1,4 +1,9 @@
-import { Module } from "@nestjs/common";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RequestMethod,
+} from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
@@ -8,8 +13,13 @@ import { UsersModule } from "./users/users.module";
 import { BreederModule } from "./breeder/breeder.module";
 import { BreBreeder } from "./breeder/breeder.entity";
 import { MasterModule } from "./master/master.module";
-import { BreFarmMaster, BreAnimalMaster } from "./master/master.entity";
-import { AnimalModule } from './animal/animal.module';
+import {
+  BreFarmMaster,
+  BreAnimalMaster,
+  BreAnimalBreedMaster,
+} from "./master/master.entity";
+import { AnimalModule } from "./animal/animal.module";
+import { MulterService } from "./multer.middleware";
 
 @Module({
   imports: [
@@ -23,7 +33,13 @@ import { AnimalModule } from './animal/animal.module';
         username: "root",
         password: "Hrushi@2003",
         database: "breeder",
-        entities: [BreUser, BreBreeder, BreFarmMaster, BreAnimalMaster],
+        entities: [
+          BreUser,
+          BreBreeder,
+          BreFarmMaster,
+          BreAnimalMaster,
+          BreAnimalBreedMaster,
+        ],
         synchronize: true,
       }),
       inject: [ConfigService],
@@ -36,4 +52,10 @@ import { AnimalModule } from './animal/animal.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(MulterService)
+      .forRoutes({ path: "auth/register", method: RequestMethod.POST });
+  }
+}

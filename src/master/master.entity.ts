@@ -1,5 +1,11 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity("bre_farm_master")
 export class BreFarmMaster {
@@ -29,4 +35,24 @@ export class BreAnimalMaster {
   @ApiProperty()
   @Column({ nullable: false, length: 150 })
   animal_type_description: string;
+}
+
+@Entity("bre_animal_breed_master")
+export class BreAnimalBreedMaster {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  animal_breed_id: number;
+
+  @ApiProperty()
+  @ManyToOne(() => BreAnimalMaster, (animal) => animal.animal_type_id)
+  @JoinColumn({ name: "animal_type_id" })
+  animal_type_id: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50 })
+  animal_breed_name: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 150 })
+  animal_breed_description: string;
 }
