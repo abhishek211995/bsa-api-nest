@@ -1,11 +1,8 @@
 import { IsDate, IsNumber, IsString } from "class-validator";
 
-export class animalData {
-  @IsNumber()
-  animal_id: number;
-
-  @IsString()
-  animal_name: string;
+export class AnimalDto {
+  // @IsString()
+  // animal_name: string;
 
   @IsNumber()
   animal_type_id: number;
@@ -19,8 +16,8 @@ export class animalData {
   @IsString()
   animal_gender: string;
 
-  @IsDate()
-  animal_date_of_birth: Date;
+  @IsString()
+  animal_date_of_birth: string;
 
   @IsString()
   animal_microchip_id: string;
@@ -28,12 +25,15 @@ export class animalData {
   @IsNumber()
   animal_owner_id: number;
 
-  @IsNumber()
-  animal_father_id: number;
-
-  @IsNumber()
-  animal_mother_id: number;
+  @IsString()
+  animal_front_view_image: string;
 
   @IsString()
-  animal_registration_number: string;
+  animal_left_view_image: string;
+
+  @IsString()
+  animal_right_view_image: string;
+
+  // @IsString()
+  // animal_registration_number: string;
 }

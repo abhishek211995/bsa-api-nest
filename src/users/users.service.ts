@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common";
-import { ApiOperation } from "@nestjs/swagger";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
 import { BreUser } from "./users.entity";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
@@ -31,5 +31,18 @@ export class UsersService {
 
   getUserById(id: number) {
     return this.breUsersRepository.findOneBy({ id: id });
+  }
+}
+
+@Injectable()
+export class Bcrypt {
+  async hashPassword(password: string): Promise<string> {
+    const saltOrRounds = 10;
+    const hash = await bcrypt.hash(password, saltOrRounds);
+    return hash;
+  }
+
+  async comparePassword(password: string, hash: string): Promise<boolean> {
+    return await bcrypt.compare(password, hash);
   }
 }

@@ -20,6 +20,9 @@ import {
 } from "./master/master.entity";
 import { AnimalModule } from "./animal/animal.module";
 import { MulterService } from "./multer.middleware";
+import { BreAnimal } from "./animal/animal.entity";
+import { JWTMiddleware } from "./auth/jwt/jwt.middleware";
+import { JwtModule } from './auth/jwt/jwt.module';
 
 @Module({
   imports: [
@@ -39,6 +42,7 @@ import { MulterService } from "./multer.middleware";
           BreFarmMaster,
           BreAnimalMaster,
           BreAnimalBreedMaster,
+          BreAnimal,
         ],
         synchronize: true,
       }),
@@ -48,6 +52,7 @@ import { MulterService } from "./multer.middleware";
     BreederModule,
     MasterModule,
     AnimalModule,
+    JwtModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -57,5 +62,10 @@ export class AppModule implements NestModule {
     consumer
       .apply(MulterService)
       .forRoutes({ path: "auth/register", method: RequestMethod.POST });
+
+    // consumer.apply(JWTMiddleware).forRoutes({
+    //   path: "auth/users",
+    //   method: RequestMethod.GET,
+    // });
   }
 }

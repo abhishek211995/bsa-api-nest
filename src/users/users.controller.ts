@@ -9,14 +9,21 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
-import { UsersService } from "./users.service";
+import { Bcrypt, UsersService } from "./users.service";
 import { BreederService } from "src/breeder/breeder.service";
 import { BreederDto } from "src/breeder/breeder.dto";
 import { BreUser } from "./users.entity";
+import * as jwt from "jsonwebtoken";
+import { response } from "express";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 @Controller("auth")
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    private readonly usersService: UsersService,
+    private readonly bcryptService: Bcrypt,
+  ) {}
 
   @Inject(BreederService)
   private readonly breederService: BreederService;
@@ -25,6 +32,9 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
+      createUserDto.password = await this.bcryptService.hashPassword(
+        createUserDto.password,
+      );
       const res: Object = await this.usersService.createUser(createUserDto);
       if (res) {
         const user = new BreUser();
@@ -55,7 +65,7 @@ export class UsersController {
       } else {
         return {
           statusCode: 500,
-          message: "Internal Server Error",
+          message: error.message,
         };
       }
     }
@@ -65,13 +75,21 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     try {
+      const { email, password } = loginUserDto;
+
       const res = await this.usersService.loginUser(loginUserDto);
+
       if (res.length > 0) {
-        if (res[0].password == loginUserDto.password) {
+        const IspasswordCorrect: Promise<Boolean> =
+          this.bcryptService.comparePassword(password, res[0].password);
+        if (IspasswordCorrect) {
+          const jwtoken = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
+
           return {
             statusCode: 200,
             message: "User Logged in successfully",
             data: res,
+            token: jwtoken,
           };
         } else {
           return {
@@ -86,9 +104,11 @@ export class UsersController {
         };
       }
     } catch (error) {
+      console.log(error);
+
       return {
         statusCode: 500,
-        message: "Internal Server Error",
+        message: error.message,
       };
     }
   }

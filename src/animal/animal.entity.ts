@@ -3,17 +3,24 @@ import {
   BreAnimalBreedMaster,
   BreAnimalMaster,
 } from "src/master/master.entity";
-import { Column, Entity, JoinColumn, ManyToOne } from "typeorm";
+import { BreUser } from "src/users/users.entity";
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+} from "typeorm";
 
 @Entity("bre_animal")
 export class BreAnimal {
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
+  @PrimaryGeneratedColumn()
   animal_id: number;
 
-  @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
-  animal_name: string;
+  // @ApiProperty()
+  // @Column({ nullable: false, length: 50, default: true })
+  // animal_name: string;
 
   @ApiProperty()
   @ManyToOne(() => BreAnimalMaster)
@@ -42,22 +49,23 @@ export class BreAnimal {
   animal_microchip_id: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @ManyToOne(() => BreUser)
+  @JoinColumn({ name: "animal_owner_id" })
   animal_owner_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 150, default: "" })
   animal_front_view_image: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
-  animal_side_view_image: string;
+  @Column({ nullable: false, length: 150, default: "" })
+  animal_left_view_image: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
-  animal_back_view_image: string;
+  @Column({ nullable: false, length: 150, default: "" })
+  animal_right_view_image: string;
 
-  @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
-  animal_registration_number: string;
+  // @ApiProperty()
+  // @Column({ nullable: false, length: 50, default: "" })
+  // animal_registration_number: string;
 }
