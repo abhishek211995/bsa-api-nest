@@ -161,4 +161,30 @@ export class UsersController {
       };
     }
   }
+
+  @Get("userByContact")
+  async getUserByContact(@Query('contact_no') contact_no: string) {
+    try {
+      const user = await this.usersService.getUserByContact(contact_no);
+      console.log(user);
+      
+      if (user) {
+        return {
+          statusCode: 200,
+          message: "User fetched successfully",
+          data: user,
+        };
+      } else {
+        return {
+          statusCode: 400,
+          message: "User dose not exist",
+        };
+      }
+    } catch (error) {
+      return {
+        statusCode: 500,
+        message: error.message,
+      };
+    }
+  }
 }

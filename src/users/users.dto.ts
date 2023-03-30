@@ -48,3 +48,23 @@ export class CreateUserDto extends BreederDto {
   @IsString()
   identity_doc_name: string;
 }
+
+export class SubscriptionDto {
+  @IsNumber()
+  user_id: number;
+
+  @IsNumber()
+  subscription_id: number;
+
+  @IsString()
+  subscription_start_date: string;
+
+  @IsString()
+  subscription_end_date: string;
+
+  @IsNumber()
+  Amount_paid: number;
+
+  @IsString()
+  subscription_status: string;
+}

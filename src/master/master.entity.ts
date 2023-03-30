@@ -56,3 +56,45 @@ export class BreAnimalBreedMaster {
   @Column({ nullable: false, length: 150 })
   animal_breed_description: string;
 }
+
+@Entity("bre_costs_master")
+export class BreCostsMaster {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50 })
+  name: string;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  amount: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 150 })
+  description: string;
+}
+
+@Entity('bre_subscriptions_master')
+export class BreSubscriptionsMaster { 
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50 })
+  name: string;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  amount: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 150 })
+  description: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 150 })
+  status: string;
+}

@@ -26,3 +26,28 @@ export class AnimalBreedDto{
   @IsString()
   animal_breed_description: string;
 }
+
+export class CostsDto { 
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  amount: number;
+
+  @IsString()
+  description: string;
+}
+
+export class SubscriptionDto{
+  @IsString()
+  name: string;
+
+  @IsNumber()
+  amount: number;
+
+  @IsString()
+  description: string;
+
+  @IsString()
+  status: string;
+}

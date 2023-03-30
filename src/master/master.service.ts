@@ -1,11 +1,19 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { AnimalBreedDto, AnimalTypeDto, FarmTypeDto } from "./master.dto";
+import {
+  AnimalBreedDto,
+  AnimalTypeDto,
+  CostsDto,
+  FarmTypeDto,
+  SubscriptionDto,
+} from "./master.dto";
 import {
   BreAnimalBreedMaster,
   BreAnimalMaster,
+  BreCostsMaster,
   BreFarmMaster,
+  BreSubscriptionsMaster,
 } from "./master.entity";
 
 @Injectable()
@@ -63,5 +71,44 @@ export class AnimalBreedServices {
     return this.breAnimalBreedMasterRepository.find({
       where: { animal_type_id: animal_type_id },
     });
+  }
+}
+
+@Injectable()
+export class CostsServices {
+  constructor(
+    @InjectRepository(BreCostsMaster)
+    private readonly breCostsMasterRepository: Repository<BreCostsMaster>,
+  ) {}
+
+  addCosts(costsDto: CostsDto) {
+    const cost = this.breCostsMasterRepository.create(costsDto);
+    return this.breCostsMasterRepository.save(cost);
+  }
+
+  getCosts() {
+    return this.breCostsMasterRepository.find();
+  }
+
+  updateCosts(  id: number ,costsDto: CostsDto) { 
+    return this.breCostsMasterRepository.update(id, costsDto);
+  }
+}
+
+
+@Injectable()
+export class SubscriptionServices{
+  constructor(
+    @InjectRepository(BreSubscriptionsMaster)
+    private readonly breSubscriptionMasterRepository: Repository<BreSubscriptionsMaster>,
+  ) {}
+
+  addSubscription(subscriptionDto: SubscriptionDto) {
+    const subscription = this.breSubscriptionMasterRepository.create(subscriptionDto);
+    return this.breSubscriptionMasterRepository.save(subscription);
+  }
+
+  getSubscriptions() {
+    return this.breSubscriptionMasterRepository.find();
   }
 }

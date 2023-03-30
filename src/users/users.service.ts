@@ -32,6 +32,10 @@ export class UsersService {
   getUserById(id: number) {
     return this.breUsersRepository.findOneBy({ id: id });
   }
+
+  getUserByContact(contact_no: string) {
+    return this.breUsersRepository.findOneBy({ contact_no: contact_no });
+  }
 }
 
 @Injectable()

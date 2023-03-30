@@ -9,8 +9,7 @@ dotenv.config();
 export class JWTMiddleware implements NestMiddleware {
   constructor(private readonly usersService: UsersService) {}
   use(req: Request, res: Response, next: NextFunction) {
-    const token = req?.cookies?.token ?? null;
-    console.log(req.cookies);
+    const token = req?.cookies?.token;
 
     if (token) {
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);

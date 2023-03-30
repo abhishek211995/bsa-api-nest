@@ -1,10 +1,18 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { Query } from "@nestjs/common/decorators";
-import { AnimalBreedDto, AnimalTypeDto, FarmTypeDto } from "./master.dto";
+import { Put, Query } from "@nestjs/common/decorators";
+import {
+  AnimalBreedDto,
+  AnimalTypeDto,
+  CostsDto,
+  FarmTypeDto,
+  SubscriptionDto,
+} from "./master.dto";
 import {
   AnimalBreedServices,
   AnimalTypeServices,
+  CostsServices,
   FarmTypeServices,
+  SubscriptionServices,
 } from "./master.service";
 
 @Controller("master")
@@ -14,6 +22,8 @@ export class MasterController {
     private readonly farmTypeServices: FarmTypeServices,
     private readonly animalTypeServices: AnimalTypeServices,
     private readonly animalBreedServices: AnimalBreedServices,
+    private readonly costsServices: CostsServices,
+    private readonly subscriptionServices: SubscriptionServices,
   ) {}
 
   // Inject AnimalTypeServices
@@ -116,12 +126,128 @@ export class MasterController {
       }
     } catch (error) {
       console.log(error);
-      if (error.code === 'ER_NO_REFERENCED_ROW_2') {
+      if (error.code === "ER_NO_REFERENCED_ROW_2") {
         return {
           status: 400,
           message: "Invalid animal type id",
         };
       }
+    }
+  }
+
+  @Post("addCosts")
+  async addCosts(@Body() costsDto: CostsDto) {
+    try {
+      const costs = await this.costsServices.addCosts(costsDto);
+      if (costs) {
+        return {
+          status: 200,
+          message: "Costs added successfully",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
+
+  @Get("getAllCosts")
+  async getAllCosts() {
+    try {
+      const costs = await this.costsServices.getCosts();
+      if (costs) {
+        return {
+          status: 200,
+          message: "Costs fetched successfully",
+          data: costs,
+        };
+      } else {
+        return {
+          status: 400,
+          message: "No costs found",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
+
+  @Put("updateCosts")
+  async updateCosts(@Body() costsDto: CostsDto, id: number) {
+    try {
+      console.log(costsDto, id);
+
+      const data = await this.costsServices.updateCosts(id, costsDto);
+      if (data) {
+        return {
+          status: 200,
+          message: "Costs updated successfully",
+        };
+      } else {
+        return {
+          status: 400,
+          message: "No costs found",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  @Post("addSubscription")
+  async addSubscription(@Body() subscriptionDto: SubscriptionDto) {
+    try {
+      const subscription = await this.subscriptionServices.addSubscription(
+        subscriptionDto,
+      );
+      if (subscription) {
+        return {
+          status: 200,
+          message: "Subscription added successfully",
+        };
+      } else {
+        return {
+          status: 400,
+          message: "Error in adding subscription",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  @Get("getAllSubscriptions")
+  async getAllSubscriptions() {
+    try {
+      const subscriptions = await this.subscriptionServices.getSubscriptions();
+      if (subscriptions) {
+        return {
+          status: 200,
+          message: "Subscriptions fetched successfully",
+          data: subscriptions,
+        };
+      } else {
+        return {
+          status: 400,
+          message: "No subscriptions found",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
     }
   }
 }
