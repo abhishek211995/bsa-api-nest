@@ -9,17 +9,20 @@ dotenv.config();
 export class JWTMiddleware implements NestMiddleware {
   constructor(private readonly usersService: UsersService) {}
   use(req: Request, res: Response, next: NextFunction) {
-    const token = req.cookies.token;
+    const token = req?.cookies?.token ?? null;
+    console.log(req.cookies);
 
     if (token) {
       const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
       const user = this.usersService.getUserById(decoded["id"]);
       if (!user) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(401).json({ message: "User does not exist" });
       }
 
       req.body.user = user;
       next();
+    } else {
+      res.status(401).json({ message: "Unauthorized" });
     }
   }
 }

@@ -31,11 +31,11 @@ import { JwtModule } from './auth/jwt/jwt.module';
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         type: "mysql",
-        host: "localhost",
-        port: 3306,
-        username: "root",
-        password: "Hrushi@2003",
-        database: "breeder",
+        host: configService.get("DB_HOST"),
+        port: configService.get("DB_PORT"),
+        username: configService.get("DB_USER"),
+        password: configService.get("DB_PASSWORD"),
+        database: configService.get("DB_NAME"),
         entities: [
           BreUser,
           BreBreeder,
@@ -63,9 +63,9 @@ export class AppModule implements NestModule {
       .apply(MulterService)
       .forRoutes({ path: "auth/register", method: RequestMethod.POST });
 
-    // consumer.apply(JWTMiddleware).forRoutes({
-    //   path: "auth/users",
-    //   method: RequestMethod.GET,
-    // });
+    consumer.apply(JWTMiddleware).forRoutes({
+      path: "auth/users",
+      method: RequestMethod.GET,
+    });
   }
 }
