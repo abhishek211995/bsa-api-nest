@@ -6,6 +6,7 @@ import {
   AnimalTypeDto,
   CostsDto,
   FarmTypeDto,
+  RoleDto,
   SubscriptionDto,
 } from "./master.dto";
 import {
@@ -13,8 +14,28 @@ import {
   BreAnimalMaster,
   BreCostsMaster,
   BreFarmMaster,
+  BreRoleMaster,
   BreSubscriptionsMaster,
 } from "./master.entity";
+
+@Injectable()
+export class RoleServices {
+  constructor(
+    @InjectRepository(BreRoleMaster)
+    private readonly breRoleMasterRepository: Repository<BreRoleMaster>,
+  ) {}
+
+  // Add role
+  addRole(roleDto: RoleDto) {
+    const role = this.breRoleMasterRepository.create(roleDto);
+    return this.breRoleMasterRepository.save(role);
+  }
+
+  // Get all roles
+  getAllRoles() {
+    return this.breRoleMasterRepository.find();
+  }
+}
 
 @Injectable()
 export class FarmTypeServices {
@@ -90,21 +111,21 @@ export class CostsServices {
     return this.breCostsMasterRepository.find();
   }
 
-  updateCosts(  id: number ,costsDto: CostsDto) { 
+  updateCosts(id: number, costsDto: CostsDto) {
     return this.breCostsMasterRepository.update(id, costsDto);
   }
 }
 
-
 @Injectable()
-export class SubscriptionServices{
+export class SubscriptionServices {
   constructor(
     @InjectRepository(BreSubscriptionsMaster)
     private readonly breSubscriptionMasterRepository: Repository<BreSubscriptionsMaster>,
   ) {}
 
   addSubscription(subscriptionDto: SubscriptionDto) {
-    const subscription = this.breSubscriptionMasterRepository.create(subscriptionDto);
+    const subscription =
+      this.breSubscriptionMasterRepository.create(subscriptionDto);
     return this.breSubscriptionMasterRepository.save(subscription);
   }
 

@@ -7,6 +7,21 @@ import {
   PrimaryGeneratedColumn,
 } from "typeorm";
 
+@Entity("bre_role_master")
+export class BreRoleMaster {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  role_id: number;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50 })
+  role_name: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 150 })
+  role_description: string;
+}
+
 @Entity("bre_farm_master")
 export class BreFarmMaster {
   @ApiProperty()
@@ -76,8 +91,8 @@ export class BreCostsMaster {
   description: string;
 }
 
-@Entity('bre_subscriptions_master')
-export class BreSubscriptionsMaster { 
+@Entity("bre_subscriptions_master")
+export class BreSubscriptionsMaster {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
