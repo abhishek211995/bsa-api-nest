@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BreSubscriptionsMaster } from "src/master/master.entity";
+import { BreRoleMaster } from "src/master/master.entity";
 import {
   Column,
   CreateDateColumn,
@@ -32,8 +32,9 @@ export class BreUser {
   user_name: string;
 
   @ApiProperty()
-  @Column({ type: "enum", enum: UserType })
-  user_role_id: UserType;
+  @ManyToOne(() => BreRoleMaster, (breRoleMaster) => breRoleMaster.role_id)
+  @JoinColumn({ name: "user_role_id" })
+  user_role_id: number;
 
   @ApiProperty()
   @Column({ nullable: false, length: 50, default: "", unique: true })

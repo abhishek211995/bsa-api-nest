@@ -26,6 +26,8 @@ import { MulterService } from "./multer.middleware";
 import { BreAnimal } from "./animal/animal.entity";
 import { JWTMiddleware } from "./auth/jwt/jwt.middleware";
 import { JwtModule } from "./auth/jwt/jwt.module";
+import { BreTrasferOwnerRequest } from "./transfer-owner/transfer.entity";
+import { TransferModule } from "./transfer-owner/transfer.module";
 
 @Module({
   imports: [
@@ -49,6 +51,7 @@ import { JwtModule } from "./auth/jwt/jwt.module";
           BreCostsMaster,
           BreSubscriptionsMaster,
           BreRoleMaster,
+          BreTrasferOwnerRequest,
         ],
         synchronize: true,
       }),
@@ -58,6 +61,7 @@ import { JwtModule } from "./auth/jwt/jwt.module";
     BreederModule,
     MasterModule,
     AnimalModule,
+    TransferModule,
     JwtModule,
   ],
   controllers: [AppController],

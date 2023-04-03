@@ -53,6 +53,23 @@ export class MasterController {
     }
   }
 
+  // Get all roles
+  @Get("getAllRoles")
+  async getRoles() {
+    try {
+      const roles = await this.roleServices.getAllRoles();
+      if (roles) {
+        return {
+          status: 200,
+          message: "Roles fetched successfully",
+          data: roles,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
   // Add farm
   @Post("addFarmType")
   async addFarm(@Body() farmTypeDto: FarmTypeDto) {
