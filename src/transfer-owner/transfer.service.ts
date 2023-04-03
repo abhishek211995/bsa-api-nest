@@ -29,25 +29,12 @@ export class TransferService {
     request_rejection_reason,
   }) {
     console.log(transfer_id);
-
-    const transfer = await this.BreTrasferOwnerRequestRepository.findOneBy({
+    const data = await this.BreTrasferOwnerRequestRepository.update(
       transfer_id,
-    });
-    console.log(transfer);
-
-    if (transfer) {
-      const data = await this.BreTrasferOwnerRequestRepository.update(
-        transfer_id,
-        {
-          request_status,
-          request_rejection_reason,
-        },
-      );
-      console.log(data);
-
-      return data;
-    } else {
-      return null;
-    }
+      {
+        request_status,
+        request_rejection_reason,
+      },
+    );
   }
 }
