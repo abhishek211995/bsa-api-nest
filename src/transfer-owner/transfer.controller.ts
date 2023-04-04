@@ -1,16 +1,30 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { TransferService } from "./transfer.service";
 import { transferOwnerDto } from "./transfer.dto";
+import { MailService } from "src/mail/mail.service";
+import { UsersService } from "src/users/users.service";
 
 @Controller("transfer")
 export class TransferController {
-  constructor(private readonly transferService: TransferService) {}
+  constructor(
+    private readonly transferService: TransferService,
+    private readonly mailService: MailService,
+    private readonly userService: UsersService,
+  ) {}
 
   @Post("addTransferRequest")
   async addTransferRequest(@Body() transferDto: transferOwnerDto) {
     try {
       const transfer = await this.transferService.addRequest(transferDto);
       if (transfer) {
+        // get email of user by id
+        const user = await this.userService.getUserById(
+          transferDto.old_owner_id,
+        );
+
+        // send email to the old owner
+        await this.mailService.sendMail(user.email, user.user_name);
+
         return {
           statusCode: 201,
           message: "Transfer request created successfully",

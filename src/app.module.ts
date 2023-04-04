@@ -28,6 +28,7 @@ import { JWTMiddleware } from "./auth/jwt/jwt.middleware";
 import { JwtModule } from "./auth/jwt/jwt.module";
 import { BreTrasferOwnerRequest } from "./transfer-owner/transfer.entity";
 import { TransferModule } from "./transfer-owner/transfer.module";
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -63,6 +64,7 @@ import { TransferModule } from "./transfer-owner/transfer.module";
     AnimalModule,
     TransferModule,
     JwtModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],
