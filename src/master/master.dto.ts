@@ -16,7 +16,7 @@ export class AnimalTypeDto {
   animal_type_description: string;
 }
 
-export class AnimalBreedDto{
+export class AnimalBreedDto {
   @IsNumber()
   animal_type_id: number;
 
@@ -27,7 +27,7 @@ export class AnimalBreedDto{
   animal_breed_description: string;
 }
 
-export class CostsDto { 
+export class CostsDto {
   @IsString()
   name: string;
 
@@ -38,7 +38,7 @@ export class CostsDto {
   description: string;
 }
 
-export class SubscriptionDto{
+export class SubscriptionDto {
   @IsString()
   name: string;
 

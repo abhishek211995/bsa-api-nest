@@ -44,7 +44,7 @@ export class AnimalService {
     animal_microchip_id: string;
     animal_registration_no: string;
   }) {
-    if(animal_microchip_id != "") {
+    if (animal_microchip_id != "") {
       return this.animalRepository.findOne({
         where: {
           animal_microchip_id,

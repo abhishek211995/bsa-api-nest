@@ -26,9 +26,6 @@ export class MasterController {
     private readonly subscriptionServices: SubscriptionServices,
   ) {}
 
-  // Inject AnimalTypeServices
-  const;
-
   // Add farm
   @Post("addFarmType")
   async addFarm(@Body() farmTypeDto: FarmTypeDto) {

@@ -6,7 +6,10 @@ import { BreUser, BreUserSubscription } from "./users.entity";
 import { Bcrypt, UsersService } from "./users.service";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BreUser,BreUserSubscription]), BreederModule],
+  imports: [
+    TypeOrmModule.forFeature([BreUser, BreUserSubscription]),
+    BreederModule,
+  ],
   controllers: [UsersController],
   providers: [UsersService, Bcrypt],
   exports: [UsersService],

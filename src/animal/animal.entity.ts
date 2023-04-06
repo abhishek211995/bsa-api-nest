@@ -15,12 +15,12 @@ import {
 @Entity("bre_animal")
 export class BreAnimal {
   @ApiProperty()
-  @PrimaryGeneratedColumn()
-  animal_id: number;
+  @PrimaryGeneratedColumn("uuid")
+  animal_id: string;
 
-  // @ApiProperty()
-  // @Column({ nullable: false, length: 50, default: true })
-  // animal_name: string;
+  @ApiProperty()
+  @Column({ nullable: false, length: 50, default: true })
+  animal_name: string;
 
   @ApiProperty()
   @ManyToOne(() => BreAnimalMaster)
@@ -65,7 +65,23 @@ export class BreAnimal {
   @Column({ nullable: false, length: 150, default: "" })
   animal_right_view_image: string;
 
-  // @ApiProperty()
-  // @Column({ nullable: false, length: 50, default: "" })
-  // animal_registration_number: string;
+  @ApiProperty()
+  @Column({ nullable: false, length: 150, default: "" })
+  animal_registration_doc: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50, default: "" })
+  animal_registration_number: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  animal_sire_id: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  animal_dam_id: string;
+
+  @ApiProperty()
+  @Column({ nullable: true, type: "json" })
+  animal_pedigree: Record<string, any>;
 }

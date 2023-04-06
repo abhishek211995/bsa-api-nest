@@ -90,21 +90,21 @@ export class CostsServices {
     return this.breCostsMasterRepository.find();
   }
 
-  updateCosts(  id: number ,costsDto: CostsDto) { 
+  updateCosts(id: number, costsDto: CostsDto) {
     return this.breCostsMasterRepository.update(id, costsDto);
   }
 }
 
-
 @Injectable()
-export class SubscriptionServices{
+export class SubscriptionServices {
   constructor(
     @InjectRepository(BreSubscriptionsMaster)
     private readonly breSubscriptionMasterRepository: Repository<BreSubscriptionsMaster>,
   ) {}
 
   addSubscription(subscriptionDto: SubscriptionDto) {
-    const subscription = this.breSubscriptionMasterRepository.create(subscriptionDto);
+    const subscription =
+      this.breSubscriptionMasterRepository.create(subscriptionDto);
     return this.breSubscriptionMasterRepository.save(subscription);
   }
 

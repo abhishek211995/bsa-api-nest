@@ -35,7 +35,7 @@ export class UsersController {
       createUserDto.password = await this.bcryptService.hashPassword(
         createUserDto.password,
       );
-      const res: Object = await this.usersService.createUser(createUserDto);
+      const res = await this.usersService.createUser(createUserDto);
       if (res) {
         const user = new BreUser();
         user.id = res["id"];
@@ -80,7 +80,7 @@ export class UsersController {
       const res = await this.usersService.loginUser(loginUserDto);
 
       if (res.length > 0) {
-        const IspasswordCorrect: Promise<Boolean> =
+        const IspasswordCorrect: Promise<boolean> =
           this.bcryptService.comparePassword(password, res[0].password);
         if (IspasswordCorrect) {
           const jwtoken = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
@@ -163,11 +163,11 @@ export class UsersController {
   }
 
   @Get("userByContact")
-  async getUserByContact(@Query('contact_no') contact_no: string) {
+  async getUserByContact(@Query("contact_no") contact_no: string) {
     try {
       const user = await this.usersService.getUserByContact(contact_no);
       console.log(user);
-      
+
       if (user) {
         return {
           statusCode: 200,

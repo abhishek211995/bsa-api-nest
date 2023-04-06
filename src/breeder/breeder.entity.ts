@@ -29,7 +29,7 @@ export class BreBreeder {
   breeder_license_doc_name: string;
 
   @ApiProperty()
-  @Column({type : "date",nullable: false})
+  @Column({ type: "date", nullable: false })
   breeder_license_expiry_date: string;
 
   @OneToOne(() => BreUser)

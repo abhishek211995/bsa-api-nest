@@ -76,8 +76,8 @@ export class BreCostsMaster {
   description: string;
 }
 
-@Entity('bre_subscriptions_master')
-export class BreSubscriptionsMaster { 
+@Entity("bre_subscriptions_master")
+export class BreSubscriptionsMaster {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
