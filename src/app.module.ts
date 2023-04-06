@@ -28,7 +28,7 @@ import { JWTMiddleware } from "./auth/jwt/jwt.middleware";
 import { JwtModule } from "./auth/jwt/jwt.module";
 import { BreTrasferOwnerRequest } from "./transfer-owner/transfer.entity";
 import { TransferModule } from "./transfer-owner/transfer.module";
-import { MailModule } from './mail/mail.module';
+import { MailModule } from "./mail/mail.module";
 
 @Module({
   imports: [
@@ -73,8 +73,7 @@ export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(MulterService)
-      .forRoutes({ path: "auth/register", method: RequestMethod.POST });
-
+      .forRoutes({ path: "animal/create", method: RequestMethod.POST });
     consumer.apply(JWTMiddleware).forRoutes(
       {
         path: "auth/users",

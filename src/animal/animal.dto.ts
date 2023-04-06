@@ -1,8 +1,8 @@
-import { IsDate, IsNumber, IsString } from "class-validator";
+import { IsDate, IsJSON, IsNumber, IsString } from "class-validator";
 
 export class AnimalDto {
-  // @IsString()
-  // animal_name: string;
+  @IsString()
+  animal_name: string;
 
   @IsNumber()
   animal_type_id: number;
@@ -34,6 +34,18 @@ export class AnimalDto {
   @IsString()
   animal_right_view_image: string;
 
-  // @IsString()
-  // animal_registration_number: string;
+  @IsString()
+  animal_registration_number: string;
+
+  @IsString()
+  animal_registration_doc: string;
+
+  @IsString()
+  animal_sire_id: string;
+
+  @IsString()
+  animal_dam_id: string;
+
+  @IsJSON()
+  animal_pedigree: Record<string, any>;
 }
