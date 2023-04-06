@@ -6,6 +6,7 @@ import {
   BreAnimalMaster,
   BreCostsMaster,
   BreFarmMaster,
+  BreRoleMaster,
   BreSubscriptionsMaster,
 } from "./master.entity";
 import {
@@ -13,6 +14,7 @@ import {
   AnimalTypeServices,
   CostsServices,
   FarmTypeServices,
+  RoleServices,
   SubscriptionServices,
 } from "./master.service";
 
@@ -24,6 +26,7 @@ import {
       BreAnimalBreedMaster,
       BreCostsMaster,
       BreSubscriptionsMaster,
+      BreRoleMaster,
     ]),
   ],
   controllers: [MasterController],
@@ -33,6 +36,7 @@ import {
     AnimalBreedServices,
     CostsServices,
     SubscriptionServices,
+    RoleServices,
   ],
   exports: [FarmTypeServices, AnimalTypeServices, AnimalBreedServices],
 })

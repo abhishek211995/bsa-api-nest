@@ -1,5 +1,13 @@
 import { IsNumber, IsString } from "class-validator";
 
+export class RoleDto {
+  @IsString()
+  role_name: string;
+
+  @IsString()
+  role_description: string;
+}
+
 export class FarmTypeDto {
   @IsString()
   farm_name: string;

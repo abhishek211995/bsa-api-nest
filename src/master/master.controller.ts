@@ -5,6 +5,7 @@ import {
   AnimalTypeDto,
   CostsDto,
   FarmTypeDto,
+  RoleDto,
   SubscriptionDto,
 } from "./master.dto";
 import {
@@ -12,6 +13,7 @@ import {
   AnimalTypeServices,
   CostsServices,
   FarmTypeServices,
+  RoleServices,
   SubscriptionServices,
 } from "./master.service";
 
@@ -19,12 +21,54 @@ import {
 export class MasterController {
   // Inject FarmTypeServices
   constructor(
+    private readonly roleServices: RoleServices,
     private readonly farmTypeServices: FarmTypeServices,
     private readonly animalTypeServices: AnimalTypeServices,
     private readonly animalBreedServices: AnimalBreedServices,
     private readonly costsServices: CostsServices,
     private readonly subscriptionServices: SubscriptionServices,
   ) {}
+
+  // Add Roles
+  @Post("addRole")
+  async addRole(@Body() roleDto: RoleDto) {
+    try {
+      const role = await this.roleServices.addRole(roleDto);
+      if (role) {
+        return {
+          status: 200,
+          message: "Role added successfully",
+        };
+      } else {
+        return {
+          status: 500,
+          message: "Error in adding role",
+        };
+      }
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  // Get all roles
+  @Get("getAllRoles")
+  async getRoles() {
+    try {
+      const roles = await this.roleServices.getAllRoles();
+      if (roles) {
+        return {
+          status: 200,
+          message: "Roles fetched successfully",
+          data: roles,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   // Add farm
   @Post("addFarmType")

@@ -14,7 +14,6 @@ import { BreederService } from "src/breeder/breeder.service";
 import { BreederDto } from "src/breeder/breeder.dto";
 import { BreUser } from "./users.entity";
 import * as jwt from "jsonwebtoken";
-import { response } from "express";
 import * as dotenv from "dotenv";
 dotenv.config();
 
