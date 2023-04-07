@@ -19,7 +19,7 @@ export class BreAnimal {
   animal_id: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
+  @Column({ nullable: false, length: 50 })
   animal_name: string;
 
   @ApiProperty()
@@ -33,11 +33,11 @@ export class BreAnimal {
   animal_breed_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
+  @Column({ nullable: false, length: 150 })
   animal_color_and_markings: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 50 })
   animal_gender: string;
 
   @ApiProperty()
@@ -45,7 +45,7 @@ export class BreAnimal {
   animal_date_of_birth: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 50 })
   animal_microchip_id: string;
 
   @ApiProperty()
@@ -54,23 +54,23 @@ export class BreAnimal {
   animal_owner_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
+  @Column({ nullable: false, length: 150 })
   animal_front_view_image: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
+  @Column({ nullable: true, length: 150 })
   animal_left_view_image: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
+  @Column({ nullable: true, length: 150 })
   animal_right_view_image: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
+  @Column({ nullable: true, length: 150 })
   animal_registration_doc: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: true, length: 50 })
   animal_registration_number: string;
 
   @ApiProperty()
