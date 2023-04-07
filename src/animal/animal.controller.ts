@@ -1,11 +1,13 @@
 import { Controller } from "@nestjs/common";
 import { Body, Get, Post, Query } from "@nestjs/common/decorators";
-import { AnimalDto } from "./animal.dto";
+import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
+import { ApiOperation } from "@nestjs/swagger";
 
 @Controller("animal")
 export class AnimalController {
   constructor(private readonly animalService: AnimalService) {}
+
   @Post("create")
   async RegisterAnimal(@Body() animalDto: AnimalDto) {
     try {
@@ -76,6 +78,21 @@ export class AnimalController {
       }
     } catch (error) {
       return { status: 500, message: error.message };
+    }
+  }
+
+  @ApiOperation({
+    summary: "Create animal with pedigree",
+  })
+  @Post("/create/pedigree")
+  async createAnimalWithPedigree(
+    @Body() animalWithPedigree: AnimalWithPedigreePayload,
+  ) {
+    try {
+      const result =
+        this.animalService.createAnimalWithPedigree(animalWithPedigree);
+    } catch (error) {
+      return error;
     }
   }
 }
