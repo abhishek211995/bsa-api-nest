@@ -18,8 +18,13 @@ export class AnimalService {
     private transactionUtils: TransactionUtil,
   ) {}
 
-  createAnimal(animalDto: AnimalDto) {
-    const AnimalData = this.animalRepository.create(animalDto);
+  async createAnimal(animalDto: AnimalDto) {
+    const animalCount = await this.animalRepository.count();
+    animalDto.animal_registration_number = generateRegNo(
+      animalDto.animal_breed_id,
+      animalCount + 1,
+    );
+    const AnimalData = await this.animalRepository.create(animalDto);
     return this.animalRepository.save(AnimalData);
   }
 
@@ -46,10 +51,10 @@ export class AnimalService {
   // get animal and owner details by animal microchip id or registration id
   getAnimalAndOwner({
     animal_microchip_id,
-    animal_registration_no,
+    animal_registration_number,
   }: {
     animal_microchip_id: string;
-    animal_registration_no: string;
+    animal_registration_number: string;
   }) {
     if (animal_microchip_id != "") {
       return this.animalRepository.findOne({
@@ -61,11 +66,31 @@ export class AnimalService {
     } else {
       return this.animalRepository.findOne({
         where: {
-          // animal_registration_id,
+          animal_registration_number,
         },
         relations: ["animal_owner"],
       });
     }
+  }
+
+  // update animal document details
+  async updateAnimalDocDetails(
+    animal_front_view_image: string,
+    animal_right_view_image: string,
+    animal_left_view_image: string,
+    animal_registration_doc: string,
+    animal_id: string,
+  ) {
+    const animal = await this.animalRepository.findOne({
+      where: {
+        animal_id,
+      },
+    });
+    animal.animal_front_view_image = animal_front_view_image;
+    animal.animal_right_view_image = animal_right_view_image;
+    animal.animal_left_view_image = animal_left_view_image;
+    animal.animal_registration_doc = animal_registration_doc;
+    return this.animalRepository.save(animal);
   }
 
   async createAnimalWithPedigree(payload: AnimalWithPedigreePayload) {

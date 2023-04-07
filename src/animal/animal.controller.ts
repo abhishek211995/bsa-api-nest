@@ -4,70 +4,46 @@ import {
   Get,
   Post,
   Query,
-  Req,
+  UploadedFile,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common/decorators";
-import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiOperation } from "@nestjs/swagger";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
+import { S3Service } from "src/s3multer/s3.service";
+import {
+  AnyFilesInterceptor,
+  FileFieldsInterceptor,
+  FileInterceptor,
+  FilesInterceptor,
+} from "@nestjs/platform-express";
 
 @Controller("animal")
 export class AnimalController {
-  constructor(private readonly animalService: AnimalService) {}
+  constructor(
+    private readonly animalService: AnimalService,
+    private readonly s3Service: S3Service,
+  ) {}
 
   @Post("create")
-  @UseInterceptors(
-    FileFieldsInterceptor([
-      { name: "animal_front_view", maxCount: 1 },
-      { name: "animal_left_view", maxCount: 1 },
-      { name: "animal_right_view", maxCount: 1 },
-      { name: "animal_registration_doc", maxCount: 1 },
-    ]),
-  )
+  @UseInterceptors(AnyFilesInterceptor())
   async RegisterAnimal(
-    @Req() req: Request,
     @UploadedFiles()
-    files: {
-      animal_front_view?: Express.Multer.File[];
-      animal_left_view?: Express.Multer.File[];
-      animal_right_view?: Express.Multer.File[];
-      animal_registration_doc?: Express.Multer.File[];
-    },
+    files: Array<Express.Multer.File>,
     @Body() animalDto: AnimalDto,
   ) {
     try {
-      // console.log(files);
-      const { uploadMultipleImages } = req as any;
-
-      if (
-        files.animal_front_view &&
-        files.animal_left_view &&
-        files.animal_right_view &&
-        files.animal_registration_doc
-      ) {
-        console.log("hi");
-
-        uploadMultipleImages(req, (err) => {
-          if (err) {
-            console.log("hi", err.message);
-          } else {
-            // animalDto.animal_front_view_image =
-            //   req.files.animal_front_view[0].location;
-            // animalDto.animal_left_view_image =
-            //   req.files.animal_left_view[0].location;
-            // animalDto.animal_right_view_image =
-            //   req.files.animal_right_view[0].location;
-            // animalDto.animal_registration_doc =
-            //   req.files.animal_registration_doc[0].location;
-            console.log(req);
-          }
-        });
-      }
+      console.log(files);
 
       const res = await this.animalService.createAnimal(animalDto);
+
       if (res) {
+        // Upload image to s3
+        const uploadData = await this.s3Service.uploadMultipleImages(files);
+        if (uploadData) {
+          // const updateDoc = this.animalService.updateAnimalDocDetails({})
+        }
         return { status: 200, message: "Animal created successfully" };
       }
     } catch (error) {
@@ -75,7 +51,9 @@ export class AnimalController {
     }
   }
 
-  // get animals of user
+  @ApiOperation({
+    summary: "get all animals",
+  })
   @Get("/getAnimals")
   async getAnimals(
     @Query()
@@ -107,16 +85,16 @@ export class AnimalController {
     @Query()
     {
       animal_microchip_id,
-      animal_registration_no,
+      animal_registration_number,
     }: {
       animal_microchip_id: string;
-      animal_registration_no: string;
+      animal_registration_number: string;
     },
   ) {
     try {
       const res = await this.animalService.getAnimalAndOwner({
         animal_microchip_id,
-        animal_registration_no,
+        animal_registration_number,
       });
       if (res) {
         return {

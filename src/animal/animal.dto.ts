@@ -37,6 +37,12 @@ export class AnimalDto {
 
   @IsString()
   animal_registration_number: string;
+
+  @IsString()
+  animal_sire_id: string;
+
+  @IsString()
+  animal_dam_id: string;
 }
 
 export class AnimalDataDto {

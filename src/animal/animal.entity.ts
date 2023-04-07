@@ -54,7 +54,7 @@ export class BreAnimal {
   animal_owner_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150 })
+  @Column({ nullable: true, length: 150 })
   animal_front_view_image: string;
 
   @ApiProperty()
@@ -70,7 +70,7 @@ export class BreAnimal {
   animal_registration_doc: string;
 
   @ApiProperty()
-  @Column({ nullable: true, length: 50 })
+  @Column({ nullable: false, length: 50 })
   animal_registration_number: string;
 
   @ApiProperty()
@@ -85,3 +85,17 @@ export class BreAnimal {
   @Column({ nullable: true, type: "json" })
   animal_pedigree: Record<string, any>;
 }
+
+// {
+//   "animal_name":"Tommy",
+//   "animal_type_id":1,
+//   "animal_breed_id":1,
+//   "animal_color_and_markings":"black spots with white color",
+//   "animal_gender":"male",
+//   "animal_date_of_birth":"01-09-2018",
+//   "animal_microchip_id":"123456780",
+//   "animal_owner_id":2,
+//   "animal_front_view_image":null,
+//   "animal_left_view_image":null,
+//   "animal_registration_number":null
+// }

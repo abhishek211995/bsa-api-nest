@@ -5,9 +5,15 @@ import { AnimalController } from "./animal.controller";
 import { BreAnimal } from "./animal.entity";
 import { AnimalService } from "./animal.service";
 import { DBUtilsModule } from "src/lib/db_utils/db.utils.module";
+import { S3Module } from "src/s3multer/s3.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BreAnimal]), MasterModule, DBUtilsModule],
+  imports: [
+    TypeOrmModule.forFeature([BreAnimal]),
+    MasterModule,
+    DBUtilsModule,
+    S3Module,
+  ],
   controllers: [AnimalController],
   providers: [AnimalService],
 })

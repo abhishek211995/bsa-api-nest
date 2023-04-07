@@ -5,7 +5,8 @@ import * as multerS3 from "multer-s3";
 import * as aws from "@aws-sdk/client-s3";
 
 interface RequestWithUploadImages extends Request {
-  uploadImages: (req: Request, res: Response, next: NextFunction) => void;
+  uploadImage: (req: Request, res: Response, next: NextFunction) => void;
+  uploadDocument: (req: Request, res: Response, next: NextFunction) => void;
   uploadMultipleImages: (
     req: Request,
     res: Response,
@@ -31,7 +32,7 @@ export class MulterService implements NestMiddleware {
       region: "ap-south-1",
     });
 
-    const uploadImages = multer({
+    const uploadImage = multer({
       fileFilter: imageFilter,
       storage: multerS3({
         s3: s3Client,
@@ -40,27 +41,25 @@ export class MulterService implements NestMiddleware {
           cb(null, { fieldName: file.fieldname });
         },
         key: function (req, file, cb) {
-          const fileNames = {
-            animal_front_view: "front-view",
-            animal_left_view: "left-view",
-            animal_right_view: "right-view",
-            animal_registration_doc: "registration-doc",
-          };
-          cb(
-            null,
-            fileNames[file.fieldname] +
-              "/" +
-              Date.now() +
-              "-" +
-              file.originalname,
-          );
+          cb(null, file.originalname);
+        },
+      }),
+    }).single("");
+
+    const uploadDocument = multer({
+      storage: multerS3({
+        s3: s3Client,
+        bucket: process.env.BUCKET,
+        metadata: function (req, file, cb) {
+          cb(null, { fieldName: file.fieldname });
+        },
+        key: function (req, file, cb) {
+          cb(null, file.originalname);
         },
       }),
     }).fields([
-      { name: "animal_front_view", maxCount: 1 },
-      { name: "animal_left_view", maxCount: 1 },
-      { name: "animal_right_view", maxCount: 1 },
-      { name: "animal_registration_doc", maxCount: 1 },
+      { name: "identity_doc", maxCount: 1 },
+      { name: "license_doc", maxCount: 1 },
     ]);
 
     const uploadMultipleImages = multer({
@@ -78,14 +77,7 @@ export class MulterService implements NestMiddleware {
             animal_right_view: "right-view",
             animal_registration_doc: "registration-doc",
           };
-          cb(
-            null,
-            fileNames[file.fieldname] +
-              "/" +
-              Date.now() +
-              "-" +
-              file.originalname,
-          );
+          cb(null, fileNames[file.fieldname] + "/" + file.originalname);
         },
       }),
     }).fields([
@@ -95,9 +87,10 @@ export class MulterService implements NestMiddleware {
       { name: "animal_registration_doc", maxCount: 1 },
     ]);
 
-    req.uploadImages = uploadImages;
+    req.uploadImage = uploadImage;
     req.uploadMultipleImages = uploadMultipleImages;
-
+    req.uploadDocument = uploadDocument;
+    console.log("MulterService", req);
     next();
   }
 }
