@@ -10,8 +10,8 @@ import {
 } from "@nestjs/common";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
 import { Bcrypt, UsersService } from "./users.service";
-import { BreederService } from "src/breeder/breeder.service";
-import { BreederDto } from "src/breeder/breeder.dto";
+import { BreederService } from "src/modules/breeder/breeder.service";
+import { BreederDto } from "src/modules/breeder/breeder.dto";
 import { BreUser } from "./users.entity";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";

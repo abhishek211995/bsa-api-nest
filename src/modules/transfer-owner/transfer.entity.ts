@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BreAnimal } from "src/animal/animal.entity";
-import { BreUser } from "src/users/users.entity";
+import { BreAnimal } from "src/modules/animal/animal.entity";
+import { BreUser } from "src/modules/users/users.entity";
 import {
   Column,
   CreateDateColumn,

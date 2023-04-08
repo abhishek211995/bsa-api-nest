@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common/decorators";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { ApiOperation } from "@nestjs/swagger";
-import { S3Service } from "src/s3multer/s3.service";
+import { S3Service } from "src/lib/s3multer/s3.service";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
 

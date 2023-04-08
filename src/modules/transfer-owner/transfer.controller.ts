@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { TransferService } from "./transfer.service";
 import { transferOwnerDto } from "./transfer.dto";
-import { MailService } from "src/mail/mail.service";
-import { UsersService } from "src/users/users.service";
+import { MailService } from "src/lib/mail/mail.service";
+import { UsersService } from "src/modules/users/users.service";
 
 @Controller("transfer")
 export class TransferController {

@@ -8,28 +8,27 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { BreUser } from "./users/users.entity";
-import { UsersModule } from "./users/users.module";
-import { BreederModule } from "./breeder/breeder.module";
-import { BreBreeder } from "./breeder/breeder.entity";
-import { MasterModule } from "./master/master.module";
+import { JWTMiddleware } from "./middleware/jwt/jwt.middleware";
+import { JwtModule } from "./middleware/jwt/jwt.module";
+import { MailModule } from "./lib/mail/mail.module";
+import { S3Module } from "./lib/s3multer/s3.module";
 import {
-  BreFarmMaster,
-  BreAnimalMaster,
   BreAnimalBreedMaster,
+  BreAnimalMaster,
   BreCostsMaster,
-  BreSubscriptionsMaster,
+  BreFarmMaster,
   BreRoleMaster,
+  BreSubscriptionsMaster,
 } from "./master/master.entity";
-import { AnimalModule } from "./animal/animal.module";
-import { MulterService } from "./multer.middleware";
-import { BreAnimal } from "./animal/animal.entity";
-import { JWTMiddleware } from "./auth/jwt/jwt.middleware";
-import { JwtModule } from "./auth/jwt/jwt.module";
-import { BreTrasferOwnerRequest } from "./transfer-owner/transfer.entity";
-import { TransferModule } from "./transfer-owner/transfer.module";
-import { MailModule } from "./mail/mail.module";
-import { S3Module } from "./s3multer/s3.module";
+import { MasterModule } from "./master/master.module";
+import { BreAnimal } from "./modules/animal/animal.entity";
+import { AnimalModule } from "./modules/animal/animal.module";
+import { BreBreeder } from "./modules/breeder/breeder.entity";
+import { BreederModule } from "./modules/breeder/breeder.module";
+import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
+import { TransferModule } from "./modules/transfer-owner/transfer.module";
+import { BreUser } from "./modules/users/users.entity";
+import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [

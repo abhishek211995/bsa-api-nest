@@ -3,7 +3,7 @@ import {
   BreAnimalBreedMaster,
   BreAnimalMaster,
 } from "src/master/master.entity";
-import { BreUser } from "src/users/users.entity";
+import { BreUser } from "src/modules/users/users.entity";
 import {
   Column,
   Entity,

@@ -5,7 +5,7 @@ import {
   MaxLength,
   MinLength,
 } from "class-validator";
-import { BreederDto } from "src/breeder/breeder.dto";
+import { BreederDto } from "src/modules/breeder/breeder.dto";
 
 //Login User DTO
 export class LoginUserDto {

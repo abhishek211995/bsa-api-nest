@@ -1,5 +1,5 @@
 import { IsNumber, IsString } from "class-validator";
-import { BreUser } from "src/users/users.entity";
+import { BreUser } from "src/modules/users/users.entity";
 
 export class BreederDto {
   @IsNumber()

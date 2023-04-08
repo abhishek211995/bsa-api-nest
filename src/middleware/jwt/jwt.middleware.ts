@@ -2,7 +2,7 @@ import { Injectable, NestMiddleware } from "@nestjs/common";
 import { NextFunction, Request, Response } from "express";
 import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
-import { UsersService } from "../../users/users.service";
+import { UsersService } from "../../modules/users/users.service";
 dotenv.config();
 
 @Injectable()

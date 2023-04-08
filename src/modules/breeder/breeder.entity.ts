@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BreUser } from "src/users/users.entity";
+import { BreUser } from "src/modules/users/users.entity";
 import {
   Column,
   CreateDateColumn,
