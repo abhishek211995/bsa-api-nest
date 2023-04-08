@@ -42,7 +42,7 @@ export class BreAnimal {
 
   @ApiProperty()
   @Column({ type: "date", nullable: false })
-  animal_date_of_birth: string;
+  animal_date_of_birth: Date;
 
   @ApiProperty()
   @Column({ nullable: false, length: 50 })

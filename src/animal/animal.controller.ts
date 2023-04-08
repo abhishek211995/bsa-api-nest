@@ -12,6 +12,7 @@ import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { ApiOperation } from "@nestjs/swagger";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
+import { Request } from "express";
 
 @Controller("animal")
 export class AnimalController {
@@ -146,6 +147,7 @@ export class AnimalController {
     try {
       const result =
         this.animalService.createAnimalWithPedigree(animalWithPedigree);
+      return { status: 200, data: result };
     } catch (error) {
       return error;
     }

@@ -43,4 +43,12 @@ export class BreBreeder {
   @ApiProperty()
   @UpdateDateColumn()
   breeder_updated_at: Date;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50, default: "" })
+  farm_name: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50, default: "" })
+  farm_address: string;
 }
