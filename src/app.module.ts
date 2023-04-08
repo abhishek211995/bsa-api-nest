@@ -29,6 +29,7 @@ import { JwtModule } from "./auth/jwt/jwt.module";
 import { BreTrasferOwnerRequest } from "./transfer-owner/transfer.entity";
 import { TransferModule } from "./transfer-owner/transfer.module";
 import { MailModule } from "./mail/mail.module";
+import { S3Module } from "./s3multer/s3.module";
 
 @Module({
   imports: [
@@ -65,15 +66,16 @@ import { MailModule } from "./mail/mail.module";
     TransferModule,
     JwtModule,
     MailModule,
+    S3Module,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(MulterService)
-      .forRoutes({ path: "animal/create", method: RequestMethod.POST });
+    // consumer
+    //   .apply(MulterService)
+    //   .forRoutes({ path: "animal/create", method: RequestMethod.POST });
     consumer.apply(JWTMiddleware).forRoutes(
       {
         path: "auth/users",
