@@ -59,9 +59,13 @@ export class BreAnimalBreedMaster {
   animal_breed_id: number;
 
   @ApiProperty()
-  @ManyToOne(() => BreAnimalMaster, (animal) => animal.animal_type_id)
-  @JoinColumn({ name: "animal_type_id" })
+  @Column({ name: "animal_type_id" })
   animal_type_id: number;
+
+  @ApiProperty()
+  @ManyToOne(() => BreAnimalMaster)
+  @JoinColumn({ name: "animal_type" })
+  animal_type: BreAnimalMaster;
 
   @ApiProperty()
   @Column({ nullable: false, length: 50 })

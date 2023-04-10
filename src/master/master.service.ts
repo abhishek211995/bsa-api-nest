@@ -84,6 +84,7 @@ export class AnimalBreedServices {
   // Add animal breed
   addAnimalBreed(animalBreedDto: AnimalBreedDto) {
     const breed = this.breAnimalBreedMasterRepository.create(animalBreedDto);
+    console.log("breed", breed);
     return this.breAnimalBreedMasterRepository.save(breed);
   }
 

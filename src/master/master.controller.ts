@@ -159,6 +159,7 @@ export class MasterController {
       const breeds = await this.animalBreedServices.getAnimalBreedByAnimalType(
         animal_type_id,
       );
+
       if (breeds) {
         return {
           status: 200,
