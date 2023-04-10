@@ -141,6 +141,7 @@ export class MasterController {
       const breed = await this.animalBreedServices.addAnimalBreed(
         animalBreedDto,
       );
+      console.log("breed", breed);
       if (breed) {
         return {
           status: 200,

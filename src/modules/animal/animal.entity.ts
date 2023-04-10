@@ -33,7 +33,7 @@ export class BreAnimal {
   animal_breed_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150 })
+  @Column({ nullable: false, length: 150, default: "" })
   animal_color_and_markings: string;
 
   @ApiProperty()
@@ -41,11 +41,11 @@ export class BreAnimal {
   animal_gender: string;
 
   @ApiProperty()
-  @Column({ type: "date", nullable: false })
+  @Column({ type: "date", nullable: true })
   animal_date_of_birth: Date;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50 })
+  @Column({ nullable: false, length: 50, default: "" })
   animal_microchip_id: string;
 
   @ApiProperty()
