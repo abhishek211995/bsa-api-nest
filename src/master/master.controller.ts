@@ -154,10 +154,10 @@ export class MasterController {
   }
 
   @Get("getAnimalBreedByAnimalId")
-  async getAnimalBreedByAnimalId(@Query() animal_type_id: number) {
+  async getAnimalBreedByAnimalId(@Query() query: { animal_type_id: number }) {
     try {
       const breeds = await this.animalBreedServices.getAnimalBreedByAnimalType(
-        animal_type_id,
+        query.animal_type_id,
       );
 
       if (breeds) {

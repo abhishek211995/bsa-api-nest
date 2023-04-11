@@ -92,6 +92,7 @@ export class AnimalBreedServices {
   getAnimalBreedByAnimalType(animal_type_id: number) {
     return this.breAnimalBreedMasterRepository.find({
       where: { animal_type_id: animal_type_id },
+      relations: { animal_type: true },
     });
   }
 }

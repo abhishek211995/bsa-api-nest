@@ -13,11 +13,7 @@ export class BreederService {
 
   async createBreeder(breederDto: BreederDto) {
     try {
-      console.log(breederDto);
-
-      const newBreeder = await this.breederRepository.create(breederDto);
-      console.log(newBreeder);
-
+      const newBreeder = this.breederRepository.create(breederDto);
       return await this.breederRepository.save(newBreeder);
     } catch (err) {
       console.log(err);
