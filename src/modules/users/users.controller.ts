@@ -9,7 +9,6 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import * as dotenv from "dotenv";
-import { Bcrypt } from "src/lib/bcrypt/bcrypt.util";
 import { BreederService } from "src/modules/breeder/breeder.service";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
 import { UsersService } from "./users.service";

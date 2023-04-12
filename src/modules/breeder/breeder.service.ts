@@ -1,4 +1,3 @@
-import { BreUser } from "src/modules/users/users.entity";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -12,10 +11,11 @@ export class BreederService {
     private readonly breederRepository: Repository<BreBreeder>,
   ) {}
 
-  async createBreeder(breederDto: BreederDto) {
+  async createBreeder(breederDto: BreederDto, user_id: number) {
     try {
       const newBreeder = this.breederRepository.create({
         ...breederDto,
+        user_id,
         breeder_license_expiry_date: new Date(
           breederDto.breeder_license_expiry_date,
         ),
@@ -25,15 +25,14 @@ export class BreederService {
       console.log(err);
     }
   }
-  async getBreeder(user_id: number) {
+  async getBreeder(user_id: any) {
     try {
-      console.log("user id", user_id);
-      const breeder = this.breederRepository.find({
+      const breeder = await this.breederRepository.findOne({
         where: { user_id: user_id },
         loadRelationIds: true,
       });
-      console.log("breeder", breeder);
-      return { breeder };
+
+      return breeder;
     } catch (err) {
       return err;
     }

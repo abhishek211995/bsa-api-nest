@@ -1,27 +1,21 @@
-import { Body, Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { BreederService } from "./breeder.service";
-import { BreederDto } from "./breeder.dto";
 
 @Controller("breeder")
 export class BreederController {
   constructor(private readonly breederService: BreederService) {}
 
   @Get("getBreeder/:user_id")
-  async getBreeder(@Param("user_id") userId: number) {
+  async getBreeder(@Param("user_id") user_id: string) {
     try {
-      console.log("params", userId);
-      const res = await this.breederService.getBreeder(userId);
-      console.log("res", res);
+      const res = await this.breederService.getBreeder(user_id);
       return {
         status: 200,
         data: res,
-        message: "Breeder Found Succeessfully!",
+        message: "Breeder Found Successfully!",
       };
     } catch (err) {
-      return {
-        statusCode: 400,
-        message: err.message,
-      };
+      throw err;
     }
   }
 }
