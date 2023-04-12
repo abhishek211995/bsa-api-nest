@@ -41,7 +41,7 @@ export class BreUser {
   email: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 150, default: "" })
   password: string;
 
   @ApiProperty()
@@ -88,6 +88,6 @@ export class loginUserDto {
   email: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 150, default: "" })
   password: string;
 }

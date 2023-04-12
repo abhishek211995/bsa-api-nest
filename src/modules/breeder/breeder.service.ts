@@ -13,7 +13,12 @@ export class BreederService {
 
   async createBreeder(breederDto: BreederDto) {
     try {
-      const newBreeder = this.breederRepository.create(breederDto);
+      const newBreeder = this.breederRepository.create({
+        ...breederDto,
+        breeder_license_expiry_date: new Date(
+          breederDto.breeder_license_expiry_date,
+        ),
+      });
       return await this.breederRepository.save(newBreeder);
     } catch (err) {
       console.log(err);

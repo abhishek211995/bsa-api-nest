@@ -50,6 +50,7 @@ export class UsersService {
     const user = await this.breUsersRepository.findOne({
       where: { email: email },
     });
+
     if (!user) {
       throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
     }
