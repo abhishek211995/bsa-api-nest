@@ -41,7 +41,11 @@ export class UsersController {
         const breeder = new BreederDto();
         breeder.farm_id = createUserDto.farm_id;
         breeder.breeder_license_no = createUserDto.breeder_license_no;
+        breeder.breeder_license_expiry_date =
+          createUserDto.breeder_license_expiry_date;
         breeder.user_id = user;
+        breeder.farm_name = createUserDto.farm_name;
+        breeder.farm_address = createUserDto.farm_address;
         console.log(breeder);
         console.log("Hi");
 

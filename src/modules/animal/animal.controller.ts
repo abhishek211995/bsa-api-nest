@@ -12,6 +12,7 @@ import { ApiOperation } from "@nestjs/swagger";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
+import { fileFilter } from "src/utils/fileFilter.util";
 
 @Controller("animal")
 export class AnimalController {
@@ -29,6 +30,7 @@ export class AnimalController {
   ) {
     try {
       console.log(files);
+      console.log(animalDto);
 
       const res = await this.animalService.createAnimal(animalDto);
 
@@ -36,9 +38,29 @@ export class AnimalController {
         // Upload image to s3
         const uploadData = await this.s3Service.uploadMultipleImages(files);
         if (uploadData) {
-          // const updateDoc = this.animalService.updateAnimalDocDetails({})
+          const updateDoc = await this.animalService.updateAnimalDocDetails({
+            animal_id: res.animal_id,
+            animal_front_view_image: fileFilter(
+              files,
+              "animal_front_view_image",
+            )[0].originalname,
+            animal_left_view_image: fileFilter(
+              files,
+              "animal_left_view_image",
+            )[0].originalname,
+            animal_right_view_image: fileFilter(
+              files,
+              "animal_right_view_image",
+            )[0].originalname,
+            animal_registration_doc: fileFilter(
+              files,
+              "animal_registration_doc",
+            )[0].originalname,
+          });
+          if (updateDoc) {
+            return { status: 200, message: "Animal created successfully" };
+          }
         }
-        return { status: 200, message: "Animal created successfully" };
       }
     } catch (error) {
       return { status: 500, message: error.message };

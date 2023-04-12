@@ -15,4 +15,10 @@ export class BreederDto {
   breeder_license_expiry_date: string;
 
   user_id: BreUser;
+
+  @IsString()
+  farm_name: string;
+
+  @IsString()
+  farm_address: string;
 }

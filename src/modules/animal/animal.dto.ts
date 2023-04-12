@@ -36,6 +36,9 @@ export class AnimalDto {
   animal_right_view_image: string;
 
   @IsString()
+  animal_registration_doc: string;
+
+  @IsString()
   animal_registration_number: string;
 
   @IsString()

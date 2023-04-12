@@ -75,13 +75,13 @@ export class AnimalService {
   }
 
   // update animal document details
-  async updateAnimalDocDetails(
-    animal_front_view_image: string,
-    animal_right_view_image: string,
-    animal_left_view_image: string,
-    animal_registration_doc: string,
-    animal_id: string,
-  ) {
+  async updateAnimalDocDetails({
+    animal_front_view_image,
+    animal_right_view_image,
+    animal_left_view_image,
+    animal_registration_doc,
+    animal_id,
+  }) {
     const animal = await this.animalRepository.findOne({
       where: {
         animal_id,
