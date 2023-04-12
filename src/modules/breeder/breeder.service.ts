@@ -1,3 +1,4 @@
+import { BreUser } from "src/modules/users/users.entity";
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
@@ -22,6 +23,19 @@ export class BreederService {
       return await this.breederRepository.save(newBreeder);
     } catch (err) {
       console.log(err);
+    }
+  }
+  async getBreeder(user_id: number) {
+    try {
+      console.log("user id", user_id);
+      const breeder = this.breederRepository.find({
+        where: { user_id: user_id },
+        loadRelationIds: true,
+      });
+      console.log("breeder", breeder);
+      return { breeder };
+    } catch (err) {
+      return err;
     }
   }
 }

@@ -28,9 +28,13 @@ export class BreBreeder {
   @Column({ type: "date", nullable: false })
   breeder_license_expiry_date: Date;
 
+  @ApiProperty()
+  @Column({ nullable: false })
+  user_id: number;
+
   @OneToOne(() => BreUser)
   @JoinColumn({ name: "user_id" })
-  user_id: BreUser;
+  user: BreUser;
 
   @ApiProperty()
   @CreateDateColumn()

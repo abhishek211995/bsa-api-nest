@@ -20,5 +20,6 @@ export class BreederDto {
   @IsString()
   breeder_license_expiry_date: string;
 
-  user_id: BreUser;
+  @IsNumber()
+  user_id: number;
 }

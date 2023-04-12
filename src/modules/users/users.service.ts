@@ -19,6 +19,7 @@ export class UsersService {
 
   async createUser(createUserDto: CreateUserDto) {
     try {
+      console.log("---------");
       const password = await this.bcryptService.hashPassword(
         createUserDto.password,
       );
@@ -27,6 +28,7 @@ export class UsersService {
         password,
       });
       const user = await this.breUsersRepository.save(newUser);
+      console.log("user", user);
       const breeder = new BreederDto();
       breeder.farm_id = createUserDto.farm_id;
       breeder.breeder_license_no = createUserDto.breeder_license_no;
@@ -34,7 +36,7 @@ export class UsersService {
         createUserDto.breeder_license_expiry_date;
       breeder.farm_address = createUserDto.farm_address;
       breeder.farm_name = createUserDto.farm_name;
-      breeder.user_id = user;
+      breeder.user_id = user.id;
       const breederDetails = await this.breBreederService.createBreeder(
         breeder,
       );
@@ -49,6 +51,8 @@ export class UsersService {
     const { email, password } = loginUserDto;
     const user = await this.breUsersRepository.findOne({
       where: { email: email },
+      loadRelationIds: true,
+      relations: ["user_role_id"],
     });
 
     if (!user) {
