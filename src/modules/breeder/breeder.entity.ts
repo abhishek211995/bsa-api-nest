@@ -32,8 +32,9 @@ export class BreBreeder {
   @Column({ nullable: false })
   user_id: number;
 
-  @OneToOne(() => BreUser)
+  @ApiProperty()
   @JoinColumn({ name: "user_id" })
+  @OneToOne(() => BreUser)
   user: BreUser;
 
   @ApiProperty()

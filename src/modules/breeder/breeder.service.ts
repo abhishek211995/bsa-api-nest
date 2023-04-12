@@ -29,7 +29,7 @@ export class BreederService {
     try {
       const breeder = await this.breederRepository.findOne({
         where: { user_id: user_id },
-        loadRelationIds: true,
+        relations: ["user"],
       });
 
       return breeder;
