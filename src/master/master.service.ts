@@ -84,6 +84,7 @@ export class AnimalBreedServices {
   // Add animal breed
   addAnimalBreed(animalBreedDto: AnimalBreedDto) {
     const breed = this.breAnimalBreedMasterRepository.create(animalBreedDto);
+    console.log("breed", breed);
     return this.breAnimalBreedMasterRepository.save(breed);
   }
 
@@ -91,6 +92,7 @@ export class AnimalBreedServices {
   getAnimalBreedByAnimalType(animal_type_id: number) {
     return this.breAnimalBreedMasterRepository.find({
       where: { animal_type_id: animal_type_id },
+      relations: { animal_type: true },
     });
   }
 }

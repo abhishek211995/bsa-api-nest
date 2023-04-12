@@ -116,7 +116,7 @@ export class AnimalService {
         "reg_doc",
       );
 
-      const mainAnimalResult = this.transactionUtils.executeInTransaction(
+      const mainAnimalResult = await this.transactionUtils.executeInTransaction(
         this.upsertAnimal([animalDataDto]),
       );
       animalsCount++;
@@ -142,32 +142,42 @@ export class AnimalService {
       console.log("result", result);
       console.log("addResponse", mainAnimalResult);
       return { mainAnimalResult, result };
-    } catch (error) {}
+    } catch (error) {
+      throw error;
+    }
   }
 
   upsertGenerations(generations: CreateGenerationsDto[]) {
-    return async function (queryRunner: QueryRunner): Promise<InsertResult> {
-      const upsertResult = await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(BreAnimal)
-        .values(generations)
-        .execute();
+    try {
+      return async function (queryRunner: QueryRunner): Promise<InsertResult> {
+        const upsertResult = await queryRunner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(BreAnimal)
+          .values(generations)
+          .execute();
 
-      return upsertResult;
-    };
+        return upsertResult;
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 
   upsertAnimal(generations: CreateAnimalDto[]) {
-    return async function (queryRunner: QueryRunner): Promise<InsertResult> {
-      const upsertResult = await queryRunner.manager
-        .createQueryBuilder()
-        .insert()
-        .into(BreAnimal)
-        .values(generations)
-        .execute();
+    try {
+      return async function (queryRunner: QueryRunner): Promise<InsertResult> {
+        const upsertResult = await queryRunner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(BreAnimal)
+          .values(generations)
+          .execute();
 
-      return upsertResult;
-    };
+        return upsertResult;
+      };
+    } catch (error) {
+      throw error;
+    }
   }
 }

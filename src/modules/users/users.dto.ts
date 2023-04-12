@@ -20,9 +20,6 @@ export class CreateUserDto extends BreederDto {
   @IsString()
   user_name: string;
 
-  @IsNumber()
-  user_role_id: number;
-
   @IsString()
   @IsEmail()
   email: string;

@@ -17,10 +17,6 @@ export class BreBreeder {
   breeder_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false })
-  farm_id: number;
-
-  @ApiProperty()
   @Column({ nullable: false, length: 50, default: "" })
   breeder_license_no: string;
 
@@ -30,11 +26,16 @@ export class BreBreeder {
 
   @ApiProperty()
   @Column({ type: "date", nullable: false })
-  breeder_license_expiry_date: string;
+  breeder_license_expiry_date: Date;
 
-  @OneToOne(() => BreUser)
+  @ApiProperty()
+  @Column({ nullable: false })
+  user_id: number;
+
+  @ApiProperty()
   @JoinColumn({ name: "user_id" })
-  user_id: BreUser;
+  @OneToOne(() => BreUser)
+  user: BreUser;
 
   @ApiProperty()
   @CreateDateColumn()

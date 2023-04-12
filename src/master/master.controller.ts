@@ -141,6 +141,7 @@ export class MasterController {
       const breed = await this.animalBreedServices.addAnimalBreed(
         animalBreedDto,
       );
+      console.log("breed", breed);
       if (breed) {
         return {
           status: 200,
@@ -153,11 +154,12 @@ export class MasterController {
   }
 
   @Get("getAnimalBreedByAnimalId")
-  async getAnimalBreedByAnimalId(@Query() animal_type_id: number) {
+  async getAnimalBreedByAnimalId(@Query() query: { animal_type_id: number }) {
     try {
       const breeds = await this.animalBreedServices.getAnimalBreedByAnimalType(
-        animal_type_id,
+        query.animal_type_id,
       );
+
       if (breeds) {
         return {
           status: 200,

@@ -8,21 +8,17 @@ import {
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
-import { CreateUserDto, LoginUserDto } from "./users.dto";
-import { Bcrypt, UsersService } from "./users.service";
-import { BreederService } from "src/modules/breeder/breeder.service";
-import { BreederDto } from "src/modules/breeder/breeder.dto";
-import { BreUser } from "./users.entity";
-import * as jwt from "jsonwebtoken";
 import * as dotenv from "dotenv";
+import { BreederService } from "src/modules/breeder/breeder.service";
+import { CreateUserDto, LoginUserDto } from "./users.dto";
+import { UsersService } from "./users.service";
+import { BreUser } from "./users.entity";
+import { BreederDto } from "../breeder/breeder.dto";
 dotenv.config();
 
 @Controller("auth")
 export class UsersController {
-  constructor(
-    private readonly usersService: UsersService,
-    private readonly bcryptService: Bcrypt,
-  ) {}
+  constructor(private readonly usersService: UsersService) {}
 
   @Inject(BreederService)
   private readonly breederService: BreederService;
@@ -31,9 +27,6 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
-      createUserDto.password = await this.bcryptService.hashPassword(
-        createUserDto.password,
-      );
       const res = await this.usersService.createUser(createUserDto);
       if (res) {
         const user = new BreUser();
@@ -49,7 +42,10 @@ export class UsersController {
         console.log(breeder);
         console.log("Hi");
 
-        const breederRes = await this.breederService.createBreeder(breeder);
+        const breederRes = await this.breederService.createBreeder(
+          breeder,
+          user.id,
+        );
         console.log(breederRes);
 
         if (breederRes) {
@@ -78,41 +74,15 @@ export class UsersController {
   @UsePipes(ValidationPipe)
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     try {
-      const { email, password } = loginUserDto;
-
       const res = await this.usersService.loginUser(loginUserDto);
-
-      if (res.length > 0) {
-        const IspasswordCorrect: Promise<boolean> =
-          this.bcryptService.comparePassword(password, res[0].password);
-        if (IspasswordCorrect) {
-          const jwtoken = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
-
-          return {
-            statusCode: 200,
-            message: "User Logged in successfully",
-            data: res,
-            token: jwtoken,
-          };
-        } else {
-          return {
-            statusCode: 400,
-            message: "Invalid credentials",
-          };
-        }
-      } else {
-        return {
-          statusCode: 400,
-          message: "User dose not exist",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-
       return {
-        statusCode: 500,
-        message: error.message,
+        statusCode: 200,
+        message: "User Logged in successfully",
+        data: res.user,
+        token: res.token,
       };
+    } catch (error) {
+      throw error;
     }
   }
 

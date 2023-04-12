@@ -11,16 +11,30 @@ export class BreederService {
     private readonly breederRepository: Repository<BreBreeder>,
   ) {}
 
-  async createBreeder(breederDto: BreederDto) {
+  async createBreeder(breederDto: BreederDto, user_id: number) {
     try {
-      console.log(breederDto);
-
-      const newBreeder = await this.breederRepository.create(breederDto);
-      console.log(newBreeder);
-
+      const newBreeder = this.breederRepository.create({
+        ...breederDto,
+        user_id,
+        breeder_license_expiry_date: new Date(
+          breederDto.breeder_license_expiry_date,
+        ),
+      });
       return await this.breederRepository.save(newBreeder);
     } catch (err) {
       console.log(err);
+    }
+  }
+  async getBreeder(user_id: any) {
+    try {
+      const breeder = await this.breederRepository.findOne({
+        where: { user_id: user_id },
+        relations: ["user"],
+      });
+
+      return breeder;
+    } catch (err) {
+      return err;
     }
   }
 }

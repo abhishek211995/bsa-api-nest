@@ -29,11 +29,11 @@ export class BreFarmMaster {
   farm_id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50 })
+  @Column({ nullable: false, length: 50, default: "" })
   farm_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150 })
+  @Column({ nullable: false, length: 150, default: "" })
   farm_description: string;
 }
 
@@ -59,16 +59,20 @@ export class BreAnimalBreedMaster {
   animal_breed_id: number;
 
   @ApiProperty()
-  @ManyToOne(() => BreAnimalMaster, (animal) => animal.animal_type_id)
-  @JoinColumn({ name: "animal_type_id" })
+  @Column({ name: "animal_type_id" })
   animal_type_id: number;
+
+  @ApiProperty()
+  @JoinColumn({ name: "animal_type_id" })
+  @ManyToOne(() => BreAnimalMaster)
+  animal_type: BreAnimalMaster;
 
   @ApiProperty()
   @Column({ nullable: false, length: 50 })
   animal_breed_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 150 })
+  @Column({ nullable: false, length: 150, default: "" })
   animal_breed_description: string;
 }
 
