@@ -42,6 +42,6 @@ export class CreateUserDto extends BreederDto {
   @IsString()
   identification_id_name: string;
 
-  @IsString()
+  // @IsString()
   identity_doc_name: string;
 }

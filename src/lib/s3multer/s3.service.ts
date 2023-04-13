@@ -33,12 +33,12 @@ export class S3Service {
     }
   }
 
-  async uploadDocument(file: Express.Multer.File) {
+  async uploadDocument(file: Express.Multer.File, user_name: string) {
     try {
       const uploadResult = await this.s3Client.send(
         new aws.PutObjectCommand({
           Bucket: process.env.BUCKET,
-          Key: file.originalname,
+          Key: `${user_name}/` + file.originalname,
           Body: file.buffer,
           ContentType: file.mimetype,
         }),

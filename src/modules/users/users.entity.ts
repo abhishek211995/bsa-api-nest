@@ -55,7 +55,7 @@ export class BreUser {
   identification_id_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 250, default: "" })
+  @Column({ nullable: true, length: 250 })
   identity_doc_name: string;
 
   @ApiProperty()

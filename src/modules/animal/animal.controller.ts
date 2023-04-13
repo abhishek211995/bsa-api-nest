@@ -29,9 +29,6 @@ export class AnimalController {
     @Body() animalDto: AnimalDto,
   ) {
     try {
-      console.log(files);
-      console.log(animalDto);
-
       const res = await this.animalService.createAnimal(animalDto);
 
       if (res) {

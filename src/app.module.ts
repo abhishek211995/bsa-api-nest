@@ -29,6 +29,7 @@ import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
 
 @Module({
   imports: [
@@ -53,6 +54,7 @@ import { UsersModule } from "./modules/users/users.module";
           BreSubscriptionsMaster,
           BreRoleMaster,
           BreTrasferOwnerRequest,
+          BreederFarmModule,
         ],
         synchronize: true,
       }),
