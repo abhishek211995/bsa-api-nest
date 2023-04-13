@@ -69,8 +69,21 @@ export class UsersService {
     return { user, token };
   }
 
-  getUsers() {
-    return this.breUsersRepository.find();
+  getUsers(roleId?: number) {
+    console.log("roleId", roleId);
+    try {
+      const query = { where: {} };
+      if (roleId) {
+        query.where = { user_role_id: Number(roleId) };
+      }
+      return this.breUsersRepository.find({
+        ...query,
+        relations: ["user_role_id"],
+      });
+    } catch (error) {
+      console.log("error", JSON.stringify(error));
+      throw error;
+    }
   }
 
   getUserById(id: number) {

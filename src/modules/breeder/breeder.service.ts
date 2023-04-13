@@ -23,8 +23,10 @@ export class BreederService {
       return await this.breederRepository.save(newBreeder);
     } catch (err) {
       console.log(err);
+      throw err;
     }
   }
+
   async getBreeder(user_id: any) {
     try {
       const breeder = await this.breederRepository.findOne({
@@ -34,7 +36,19 @@ export class BreederService {
 
       return breeder;
     } catch (err) {
-      return err;
+      throw err;
+    }
+  }
+
+  async getBreederList() {
+    try {
+      const list = await this.breederRepository.find({
+        relations: ["user"],
+      });
+
+      return list;
+    } catch (err) {
+      throw err;
     }
   }
 }

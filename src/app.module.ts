@@ -76,10 +76,10 @@ export class AppModule implements NestModule {
     //   .apply(MulterService)
     //   .forRoutes({ path: "animal/create", method: RequestMethod.POST });
     consumer.apply(JWTMiddleware).forRoutes(
-      {
-        path: "auth/users",
-        method: RequestMethod.GET,
-      },
+      // {
+      //   path: "auth/users",
+      //   method: RequestMethod.GET,
+      // },
       {
         path: "animal/getAnimals",
         method: RequestMethod.GET,

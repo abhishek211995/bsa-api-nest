@@ -18,4 +18,18 @@ export class BreederController {
       throw err;
     }
   }
+
+  @Get()
+  async getBreederList() {
+    try {
+      const res = await this.breederService.getBreederList();
+      return {
+        status: 200,
+        data: res,
+        message: "Breeder List Found Successfully!",
+      };
+    } catch (err) {
+      throw err;
+    }
+  }
 }

@@ -10,12 +10,6 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-enum UserType {
-  "admin",
-  "breeder",
-  "individual",
-}
-
 enum UserStatus {
   "Verified" = 1,
   "Verification Pending" = 2,
@@ -79,15 +73,4 @@ export class BreUser {
     default: UserStatus["Verification Pending"],
   })
   user_status: UserStatus;
-}
-
-@Entity()
-export class loginUserDto {
-  @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
-  email: string;
-
-  @ApiProperty()
-  @Column({ nullable: false, length: 150, default: "" })
-  password: string;
 }
