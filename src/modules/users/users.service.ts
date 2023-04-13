@@ -69,17 +69,20 @@ export class UsersService {
     return { user, token };
   }
 
-  getUsers(roleId?: number) {
+  async getUsers(roleId?: number) {
     console.log("roleId", roleId);
     try {
       const query = { where: {} };
       if (roleId) {
         query.where = { user_role_id: Number(roleId) };
       }
-      return this.breUsersRepository.find({
+      console.log("query", query);
+      const res = await this.breUsersRepository.find({
         ...query,
         relations: ["user_role_id"],
       });
+      console.log("res", res);
+      return res;
     } catch (error) {
       console.log("error", JSON.stringify(error));
       throw error;
@@ -96,7 +99,13 @@ export class UsersService {
       throw error;
     }
   }
-
+  getUserByRoleId(roleId: any) {
+    return this.breUsersRepository.findOne({
+      where: {
+        user_role_id: roleId,
+      },
+    });
+  }
   getUserByContact(contact_no: string) {
     return this.breUsersRepository.findOneBy({ contact_no: contact_no });
   }
