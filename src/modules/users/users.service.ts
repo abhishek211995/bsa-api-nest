@@ -87,7 +87,14 @@ export class UsersService {
   }
 
   getUserById(id: number) {
-    return this.breUsersRepository.findOneBy({ id: id });
+    try {
+      return this.breUsersRepository.findOne({
+        where: { id },
+        relations: ["user_role_id"],
+      });
+    } catch (error) {
+      throw error;
+    }
   }
 
   getUserByContact(contact_no: string) {
