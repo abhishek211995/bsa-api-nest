@@ -112,6 +112,12 @@ export class CostsServices {
   getCosts() {
     return this.breCostsMasterRepository.find();
   }
+  getCostById(param: any) {
+    const { id } = param;
+    return this.breCostsMasterRepository.find({
+      where: { id: id },
+    });
+  }
 
   updateCosts(id: number, costsDto: CostsDto) {
     return this.breCostsMasterRepository.update(id, costsDto);

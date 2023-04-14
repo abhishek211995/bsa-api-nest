@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { Put, Query } from "@nestjs/common/decorators";
+import { Param, Put, Query } from "@nestjs/common/decorators";
 import {
   AnimalBreedDto,
   AnimalTypeDto,
@@ -181,6 +181,7 @@ export class MasterController {
   @Post("addCosts")
   async addCosts(@Body() costsDto: CostsDto) {
     try {
+      console.log("costs", costsDto);
       const costs = await this.costsServices.addCosts(costsDto);
       if (costs) {
         return {
@@ -219,12 +220,26 @@ export class MasterController {
       };
     }
   }
-
-  @Put("updateCosts")
-  async updateCosts(@Body() costsDto: CostsDto, id: number) {
+  @Get("getCost/:id")
+  async getCostById(@Param() id: number) {
     try {
-      console.log(costsDto, id);
+      const cost = await this.costsServices.getCostById(id);
+      return {
+        status: 200,
+        data: cost,
+        message: "Cost Found Successfully!",
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
 
+  @Put("updateCosts/:id")
+  async updateCosts(@Body() costsDto: CostsDto, @Param() id: number) {
+    try {
       const data = await this.costsServices.updateCosts(id, costsDto);
       if (data) {
         return {
