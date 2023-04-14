@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 import { BreBreeder } from "../breeder/breeder.entity";
 
-@Entity("bre_breeder")
+@Entity("bre_breeder_farm")
 export class BreBreederFarm {
   @ApiProperty()
   @PrimaryGeneratedColumn()

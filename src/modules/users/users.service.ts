@@ -27,23 +27,34 @@ export class UsersService {
     files: Array<Express.Multer.File>,
   ) {
     try {
+      console.log(createUserDto);
+      console.log(files);
+
       const password = await this.bcryptService.hashPassword(
         createUserDto.password,
       );
+      console.log("password", password);
+
       const newUser = this.breUsersRepository.create({
         ...createUserDto,
         password,
       });
+      console.log(newUser);
+
       const user = await this.breUsersRepository.save(newUser);
-      const identity_doc_name = fileFilter(files, "identity_doc_name")[0];
+      console.log(user);
+
+      const identity_doc = fileFilter(files, "identity_doc_name")[0];
+      console.log(identity_doc);
+
       const uploadData = await this.s3Service.uploadDocument(
-        identity_doc_name,
+        identity_doc,
         user.user_name,
       );
 
       const updateUser = await this.updateUserDoc(
         newUser.id,
-        identity_doc_name.originalname,
+        identity_doc.originalname,
       );
 
       const breeder = new BreederDto();

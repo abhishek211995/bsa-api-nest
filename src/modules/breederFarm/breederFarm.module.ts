@@ -9,4 +9,4 @@ import { BreBreederFarm } from "./breederFarm.entity";
   providers: [breederFarmService],
   exports: [breederFarmService],
 })
-export class BreederFarmModule {}
+export class BreederFarm {}

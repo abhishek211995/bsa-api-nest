@@ -21,7 +21,7 @@ export class BreederService {
     files: Array<Express.Multer.File>,
   ) {
     try {
-      const newBreeder = this.breederRepository.create({
+      const newBreeder = await this.breederRepository.create({
         ...breederDto,
         user_id: user.id,
         breeder_license_expiry_date: new Date(

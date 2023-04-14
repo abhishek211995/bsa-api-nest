@@ -29,7 +29,8 @@ import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
-import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
+import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
+import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 
 @Module({
   imports: [
@@ -54,7 +55,7 @@ import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
           BreSubscriptionsMaster,
           BreRoleMaster,
           BreTrasferOwnerRequest,
-          BreederFarmModule,
+          BreBreederFarm,
         ],
         synchronize: true,
       }),
@@ -68,15 +69,13 @@ import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
     JwtModule,
     MailModule,
     S3Module,
+    BreederFarm,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(MulterService)
-    //   .forRoutes({ path: "animal/create", method: RequestMethod.POST });
     consumer.apply(JWTMiddleware).forRoutes(
       // {
       //   path: "auth/users",

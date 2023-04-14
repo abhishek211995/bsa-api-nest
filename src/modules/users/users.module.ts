@@ -6,7 +6,7 @@ import { UsersController } from "./users.controller";
 import { BreUser } from "./users.entity";
 import { UsersService } from "./users.service";
 import { S3Module } from "src/lib/s3multer/s3.module";
-import { BreederFarmModule } from "../breederFarm/breederFarm.module";
+import { BreederFarm } from "../breederFarm/breederFarm.module";
 
 @Module({
   imports: [
@@ -14,7 +14,7 @@ import { BreederFarmModule } from "../breederFarm/breederFarm.module";
     BreederModule,
     BcryptModule,
     S3Module,
-    BreederFarmModule,
+    BreederFarm,
   ],
   controllers: [UsersController],
   providers: [UsersService],
