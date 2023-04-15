@@ -27,10 +27,13 @@ import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
+import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
 import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
 import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
 import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
+
 
 @Module({
   imports: [
@@ -55,6 +58,7 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
           BreSubscriptionsMaster,
           BreRoleMaster,
           BreTrasferOwnerRequest,
+          BreBreederFarm,
         ],
         synchronize: true,
       }),
@@ -70,6 +74,7 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
     JwtModule,
     MailModule,
     S3Module,
+    BreederFarm,
   ],
   controllers: [AppController],
   providers: [AppService],

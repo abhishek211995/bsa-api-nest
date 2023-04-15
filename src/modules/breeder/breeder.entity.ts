@@ -21,7 +21,7 @@ export class BreBreeder {
   breeder_license_no: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: true, length: 50 })
   breeder_license_doc_name: string;
 
   @ApiProperty()
@@ -50,6 +50,6 @@ export class BreBreeder {
   farm_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50 })
+  @Column({ nullable: false, length: 150 })
   farm_address: string;
 }

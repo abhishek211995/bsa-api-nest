@@ -8,7 +8,7 @@ export class BreederDto {
   @IsString()
   breeder_license_no: string;
 
-  @IsString()
+  // @IsString()
   breeder_license_doc_name: string;
 
   @IsString()

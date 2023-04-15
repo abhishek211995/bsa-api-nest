@@ -10,6 +10,8 @@ import {
 import { BreAnimal } from "./animal.entity";
 import TransactionUtil from "src/lib/db_utils/transaction.utils";
 import { generateRegNo } from "src/utils/generateReg.util";
+import { S3Service } from "src/lib/s3multer/s3.service";
+import { fileFilter } from "src/utils/fileFilter.util";
 
 @Injectable()
 export class AnimalService {
@@ -17,16 +19,41 @@ export class AnimalService {
     @InjectRepository(BreAnimal)
     private readonly animalRepository: Repository<BreAnimal>,
     private transactionUtils: TransactionUtil,
+    private readonly s3Service: S3Service,
   ) {}
 
-  async createAnimal(animalDto: AnimalDto) {
+  async createAnimal(animalDto: AnimalDto, files: Array<Express.Multer.File>) {
     const animalCount = await this.animalRepository.count();
-    animalDto.animal_registration_number = generateRegNo(
+    animalDto.animal_registration_number = await generateRegNo(
       animalDto.animal_breed_id,
       animalCount + 1,
     );
     const AnimalData = await this.animalRepository.create(animalDto);
-    return this.animalRepository.save(AnimalData);
+    const animal = await this.animalRepository.save(AnimalData);
+    if (animal) {
+      console.log("animal", animal);
+
+      const uploadData = await this.s3Service.uploadMultipleImages(
+        files,
+        animal.animal_registration_number,
+      );
+      if (uploadData) {
+        const updateDoc = await this.updateAnimalDocDetails({
+          animal_id: animal.animal_id,
+          animal_front_view_image: fileFilter(
+            files,
+            "animal_front_view_image",
+          )[0].originalname,
+          animal_left_view_image: fileFilter(files, "animal_left_view_image")[0]
+            .originalname,
+          animal_right_view_image: fileFilter(
+            files,
+            "animal_right_view_image",
+          )[0].originalname,
+        });
+      }
+      return { animal, uploadData };
+    }
   }
 
   // get all animals of user by animal type id and gender
@@ -79,7 +106,6 @@ export class AnimalService {
     animal_front_view_image,
     animal_right_view_image,
     animal_left_view_image,
-    animal_registration_doc,
     animal_id,
   }) {
     const animal = await this.animalRepository.findOne({
@@ -90,13 +116,11 @@ export class AnimalService {
     animal.animal_front_view_image = animal_front_view_image;
     animal.animal_right_view_image = animal_right_view_image;
     animal.animal_left_view_image = animal_left_view_image;
-    animal.animal_registration_doc = animal_registration_doc;
     return this.animalRepository.save(animal);
   }
 
   async createAnimalWithPedigree(payload: AnimalWithPedigreePayload) {
     try {
-      console.log("reached=>>>>");
       const { animalData, animalTypeId, breedId, generations } = payload;
       let animalsCount = await this.animalRepository.count();
       const animalDataDto = new CreateAnimalDto(

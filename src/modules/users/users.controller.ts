@@ -6,12 +6,15 @@ import {
   Param,
   Post,
   Query,
+  UploadedFiles,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from "@nestjs/common";
 import * as dotenv from "dotenv";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
 import { UsersService } from "./users.service";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 dotenv.config();
 
 @Controller("auth")
@@ -21,9 +24,13 @@ export class UsersController {
   @Post("register")
   @HttpCode(200)
   @UsePipes(ValidationPipe)
-  async createUser(@Body() createUserDto: CreateUserDto) {
+  @UseInterceptors(AnyFilesInterceptor())
+  async createUser(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() createUserDto: CreateUserDto,
+  ) {
     try {
-      const res = await this.usersService.createUser(createUserDto);
+      const res = await this.usersService.createUser(createUserDto, files);
       return { ...res };
     } catch (error) {
       if (error?.code === "ER_DUP_ENTRY") {
