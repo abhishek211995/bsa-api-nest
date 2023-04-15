@@ -1,16 +1,7 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { Put, Query } from "@nestjs/common/decorators";
+import { Param, Put } from "@nestjs/common/decorators";
+import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import {
-  AnimalBreedDto,
-  AnimalTypeDto,
-  CostsDto,
-  FarmTypeDto,
-  RoleDto,
-  SubscriptionDto,
-} from "./master.dto";
-import {
-  AnimalBreedServices,
-  AnimalTypeServices,
   CostsServices,
   FarmTypeServices,
   RoleServices,
@@ -23,8 +14,6 @@ export class MasterController {
   constructor(
     private readonly roleServices: RoleServices,
     private readonly farmTypeServices: FarmTypeServices,
-    private readonly animalTypeServices: AnimalTypeServices,
-    private readonly animalBreedServices: AnimalBreedServices,
     private readonly costsServices: CostsServices,
     private readonly subscriptionServices: SubscriptionServices,
   ) {}
@@ -103,84 +92,10 @@ export class MasterController {
     }
   }
 
-  // Add animal type
-  @Post("addAnimalType")
-  async addAnimalType(@Body() animalTypeDto: AnimalTypeDto) {
-    try {
-      const animal = await this.animalTypeServices.addAnimalType(animalTypeDto);
-      if (animal) {
-        return {
-          status: 200,
-          message: "Animal type added successfully",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  @Get("getAllAnimalTypes")
-  async getAllAnimalTypes() {
-    try {
-      const animals = await this.animalTypeServices.getAllAnimalTypes();
-      if (animals) {
-        return {
-          status: 200,
-          message: "Animal types fetched successfully",
-          data: animals,
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  @Post("addAnimalBreed")
-  async addAnimalBreed(@Body() animalBreedDto: AnimalBreedDto) {
-    try {
-      const breed = await this.animalBreedServices.addAnimalBreed(
-        animalBreedDto,
-      );
-      console.log("breed", breed);
-      if (breed) {
-        return {
-          status: 200,
-          message: "Animal breed added successfully",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  @Get("getAnimalBreedByAnimalId")
-  async getAnimalBreedByAnimalId(@Query() query: { animal_type_id: number }) {
-    try {
-      const breeds = await this.animalBreedServices.getAnimalBreedByAnimalType(
-        query.animal_type_id,
-      );
-
-      if (breeds) {
-        return {
-          status: 200,
-          message: "Animal breeds fetched successfully",
-          data: breeds,
-        };
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.code === "ER_NO_REFERENCED_ROW_2") {
-        return {
-          status: 400,
-          message: "Invalid animal type id",
-        };
-      }
-    }
-  }
-
   @Post("addCosts")
   async addCosts(@Body() costsDto: CostsDto) {
     try {
+      console.log("costs", costsDto);
       const costs = await this.costsServices.addCosts(costsDto);
       if (costs) {
         return {
@@ -219,12 +134,26 @@ export class MasterController {
       };
     }
   }
-
-  @Put("updateCosts")
-  async updateCosts(@Body() costsDto: CostsDto, id: number) {
+  @Get("getCost/:id")
+  async getCostById(@Param() id: number) {
     try {
-      console.log(costsDto, id);
+      const cost = await this.costsServices.getCostById(id);
+      return {
+        status: 200,
+        data: cost,
+        message: "Cost Found Successfully!",
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
 
+  @Put("updateCosts/:id")
+  async updateCosts(@Body() costsDto: CostsDto, @Param() id: number) {
+    try {
       const data = await this.costsServices.updateCosts(id, costsDto);
       if (data) {
         return {

@@ -13,8 +13,6 @@ import { JwtModule } from "./middleware/jwt/jwt.module";
 import { MailModule } from "./lib/mail/mail.module";
 import { S3Module } from "./lib/s3multer/s3.module";
 import {
-  BreAnimalBreedMaster,
-  BreAnimalMaster,
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
@@ -31,6 +29,11 @@ import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
 import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
 import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
+import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
+import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
+import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
+import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
+
 
 @Module({
   imports: [
@@ -65,6 +68,8 @@ import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
     BreederModule,
     MasterModule,
     AnimalModule,
+    AnimalMasterModule,
+    AnimalBreedMasterModule,
     TransferModule,
     JwtModule,
     MailModule,
@@ -77,10 +82,10 @@ import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer.apply(JWTMiddleware).forRoutes(
-      // {
-      //   path: "auth/users",
-      //   method: RequestMethod.GET,
-      // },
+      {
+        path: "auth/users",
+        method: RequestMethod.GET,
+      },
       {
         path: "animal/getAnimals",
         method: RequestMethod.GET,

@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  Param,
   Post,
   Query,
   UploadedFiles,
@@ -20,6 +22,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("register")
+  @HttpCode(200)
   @UsePipes(ValidationPipe)
   @UseInterceptors(AnyFilesInterceptor())
   async createUser(
@@ -41,6 +44,7 @@ export class UsersController {
   }
 
   @Post("login")
+  @HttpCode(200)
   @UsePipes(ValidationPipe)
   async loginUser(@Body() loginUserDto: LoginUserDto) {
     try {
@@ -60,6 +64,7 @@ export class UsersController {
   async getUsers(@Query("roleId") roleId: number) {
     try {
       const users = await this.usersService.getUsers(roleId);
+      console.log("users", users);
       return {
         statusCode: 200,
         message: "Users fetched successfully",
