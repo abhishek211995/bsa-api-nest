@@ -19,7 +19,7 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @Post("register")
-  @HttpCode(201)
+  @HttpCode(200)
   @UsePipes(ValidationPipe)
   async createUser(@Body() createUserDto: CreateUserDto) {
     try {
