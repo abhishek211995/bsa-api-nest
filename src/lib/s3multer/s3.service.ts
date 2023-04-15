@@ -49,13 +49,18 @@ export class S3Service {
     }
   }
 
-  async uploadMultipleImages(files: Express.Multer.File[]) {
+  async uploadMultipleImages(
+    files: Express.Multer.File[],
+    register_no: string,
+  ) {
     try {
+      console.log("register_no: ", register_no);
+
       const EndResult = files.map(async (file) => {
         const uploadResult = await this.s3Client.send(
           new aws.PutObjectCommand({
             Bucket: process.env.BUCKET,
-            Key: file.originalname,
+            Key: `${register_no}/` + file.originalname,
             Body: file.buffer,
             ContentType: file.mimetype,
           }),
