@@ -13,7 +13,6 @@ import { JwtModule } from "./middleware/jwt/jwt.module";
 import { MailModule } from "./lib/mail/mail.module";
 import { S3Module } from "./lib/s3multer/s3.module";
 import {
-  BreAnimalBreedMaster,
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
@@ -30,6 +29,8 @@ import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
 import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
 import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
+import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
+import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
     MasterModule,
     AnimalModule,
     AnimalMasterModule,
+    AnimalBreedMasterModule,
     TransferModule,
     JwtModule,
     MailModule,

@@ -2,14 +2,12 @@ import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { MasterController } from "./master.controller";
 import {
-  BreAnimalBreedMaster,
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
   BreSubscriptionsMaster,
 } from "./master.entity";
 import {
-  AnimalBreedServices,
   CostsServices,
   FarmTypeServices,
   RoleServices,
@@ -20,7 +18,6 @@ import {
   imports: [
     TypeOrmModule.forFeature([
       BreFarmMaster,
-      BreAnimalBreedMaster,
       BreCostsMaster,
       BreSubscriptionsMaster,
       BreRoleMaster,
@@ -29,11 +26,10 @@ import {
   controllers: [MasterController],
   providers: [
     FarmTypeServices,
-    AnimalBreedServices,
     CostsServices,
     SubscriptionServices,
     RoleServices,
   ],
-  exports: [FarmTypeServices, AnimalBreedServices],
+  exports: [FarmTypeServices],
 })
 export class MasterModule {}

@@ -1,15 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
+import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import {
-  AnimalBreedDto,
-  CostsDto,
-  FarmTypeDto,
-  RoleDto,
-  SubscriptionDto,
-} from "./master.dto";
-import {
-  BreAnimalBreedMaster,
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
@@ -50,29 +43,6 @@ export class FarmTypeServices {
 
   getAllFarmTypes() {
     return this.breFarmMasterRepository.find();
-  }
-}
-
-@Injectable()
-export class AnimalBreedServices {
-  constructor(
-    @InjectRepository(BreAnimalBreedMaster)
-    private readonly breAnimalBreedMasterRepository: Repository<BreAnimalBreedMaster>,
-  ) {}
-
-  // Add animal breed
-  addAnimalBreed(animalBreedDto: AnimalBreedDto) {
-    const breed = this.breAnimalBreedMasterRepository.create(animalBreedDto);
-    console.log("breed", breed);
-    return this.breAnimalBreedMasterRepository.save(breed);
-  }
-
-  // Get animal breed by animal type id
-  getAnimalBreedByAnimalType(animal_type_id: number) {
-    return this.breAnimalBreedMasterRepository.find({
-      where: { animal_type_id: animal_type_id },
-      relations: { animal_type: true },
-    });
   }
 }
 

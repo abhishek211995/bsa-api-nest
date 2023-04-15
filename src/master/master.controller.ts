@@ -1,14 +1,7 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { Param, Put, Query } from "@nestjs/common/decorators";
+import { Param, Put } from "@nestjs/common/decorators";
+import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import {
-  AnimalBreedDto,
-  CostsDto,
-  FarmTypeDto,
-  RoleDto,
-  SubscriptionDto,
-} from "./master.dto";
-import {
-  AnimalBreedServices,
   CostsServices,
   FarmTypeServices,
   RoleServices,
@@ -21,7 +14,6 @@ export class MasterController {
   constructor(
     private readonly roleServices: RoleServices,
     private readonly farmTypeServices: FarmTypeServices,
-    private readonly animalBreedServices: AnimalBreedServices,
     private readonly costsServices: CostsServices,
     private readonly subscriptionServices: SubscriptionServices,
   ) {}
@@ -97,49 +89,6 @@ export class MasterController {
       }
     } catch (error) {
       console.log(error);
-    }
-  }
-
-  @Post("addAnimalBreed")
-  async addAnimalBreed(@Body() animalBreedDto: AnimalBreedDto) {
-    try {
-      const breed = await this.animalBreedServices.addAnimalBreed(
-        animalBreedDto,
-      );
-      console.log("breed", breed);
-      if (breed) {
-        return {
-          status: 200,
-          message: "Animal breed added successfully",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  @Get("getAnimalBreedByAnimalId")
-  async getAnimalBreedByAnimalId(@Query() query: { animal_type_id: number }) {
-    try {
-      const breeds = await this.animalBreedServices.getAnimalBreedByAnimalType(
-        query.animal_type_id,
-      );
-
-      if (breeds) {
-        return {
-          status: 200,
-          message: "Animal breeds fetched successfully",
-          data: breeds,
-        };
-      }
-    } catch (error) {
-      console.log(error);
-      if (error.code === "ER_NO_REFERENCED_ROW_2") {
-        return {
-          status: 400,
-          message: "Invalid animal type id",
-        };
-      }
     }
   }
 
