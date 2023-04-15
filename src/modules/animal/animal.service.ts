@@ -96,7 +96,6 @@ export class AnimalService {
 
   async createAnimalWithPedigree(payload: AnimalWithPedigreePayload) {
     try {
-      console.log("reached=>>>>");
       const { animalData, animalTypeId, breedId, generations } = payload;
       let animalsCount = await this.animalRepository.count();
       const animalDataDto = new CreateAnimalDto(

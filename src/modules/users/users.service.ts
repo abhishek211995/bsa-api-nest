@@ -9,8 +9,7 @@ import { BreederService } from "../breeder/breeder.service";
 import { BreederDto } from "../breeder/breeder.dto";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
-import { breederFarmService } from "../breederFarm/breederFarm.service";
-
+import { BreederFarmService } from "../breederFarm/breederFarm.service";
 @Injectable()
 export class UsersService {
   constructor(
@@ -19,7 +18,7 @@ export class UsersService {
     private readonly breBreederService: BreederService,
     private bcryptService: Bcrypt,
     private readonly s3Service: S3Service,
-    private readonly breederFarmService: breederFarmService,
+    private readonly breederFarmService: BreederFarmService,
   ) {}
 
   async createUser(
@@ -27,25 +26,18 @@ export class UsersService {
     files: Array<Express.Multer.File>,
   ) {
     try {
-      console.log(createUserDto);
-      console.log(files);
-
       const password = await this.bcryptService.hashPassword(
         createUserDto.password,
       );
-      console.log("password", password);
 
       const newUser = this.breUsersRepository.create({
         ...createUserDto,
         password,
       });
-      console.log(newUser);
 
       const user = await this.breUsersRepository.save(newUser);
-      console.log(user);
 
       const identity_doc = fileFilter(files, "identity_doc_name")[0];
-      console.log(identity_doc);
 
       const uploadData = await this.s3Service.uploadDocument(
         identity_doc,
@@ -73,7 +65,8 @@ export class UsersService {
           breeder_id: breederDetails.breeder.breeder_id,
           farm_id: createUserDto.farm_id,
         });
-        if (newFarm) console.log("New farms created");
+        if (newFarm)
+          console.log("Breeder farm relation created for user id", user.id);
       }
       return { user, breederDetails };
     } catch (error) {
@@ -82,27 +75,29 @@ export class UsersService {
   }
 
   async loginUser(loginUserDto: LoginUserDto) {
-    const { email, password } = loginUserDto;
-    const user = await this.breUsersRepository.findOne({
-      where: { email: email },
-      loadRelationIds: true,
-      relations: ["user_role_id"],
-    });
+    try {
+      const { email, password } = loginUserDto;
+      const user = await this.breUsersRepository.findOne({
+        where: { email: email },
+        loadRelationIds: true,
+        relations: ["user_role_id"],
+      });
 
-    if (!user) {
-      throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+      if (!user) {
+        throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+      }
+
+      const isPasswordCorrect: boolean =
+        await this.bcryptService.comparePassword(password, user.password);
+      if (!isPasswordCorrect) {
+        throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+      }
+
+      const token = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
+      return { user, token };
+    } catch (error) {
+      throw error;
     }
-
-    const isPasswordCorrect: boolean = await this.bcryptService.comparePassword(
-      password,
-      user.password,
-    );
-    if (!isPasswordCorrect) {
-      throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
-    }
-
-    const token = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
-    return { user, token };
   }
 
   async updateUserDoc(id: number, identity_doc_name: string) {
@@ -119,7 +114,6 @@ export class UsersService {
   }
 
   getUsers(roleId?: number) {
-    console.log("roleId", roleId);
     try {
       const query = { where: {} };
       if (roleId) {

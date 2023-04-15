@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { BreBreederFarm } from "./breederFarm.entity";
-import { Repository } from "typeorm";
+import { InsertResult, QueryRunner, Repository } from "typeorm";
 import { BreederFarmDto } from "./breederFarm.dto";
 
 @Injectable()
-export class breederFarmService {
+export class BreederFarmService {
   constructor(
     @InjectRepository(BreBreederFarm)
     private breederFarmRepository: Repository<BreBreederFarm>,
@@ -13,15 +13,22 @@ export class breederFarmService {
 
   async createBreederFarm(breederFarmDto: BreederFarmDto) {
     try {
-      breederFarmDto.farm_id.split(",").forEach(async (farm_id) => {
-        const newBreederFarm = await this.breederFarmRepository.create({
-          farm_id: Number(farm_id),
-          breeder_id: breederFarmDto.breeder_id,
-        });
-        const newFarms = await this.breederFarmRepository.save(newBreederFarm);
-        console.log(newBreederFarm);
-        setTimeout(() => {}, 3000);
-      });
+      const farmIds = breederFarmDto.farm_id
+        .split(",")
+        .map((i) => Number(i.trim()));
+      const data = farmIds.map((f) => ({
+        farm_id: f,
+        breeder_id: breederFarmDto.breeder_id,
+      }));
+      return async function (queryRunner: QueryRunner): Promise<InsertResult> {
+        const upsertResult = await queryRunner.manager
+          .createQueryBuilder()
+          .insert()
+          .into(BreBreederFarm)
+          .values(data)
+          .execute();
+        return upsertResult;
+      };
     } catch (error) {
       throw error;
     }
