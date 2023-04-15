@@ -2,7 +2,6 @@ import { Body, Controller, Get, Post } from "@nestjs/common";
 import { Param, Put, Query } from "@nestjs/common/decorators";
 import {
   AnimalBreedDto,
-  AnimalTypeDto,
   CostsDto,
   FarmTypeDto,
   RoleDto,
@@ -10,7 +9,6 @@ import {
 } from "./master.dto";
 import {
   AnimalBreedServices,
-  AnimalTypeServices,
   CostsServices,
   FarmTypeServices,
   RoleServices,
@@ -23,7 +21,6 @@ export class MasterController {
   constructor(
     private readonly roleServices: RoleServices,
     private readonly farmTypeServices: FarmTypeServices,
-    private readonly animalTypeServices: AnimalTypeServices,
     private readonly animalBreedServices: AnimalBreedServices,
     private readonly costsServices: CostsServices,
     private readonly subscriptionServices: SubscriptionServices,
@@ -96,38 +93,6 @@ export class MasterController {
           status: 200,
           message: "Farms fetched successfully",
           data: farms,
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  // Add animal type
-  @Post("addAnimalType")
-  async addAnimalType(@Body() animalTypeDto: AnimalTypeDto) {
-    try {
-      const animal = await this.animalTypeServices.addAnimalType(animalTypeDto);
-      if (animal) {
-        return {
-          status: 200,
-          message: "Animal type added successfully",
-        };
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  @Get("getAllAnimalTypes")
-  async getAllAnimalTypes() {
-    try {
-      const animals = await this.animalTypeServices.getAllAnimalTypes();
-      if (animals) {
-        return {
-          status: 200,
-          message: "Animal types fetched successfully",
-          data: animals,
         };
       }
     } catch (error) {

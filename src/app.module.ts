@@ -14,7 +14,6 @@ import { MailModule } from "./lib/mail/mail.module";
 import { S3Module } from "./lib/s3multer/s3.module";
 import {
   BreAnimalBreedMaster,
-  BreAnimalMaster,
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
@@ -29,6 +28,8 @@ import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
+import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UsersModule } from "./modules/users/users.module";
     BreederModule,
     MasterModule,
     AnimalModule,
+    AnimalMasterModule,
     TransferModule,
     JwtModule,
     MailModule,
@@ -72,14 +74,11 @@ import { UsersModule } from "./modules/users/users.module";
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    // consumer
-    //   .apply(MulterService)
-    //   .forRoutes({ path: "animal/create", method: RequestMethod.POST });
     consumer.apply(JWTMiddleware).forRoutes(
-      // {
-      //   path: "auth/users",
-      //   method: RequestMethod.GET,
-      // },
+      {
+        path: "auth/users",
+        method: RequestMethod.GET,
+      },
       {
         path: "animal/getAnimals",
         method: RequestMethod.GET,

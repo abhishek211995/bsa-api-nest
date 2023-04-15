@@ -1,8 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import {
-  BreAnimalBreedMaster,
-  BreAnimalMaster,
-} from "src/master/master.entity";
+import { BreAnimalBreedMaster } from "src/master/master.entity";
 import { BreUser } from "src/modules/users/users.entity";
 import {
   Column,
@@ -11,6 +8,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
+import { BreAnimalMaster } from "../animalMaster/animalMaster.entity";
 
 @Entity("bre_animal")
 export class BreAnimal {

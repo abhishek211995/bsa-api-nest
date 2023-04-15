@@ -1,4 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
+import { BreAnimalMaster } from "src/modules/animalMaster/animalMaster.entity";
 import {
   Column,
   Entity,
@@ -35,21 +36,6 @@ export class BreFarmMaster {
   @ApiProperty()
   @Column({ nullable: false, length: 150, default: "" })
   farm_description: string;
-}
-
-@Entity("bre_animal_master")
-export class BreAnimalMaster {
-  @ApiProperty()
-  @PrimaryGeneratedColumn()
-  animal_type_id: number;
-
-  @ApiProperty()
-  @Column({ nullable: false, length: 50 })
-  animal_type_name: string;
-
-  @ApiProperty()
-  @Column({ nullable: false, length: 150 })
-  animal_type_description: string;
 }
 
 @Entity("bre_animal_breed_master")
