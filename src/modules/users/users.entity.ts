@@ -74,4 +74,8 @@ export class BreUser {
     default: UserStatus["Verification Pending"],
   })
   user_status: UserStatus;
+
+  @ApiProperty()
+  @Column({ default: "", length: 2000 })
+  reject_reason: string;
 }

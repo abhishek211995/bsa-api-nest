@@ -5,6 +5,7 @@ import {
   HttpCode,
   Param,
   Post,
+  Put,
   Query,
   UploadedFiles,
   UseInterceptors,
@@ -12,9 +13,10 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import * as dotenv from "dotenv";
-import { CreateUserDto, LoginUserDto } from "./users.dto";
+import { ChangeStatusPayload, CreateUserDto, LoginUserDto } from "./users.dto";
 import { UsersService } from "./users.service";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 dotenv.config();
 
 @Controller("auth")
@@ -120,6 +122,23 @@ export class UsersController {
         statusCode: 500,
         message: error.message,
       };
+    }
+  }
+
+  @Put("/change-status/:id")
+  async changeUserStatus(
+    @Param("id") id: number,
+    @Body() body: ChangeStatusPayload,
+  ) {
+    try {
+      const update = await this.usersService.changeUserStatus(
+        body.status,
+        id,
+        body.reason,
+      );
+      makeHTTPResponse(update);
+    } catch (error) {
+      throw error;
     }
   }
 }

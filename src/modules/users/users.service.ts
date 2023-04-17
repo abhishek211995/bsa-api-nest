@@ -10,6 +10,7 @@ import { BreederDto } from "../breeder/breeder.dto";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
 import { BreederFarmService } from "../breederFarm/breederFarm.service";
+import { ServiceException } from "src/exception/base-exception";
 @Injectable()
 export class UsersService {
   constructor(
@@ -147,6 +148,12 @@ export class UsersService {
         where: { id },
         relations: ["user_role_id"],
       });
+      if (!user) {
+        throw new ServiceException({
+          message: "User not found",
+          serviceErrorCode: "US-404",
+        });
+      }
       return user;
     } catch (error) {
       throw error;
@@ -163,5 +170,19 @@ export class UsersService {
 
   getUserByContact(contact_no: string) {
     return this.breUsersRepository.findOneBy({ contact_no: contact_no });
+  }
+
+  async changeUserStatus(status: number, id: number, reason: string) {
+    try {
+      await this.getUserById(Number(id));
+      const update = await this.breUsersRepository.update(
+        { id: Number(id) },
+        { user_status: status, reject_reason: reason },
+      );
+
+      return update;
+    } catch (error) {
+      throw error;
+    }
   }
 }

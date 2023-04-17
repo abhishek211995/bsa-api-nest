@@ -45,3 +45,11 @@ export class CreateUserDto extends BreederDto {
   // @IsString()
   identity_doc_name: string;
 }
+
+export class ChangeStatusPayload {
+  @IsNumber()
+  status: number;
+
+  @IsString()
+  reason: string;
+}
