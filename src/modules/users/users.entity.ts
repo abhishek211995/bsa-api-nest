@@ -10,7 +10,7 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-enum UserStatus {
+export enum UserStatus {
   "Verified" = 1,
   "Verification Pending" = 2,
 }

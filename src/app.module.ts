@@ -34,7 +34,6 @@ import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
 import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
 import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -81,15 +80,17 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(JWTMiddleware).forRoutes(
-      {
-        path: "auth/users",
-        method: RequestMethod.GET,
-      },
-      {
-        path: "animal/getAnimals",
-        method: RequestMethod.GET,
-      },
-    );
+    consumer
+      .apply(JWTMiddleware)
+      .forRoutes
+      // {
+      //   path: "auth/users",
+      //   method: RequestMethod.GET,
+      // },
+      // {
+      //   path: "animal/getAnimals",
+      //   method: RequestMethod.GET,
+      // },
+      ();
   }
 }

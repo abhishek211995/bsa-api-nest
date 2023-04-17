@@ -4,7 +4,7 @@ import * as jwt from "jsonwebtoken";
 import { Bcrypt } from "src/lib/bcrypt/bcrypt.util";
 import { Repository } from "typeorm";
 import { CreateUserDto, LoginUserDto } from "./users.dto";
-import { BreUser } from "./users.entity";
+import { BreUser, UserStatus } from "./users.entity";
 import { BreederService } from "../breeder/breeder.service";
 import { BreederDto } from "../breeder/breeder.dto";
 import { S3Service } from "src/lib/s3multer/s3.service";
@@ -123,29 +123,36 @@ export class UsersService {
       if (roleId) {
         query.where = { user_role_id: Number(roleId) };
       }
-      console.log("query", query);
+
       const res = await this.breUsersRepository.find({
         ...query,
         relations: ["user_role_id"],
       });
-      console.log("res", res);
-      return res;
+
+      const list = this.convertUsers(res);
+      return list;
     } catch (error) {
       console.log("error", JSON.stringify(error));
       throw error;
     }
   }
 
-  getUserById(id: number) {
+  convertUsers(users: BreUser[]) {
+    return users.map((u) => ({ ...u, user_status: UserStatus[u.user_status] }));
+  }
+
+  async getUserById(id: number) {
     try {
-      return this.breUsersRepository.findOne({
+      const user = await this.breUsersRepository.findOne({
         where: { id },
         relations: ["user_role_id"],
       });
+      return user;
     } catch (error) {
       throw error;
     }
   }
+
   getUserByRoleId(roleId: any) {
     return this.breUsersRepository.findOne({
       where: {
@@ -153,6 +160,7 @@ export class UsersService {
       },
     });
   }
+
   getUserByContact(contact_no: string) {
     return this.breUsersRepository.findOneBy({ contact_no: contact_no });
   }
