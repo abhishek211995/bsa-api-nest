@@ -1,11 +1,11 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
-import { BreederDto } from "./breeder.dto";
-import { BreBreeder } from "./breeder.entity";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
-import { CreateUserDto } from "../users/users.dto";
+import { Repository } from "typeorm";
+import { UserStatus } from "../users/users.entity";
+import { BreederDto } from "./breeder.dto";
+import { BreBreeder } from "./breeder.entity";
 
 @Injectable()
 export class BreederService {
@@ -71,7 +71,14 @@ export class BreederService {
         relations: ["user"],
       });
 
-      return breeder;
+      const convertBreeder = {
+        ...breeder,
+        user: {
+          ...breeder.user,
+          user_status_info: UserStatus[breeder.user.user_status],
+        },
+      };
+      return convertBreeder;
     } catch (err) {
       throw err;
     }

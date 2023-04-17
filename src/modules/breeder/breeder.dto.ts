@@ -1,5 +1,5 @@
 import { IsArray, IsDate, IsNumber, IsString } from "class-validator";
-import { BreUser } from "src/modules/users/users.entity";
+import { BreUser, UserStatus } from "src/modules/users/users.entity";
 
 export class BreederDto {
   @IsString()

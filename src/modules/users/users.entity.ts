@@ -13,6 +13,7 @@ import {
 export enum UserStatus {
   "Verified" = 1,
   "Verification Pending" = 2,
+  "Rejected" = 3,
 }
 
 @Entity("bre_user")
