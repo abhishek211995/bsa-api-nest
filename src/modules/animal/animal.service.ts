@@ -163,8 +163,6 @@ export class AnimalService {
         this.upsertGenerations(genData),
       );
 
-      console.log("result", result);
-      console.log("addResponse", mainAnimalResult);
       return { mainAnimalResult, result };
     } catch (error) {
       throw error;

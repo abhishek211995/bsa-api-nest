@@ -4,7 +4,7 @@ import {
   Column,
   Entity,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
   PrimaryGeneratedColumn,
 } from "typeorm";
 import { BreBreeder } from "../breeder/breeder.entity";
@@ -16,20 +16,20 @@ export class BreBreederFarm {
   id: number;
 
   @ApiProperty()
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: false })
   farm_id: number;
 
   @ApiProperty()
   @JoinColumn({ name: "farm_id" })
-  @OneToOne(() => BreFarmMaster)
+  @ManyToOne(() => BreFarmMaster)
   farm: BreFarmMaster;
 
   @ApiProperty()
-  @Column({ nullable: false })
+  @Column({ nullable: false, unique: false })
   breeder_id: number;
 
   @ApiProperty()
   @JoinColumn({ name: "breeder_id" })
-  @OneToOne(() => BreBreeder)
+  @ManyToOne(() => BreBreeder)
   breeder: BreBreeder;
 }

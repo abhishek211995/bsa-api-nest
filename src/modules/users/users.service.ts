@@ -61,12 +61,16 @@ export class UsersService {
         files,
       );
       if (breederDetails) {
-        const newFarm = this.breederFarmService.createBreederFarm({
+        const newFarm = await this.breederFarmService.createBreederFarm({
           breeder_id: breederDetails.breeder.breeder_id,
           farm_id: createUserDto.farm_id,
         });
         if (newFarm)
-          console.log("Breeder farm relation created for user id", user.id);
+          console.log(
+            "Breeder farm relation created for user id",
+            user.id,
+            newFarm,
+          );
       }
       return { user, breederDetails };
     } catch (error) {

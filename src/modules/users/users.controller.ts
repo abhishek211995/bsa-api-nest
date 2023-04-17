@@ -33,12 +33,6 @@ export class UsersController {
       const res = await this.usersService.createUser(createUserDto, files);
       return { ...res };
     } catch (error) {
-      if (error?.code === "ER_DUP_ENTRY") {
-        return {
-          statusCode: 400,
-          message: "User already exists",
-        };
-      }
       throw error;
     }
   }
