@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
@@ -136,7 +137,7 @@ export class UsersController {
         id,
         body.reason,
       );
-      makeHTTPResponse(update);
+      return makeHTTPResponse(update, HttpStatus.OK, "Updated successfully");
     } catch (error) {
       throw error;
     }
