@@ -1,7 +1,6 @@
-import { Injectable } from "@nestjs/common";
-import * as multer from "multer";
-import * as multerS3 from "multer-s3";
 import * as aws from "@aws-sdk/client-s3";
+import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { Injectable } from "@nestjs/common";
 
 @Injectable()
 export class S3Service {
@@ -87,6 +86,20 @@ export class S3Service {
         return uploadResult;
       });
       return Promise.all(EndResult);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getLink(keys: string) {
+    try {
+      const command = new aws.GetObjectCommand({
+        Bucket: process.env.BUCKET,
+        Key: keys,
+      });
+      // const result = await this.s3Client.send(command);
+      return getSignedUrl(this.s3Client, command, { expiresIn: 3600 * 2 });
+      // return result;
     } catch (error) {
       throw error;
     }

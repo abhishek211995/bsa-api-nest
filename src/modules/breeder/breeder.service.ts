@@ -71,13 +71,25 @@ export class BreederService {
         relations: ["user"],
       });
 
-      const convertBreeder = {
+      let convertBreeder: BreBreeder & {
+        user_status_info: string;
+        idDoc: string;
+        licenseDoc: string;
+      } = {
         ...breeder,
-        user: {
-          ...breeder.user,
-          user_status_info: UserStatus[breeder.user.user_status],
-        },
+        user_status_info: UserStatus[breeder.user.user_status],
+        idDoc: "",
+        licenseDoc: "",
       };
+
+      const licenseDoc = await this.s3Service.getLink(
+        `${breeder.user.user_name}/${breeder.breeder_license_doc_name}`,
+      );
+      const idDoc = await this.s3Service.getLink(
+        `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
+      );
+
+      convertBreeder = { ...convertBreeder, idDoc, licenseDoc };
       return convertBreeder;
     } catch (err) {
       throw err;
