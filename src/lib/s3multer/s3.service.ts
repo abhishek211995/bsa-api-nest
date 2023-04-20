@@ -16,12 +16,16 @@ export class S3Service {
     });
   }
 
-  async uploadImage(file: Express.Multer.File) {
+  async uploadSingle(file: Express.Multer.File, folderName?: string) {
     try {
+      const path = folderName
+        ? `${folderName}/` + file.originalname
+        : file.originalname;
+
       const uploadResult = await this.s3Client.send(
         new aws.PutObjectCommand({
           Bucket: process.env.BUCKET,
-          Key: file.originalname,
+          Key: path,
           Body: file.buffer,
           ContentType: file.mimetype,
         }),
@@ -32,53 +36,16 @@ export class S3Service {
     }
   }
 
-  async uploadDocument(file: Express.Multer.File, user_name: string) {
+  async uploadMultiple(files: Express.Multer.File[], folderName?: string) {
     try {
-      const uploadResult = await this.s3Client.send(
-        new aws.PutObjectCommand({
-          Bucket: process.env.BUCKET,
-          Key: `${user_name}/` + file.originalname,
-          Body: file.buffer,
-          ContentType: file.mimetype,
-        }),
-      );
-      return uploadResult;
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async uploadMultipleImages(
-    files: Express.Multer.File[],
-    register_no: string,
-  ) {
-    try {
-      console.log("register_no: ", register_no);
-
       const EndResult = files.map(async (file) => {
+        const path = folderName
+          ? `${folderName}/` + file.originalname
+          : file.originalname;
         const uploadResult = await this.s3Client.send(
           new aws.PutObjectCommand({
             Bucket: process.env.BUCKET,
-            Key: `${register_no}/` + file.originalname,
-            Body: file.buffer,
-            ContentType: file.mimetype,
-          }),
-        );
-        return uploadResult;
-      });
-      return Promise.all(EndResult);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  async uploadMultipleDocuments(files: Express.Multer.File[]) {
-    try {
-      const EndResult = files.map(async (file) => {
-        const uploadResult = await this.s3Client.send(
-          new aws.PutObjectCommand({
-            Bucket: process.env.BUCKET,
-            Key: file.originalname,
+            Key: path,
             Body: file.buffer,
             ContentType: file.mimetype,
           }),

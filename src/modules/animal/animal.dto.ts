@@ -77,17 +77,18 @@ export class AnimalDataDto {
   pedigree: Record<string, any>;
 }
 export class AnimalWithPedigreePayload {
-  animalData: AnimalDataDto;
+  animalData: string; //AnimalDataDto;
   animalTypeId: number;
   breedId: number;
-  generations: {
-    name: string;
-    id: string;
-    gender: string;
-    sireId: string;
-    damId: string;
-    pedigree: Record<string, any>;
-  }[];
+  generations: string;
+  // {
+  //   name: string;
+  //   id: string;
+  //   gender: string;
+  //   sireId: string;
+  //   damId: string;
+  //   pedigree: Record<string, any>;
+  // }[];
   userId: number;
 }
 

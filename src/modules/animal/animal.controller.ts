@@ -113,12 +113,17 @@ export class AnimalController {
     summary: "Create animal with pedigree",
   })
   @Post("/create/pedigree")
+  @UseInterceptors(AnyFilesInterceptor())
   async createAnimalWithPedigree(
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
     @Body() animalWithPedigree: AnimalWithPedigreePayload,
   ) {
     try {
-      const result =
-        this.animalService.createAnimalWithPedigree(animalWithPedigree);
+      const result = this.animalService.createAnimalWithPedigree(
+        animalWithPedigree,
+        files,
+      );
       return { status: 200, data: result };
     } catch (error) {
       return error;

@@ -32,7 +32,7 @@ export class AnimalService {
     const AnimalData = await this.animalRepository.create(animalDto);
     const animal = await this.animalRepository.save(AnimalData);
     if (animal) {
-      const uploadData = await this.s3Service.uploadMultipleImages(
+      const uploadData = await this.s3Service.uploadMultiple(
         files,
         animal.animal_registration_number,
       );
@@ -134,9 +134,14 @@ export class AnimalService {
     return this.animalRepository.save(animal);
   }
 
-  async createAnimalWithPedigree(payload: AnimalWithPedigreePayload) {
+  async createAnimalWithPedigree(
+    payload: AnimalWithPedigreePayload,
+    files: Array<Express.Multer.File>,
+  ) {
     try {
-      const { animalData, animalTypeId, breedId, generations } = payload;
+      const animalData = JSON.parse(payload.animalData);
+      const generations = JSON.parse(payload.generations);
+      const { animalTypeId, breedId } = payload;
       let animalsCount = await this.animalRepository.count();
       const animalDataDto = new CreateAnimalDto(
         animalData.id,
@@ -158,7 +163,22 @@ export class AnimalService {
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
         this.upsertAnimal([animalDataDto]),
       );
+      const uploadData = await this.s3Service.uploadSingle(
+        files[0],
+        animalDataDto.animal_registration_number,
+      );
+      if (uploadData) {
+        await this.animalRepository.update(
+          { animal_id: animalDataDto.animal_id },
+          {
+            animal_registration_doc: fileFilter(files, "certificate")[0]
+              .originalname,
+          },
+        );
+      }
+
       animalsCount++;
+
       const genData = generations.map((g, i) => {
         const reg_no = generateRegNo(breedId, animalsCount + 1 + i);
         return new CreateGenerationsDto(
@@ -167,7 +187,7 @@ export class AnimalService {
           animalTypeId,
           breedId,
           g.gender,
-          1,
+          payload.userId,
           g.sireId,
           g.damId,
           g.pedigree,
@@ -180,7 +200,11 @@ export class AnimalService {
 
       return { mainAnimalResult, result };
     } catch (error) {
-      throw error;
+      console.log("error", error);
+      throw new ServiceException({
+        message: error?.message ?? "Failed to add animals",
+        serviceErrorCode: "AS-100",
+      });
     }
   }
 
@@ -197,6 +221,7 @@ export class AnimalService {
         return upsertResult;
       };
     } catch (error) {
+      console.log("error", error);
       throw error;
     }
   }

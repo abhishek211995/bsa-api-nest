@@ -35,7 +35,7 @@ export class BreederService {
           files,
           "breeder_license_doc_name",
         )[0];
-        const uploadData = await this.s3Service.uploadDocument(
+        const uploadData = await this.s3Service.uploadSingle(
           breeder_license_doc,
           user.user_name,
         );

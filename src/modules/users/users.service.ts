@@ -40,7 +40,7 @@ export class UsersService {
 
       const identity_doc = fileFilter(files, "identity_doc_name")[0];
 
-      const uploadData = await this.s3Service.uploadDocument(
+      const uploadData = await this.s3Service.uploadSingle(
         identity_doc,
         user.user_name,
       );
