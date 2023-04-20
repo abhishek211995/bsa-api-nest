@@ -82,18 +82,8 @@ export class BreAnimal {
   @ApiProperty()
   @Column({ nullable: true, type: "json" })
   animal_pedigree: Record<string, any>;
-}
 
-// {
-//   "animal_name":"Tommy",
-//   "animal_type_id":1,
-//   "animal_breed_id":1,
-//   "animal_color_and_markings":"black spots with white color",
-//   "animal_gender":"male",
-//   "animal_date_of_birth":"01-09-2018",
-//   "animal_microchip_id":"123456780",
-//   "animal_owner_id":2,
-//   "animal_front_view_image":null,
-//   "animal_left_view_image":null,
-//   "animal_registration_number":null
-// }
+  @ApiProperty()
+  @Column({ default: false })
+  is_active: boolean;
+}

@@ -12,6 +12,7 @@ import TransactionUtil from "src/lib/db_utils/transaction.utils";
 import { generateRegNo } from "src/utils/generateReg.util";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
+import { ServiceException } from "src/exception/base-exception";
 
 @Injectable()
 export class AnimalService {
@@ -24,15 +25,13 @@ export class AnimalService {
 
   async createAnimal(animalDto: AnimalDto, files: Array<Express.Multer.File>) {
     const animalCount = await this.animalRepository.count();
-    animalDto.animal_registration_number = await generateRegNo(
+    animalDto.animal_registration_number = generateRegNo(
       animalDto.animal_breed_id,
       animalCount + 1,
     );
     const AnimalData = await this.animalRepository.create(animalDto);
     const animal = await this.animalRepository.save(AnimalData);
     if (animal) {
-      console.log("animal", animal);
-
       const uploadData = await this.s3Service.uploadMultipleImages(
         files,
         animal.animal_registration_number,
@@ -57,7 +56,7 @@ export class AnimalService {
   }
 
   // get all animals of user by animal type id and gender
-  getAllAnimalByAnimalType({
+  async getAllAnimalByAnimalType({
     user_id,
     animal_type_id,
     gender,
@@ -66,14 +65,30 @@ export class AnimalService {
     animal_type_id: number;
     gender: string;
   }) {
-    const data = this.animalRepository.find({
-      where: {
-        animal_owner_id: user_id,
-        animal_type_id,
-        animal_gender: gender,
-      },
-    });
-    return data;
+    try {
+      const findWhereOptions: Record<string, any> = {};
+      if (user_id) {
+        findWhereOptions.animal_owner_id = Number(user_id);
+      }
+      if (animal_type_id) {
+        findWhereOptions.animal_type_id = Number(animal_type_id);
+      }
+      if (gender) {
+        findWhereOptions.animal_gender = gender;
+      }
+
+      const data = await this.animalRepository.find({
+        where: findWhereOptions,
+        relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
+      });
+      return data;
+    } catch (error) {
+      console.log("error while fetching animal", error);
+      throw new ServiceException({
+        message: "Failed to fetch",
+        serviceErrorCode: "AS-101",
+      });
+    }
   }
 
   // get animal and owner details by animal microchip id or registration id
@@ -129,7 +144,7 @@ export class AnimalService {
         animalTypeId,
         breedId,
         animalData.gender,
-        1,
+        payload.userId,
         animalData.sireId,
         animalData.damId,
         animalData.pedigree,

@@ -88,6 +88,7 @@ export class AnimalWithPedigreePayload {
     damId: string;
     pedigree: Record<string, any>;
   }[];
+  userId: number;
 }
 
 export class CreateGenerationsDto {

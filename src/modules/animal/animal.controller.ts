@@ -12,7 +12,6 @@ import { ApiOperation } from "@nestjs/swagger";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
-import { fileFilter } from "src/utils/fileFilter.util";
 
 @Controller("animal")
 export class AnimalController {
@@ -48,17 +47,22 @@ export class AnimalController {
   @Get("/getAnimals")
   async getAnimals(
     @Query()
-    { animal_type_id, gender }: { animal_type_id: number; gender: string },
-    @Body() { user }: { user: any },
+    {
+      animal_type_id,
+      gender,
+      user_id,
+    }: {
+      animal_type_id: number;
+      gender: string;
+      user_id: number;
+    },
   ) {
     try {
-      const user_id: number = user.id;
       const res = await this.animalService.getAllAnimalByAnimalType({
         user_id,
         animal_type_id,
         gender,
       });
-      console.log(res);
       if (res) {
         return {
           status: 200,
