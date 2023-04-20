@@ -92,6 +92,32 @@ export class MasterController {
     }
   }
 
+  @Put("updateFarmType/:farm_id")
+  async updateFarmType(
+    @Param("farm_id") farm_id: number,
+    @Body() farmTypeDto: FarmTypeDto,
+  ) {
+    try {
+      const farm = await this.farmTypeServices.updateFarmType(
+        farm_id,
+        farmTypeDto,
+      );
+      if (farm) {
+        return {
+          status: 200,
+          message: "Farm updated successfully",
+          data: farm,
+        };
+      }
+    } catch (error) {
+      console.log(error);
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
+
   @Post("addCosts")
   async addCosts(@Body() costsDto: CostsDto) {
     try {

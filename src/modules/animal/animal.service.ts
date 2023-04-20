@@ -242,4 +242,33 @@ export class AnimalService {
       throw error;
     }
   }
+
+  async getAnimalById(animalId: string) {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { animal_id: animalId },
+        relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
+      });
+
+      if (animal.animal_pedigree === null) {
+        animal.animal_front_view_image = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_front_view_image}`,
+        );
+        animal.animal_right_view_image = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_right_view_image}`,
+        );
+        animal.animal_left_view_image = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_left_view_image}`,
+        );
+      } else {
+        animal.animal_registration_doc = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_registration_doc}`,
+        );
+      }
+
+      return animal;
+    } catch (error) {
+      throw error;
+    }
+  }
 }

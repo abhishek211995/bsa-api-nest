@@ -129,4 +129,20 @@ export class AnimalController {
       return error;
     }
   }
+
+  @ApiOperation({
+    summary: "Get animal by id with document links",
+  })
+  @Get("/getAnimalById")
+  async getAnimalById(@Query() id: string) {
+    try {
+      const result = await this.animalService.getAnimalById(id);
+      return { status: 200, data: result };
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
 }

@@ -44,6 +44,23 @@ export class FarmTypeServices {
   getAllFarmTypes() {
     return this.breFarmMasterRepository.find();
   }
+
+  async updateFarmType(farm_id: number, farmTypeDto: FarmTypeDto) {
+    try {
+      const farm = await this.breFarmMasterRepository.find({
+        where: { farm_id },
+      });
+      if (!farm) {
+        throw new Error("Farm not found");
+      }
+      await this.breFarmMasterRepository.update(farm_id, farmTypeDto);
+      return await this.breFarmMasterRepository.find({
+        where: { farm_id },
+      });
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
 
 @Injectable()
