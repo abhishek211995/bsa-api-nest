@@ -142,4 +142,14 @@ export class UsersController {
       throw error;
     }
   }
+
+  @Get("getOTP")
+  async getOTP(@Query("email") email: string) {
+    try {
+      const res = await this.usersService.getOTP(email);
+      return makeHTTPResponse(res, HttpStatus.OK, "OTP sent successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
 }
