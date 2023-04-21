@@ -168,8 +168,15 @@ export class UsersService {
     });
   }
 
-  getUserByContact(contact_no: string) {
-    return this.breUsersRepository.findOneBy({ contact_no: contact_no });
+  async getUserByContact(contact_no: string) {
+    try {
+      const user = await this.breUsersRepository.findOneBy({
+        contact_no: contact_no,
+      });
+      return user;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async changeUserStatus(status: number, id: number, reason: string) {

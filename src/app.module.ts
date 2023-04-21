@@ -33,6 +33,8 @@ import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
 import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
 import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
 import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
+import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
+import { BreLitterRegistration } from "./modules/litterRegistration/litterRegistration.entity";
 
 @Module({
   imports: [
@@ -58,6 +60,7 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
           BreRoleMaster,
           BreTrasferOwnerRequest,
           BreBreederFarm,
+          BreLitterRegistration,
         ],
         synchronize: true,
       }),
@@ -69,6 +72,7 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
     AnimalModule,
     AnimalMasterModule,
     AnimalBreedMasterModule,
+    LitterRegistrationModule,
     TransferModule,
     JwtModule,
     MailModule,
