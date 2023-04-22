@@ -4,6 +4,7 @@ import { InsertResult, QueryRunner, Repository } from "typeorm";
 import {
   AnimalDto,
   AnimalWithPedigreePayload,
+  ChangeNamePayload,
   CreateAnimalDto,
   CreateGenerationsDto,
 } from "./animal.dto";
@@ -288,6 +289,35 @@ export class AnimalService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to get animal details",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    }
+  }
+
+  async changeName(body: ChangeNamePayload) {
+    try {
+      await this.getAnimalById(body.animal_id);
+      const result = await this.animalRepository.update(
+        {
+          animal_id: body.animal_id,
+        },
+        {
+          animal_name: body.name,
+        },
+      );
+
+      if (result.affected > 0) {
+        return result.affected;
+      }
+      throw new ServiceException({
+        message: "Failed to change animal name",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to change animal name",
         serviceErrorCode: "AS-100",
         httpStatusCode: 500,
       });

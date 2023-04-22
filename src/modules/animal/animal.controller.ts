@@ -10,7 +10,11 @@ import {
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { ApiOperation } from "@nestjs/swagger";
 import { S3Service } from "src/lib/s3multer/s3.service";
-import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
+import {
+  AnimalDto,
+  AnimalWithPedigreePayload,
+  ChangeNamePayload,
+} from "./animal.dto";
 import { AnimalService } from "./animal.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
@@ -144,6 +148,19 @@ export class AnimalController {
         status: 500,
         message: error.message,
       };
+    }
+  }
+
+  @ApiOperation({
+    summary: "Change name of pet",
+  })
+  @Post("/changeName")
+  async changeName(@Body() body: ChangeNamePayload) {
+    try {
+      const result = await this.animalService.changeName(body);
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
     }
   }
 }

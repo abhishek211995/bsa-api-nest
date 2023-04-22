@@ -247,3 +247,13 @@ export class CreateAnimalDto {
   @ApiProperty()
   animal_pedigree: Record<string, any>;
 }
+
+export class ChangeNamePayload {
+  @IsString()
+  @ApiProperty()
+  animal_id: string;
+
+  @IsString()
+  @ApiProperty()
+  name: string;
+}
