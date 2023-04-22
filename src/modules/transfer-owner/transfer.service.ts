@@ -61,8 +61,9 @@ export class TransferService {
 
   async getRequestById(id: number) {
     try {
-      const transfer = await this.breTransferOwnerRequestRepository.findOneBy({
-        transfer_id: id,
+      const transfer = await this.breTransferOwnerRequestRepository.findOne({
+        where: { transfer_id: id },
+        relations: ["animal_id", "new_owner_id", "old_owner_id"],
       });
       if (!transfer) {
         throw new ServiceException({
