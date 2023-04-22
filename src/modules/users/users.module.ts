@@ -7,7 +7,7 @@ import { BreUser } from "./users.entity";
 import { UsersService } from "./users.service";
 import { S3Module } from "src/lib/s3multer/s3.module";
 import { BreederFarm } from "../breederFarm/breederFarm.module";
-
+import { EmailModule } from "src/lib/mail/mail.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([BreUser]),
@@ -15,6 +15,7 @@ import { BreederFarm } from "../breederFarm/breederFarm.module";
     BcryptModule,
     S3Module,
     BreederFarm,
+    EmailModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

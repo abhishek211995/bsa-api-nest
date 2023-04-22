@@ -58,18 +58,18 @@ export class AnimalService {
 
   // get all animals of user by animal type id and gender
   async getAllAnimalByAnimalType({
-    user_id,
+    animal_owner_id,
     animal_type_id,
     gender,
   }: {
-    user_id: number;
+    animal_owner_id: number;
     animal_type_id: number;
     gender: string;
   }) {
     try {
-      const findWhereOptions: Record<string, any> = {};
-      if (user_id) {
-        findWhereOptions.animal_owner_id = Number(user_id);
+      let findWhereOptions: Record<string, any> = {};
+      if (animal_owner_id) {
+        findWhereOptions.animal_owner_id = Number(animal_owner_id);
       }
       if (animal_type_id) {
         findWhereOptions.animal_type_id = Number(animal_type_id);
@@ -77,11 +77,18 @@ export class AnimalService {
       if (gender) {
         findWhereOptions.animal_gender = gender;
       }
+      console.log("findWhereOptions", findWhereOptions);
 
       const data = await this.animalRepository.find({
         where: findWhereOptions,
         relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
       });
+      if (data.length == 0) {
+        throw new ServiceException({
+          message: "No data found",
+          serviceErrorCode: "AS-101",
+        });
+      }
       return data;
     } catch (error) {
       console.log("error while fetching animal", error);

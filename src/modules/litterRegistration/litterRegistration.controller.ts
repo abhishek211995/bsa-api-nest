@@ -10,7 +10,7 @@ export class LitterRegistrationController {
   @ApiOperation({
     summary: "Litter registration",
   })
-  @Post("/litter/registration")
+  @Post("/registration")
   async addLitter(@Body() body: LitterRegistrationBody) {
     try {
       const result = await this.litterService.registerLitter(body);
