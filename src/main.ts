@@ -17,7 +17,7 @@ async function bootstrap() {
 
   // cors options
   app.enableCors({
-    origin: "http://localhost:3001",
+    origin: "http://localhost:3000",
     credentials: true,
   });
   const document = SwaggerModule.createDocument(app, swaggerConfig);

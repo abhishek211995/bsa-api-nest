@@ -12,6 +12,7 @@ import { ApiOperation } from "@nestjs/swagger";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { AnimalDto, AnimalWithPedigreePayload } from "./animal.dto";
 import { AnimalService } from "./animal.service";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
 @Controller("animal")
 export class AnimalController {
@@ -127,6 +128,22 @@ export class AnimalController {
       return { status: 200, data: result };
     } catch (error) {
       return error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Get animal by id with document links",
+  })
+  @Get("/getAnimalById")
+  async getAnimalById(@Query() id: string) {
+    try {
+      const result = await this.animalService.getAnimalById(id);
+      return makeHTTPResponse(result, 200, "Animal data fetched successfully");
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
     }
   }
 }

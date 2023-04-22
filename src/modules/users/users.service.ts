@@ -192,4 +192,18 @@ export class UsersService {
       throw error;
     }
   }
+
+  async getOTP(email: string) {
+    try {
+      const otp = Math.floor(1000 + Math.random() * 9000);
+      // Send OTP to email
+
+      return otp;
+    } catch (error) {
+      throw new ServiceException({
+        message: "Error while creating OTP",
+        serviceErrorCode: "US-500",
+      });
+    }
+  }
 }
