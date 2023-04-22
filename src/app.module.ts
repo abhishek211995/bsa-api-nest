@@ -1,16 +1,9 @@
-import {
-  MiddlewareConsumer,
-  Module,
-  NestModule,
-  RequestMethod,
-} from "@nestjs/common";
+import { MiddlewareConsumer, Module, NestModule } from "@nestjs/common";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { TypeOrmModule } from "@nestjs/typeorm";
 import { AppController } from "./app.controller";
 import { AppService } from "./app.service";
-import { JWTMiddleware } from "./middleware/jwt/jwt.middleware";
-import { JwtModule } from "./middleware/jwt/jwt.module";
-import { MailModule } from "./lib/mail/mail.module";
+import { EmailModule } from "./lib/mail/mail.module";
 import { S3Module } from "./lib/s3multer/s3.module";
 import {
   BreCostsMaster,
@@ -19,22 +12,24 @@ import {
   BreSubscriptionsMaster,
 } from "./master/master.entity";
 import { MasterModule } from "./master/master.module";
+import { JWTMiddleware } from "./middleware/jwt/jwt.middleware";
+import { JwtModule } from "./middleware/jwt/jwt.module";
 import { BreAnimal } from "./modules/animal/animal.entity";
 import { AnimalModule } from "./modules/animal/animal.module";
-import { BreBreeder } from "./modules/breeder/breeder.entity";
-import { BreederModule } from "./modules/breeder/breeder.module";
-import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
-import { TransferModule } from "./modules/transfer-owner/transfer.module";
-import { BreUser } from "./modules/users/users.entity";
-import { UsersModule } from "./modules/users/users.module";
-import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
-import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 import { BreAnimalMaster } from "./modules/animalMaster/animalMaster.entity";
 import { AnimalMasterModule } from "./modules/animalMaster/animalMaster.module";
 import { BreAnimalBreedMaster } from "./modules/breedMaster/breedMaster.entity";
 import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.module";
-import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
+import { BreBreeder } from "./modules/breeder/breeder.entity";
+import { BreederModule } from "./modules/breeder/breeder.module";
+import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
+import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
 import { BreLitterRegistration } from "./modules/litterRegistration/litterRegistration.entity";
+import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
+import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
+import { TransferModule } from "./modules/transfer-owner/transfer.module";
+import { BreUser } from "./modules/users/users.entity";
+import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
@@ -75,7 +70,7 @@ import { BreLitterRegistration } from "./modules/litterRegistration/litterRegist
     LitterRegistrationModule,
     TransferModule,
     JwtModule,
-    MailModule,
+    EmailModule,
     S3Module,
     BreederFarm,
   ],

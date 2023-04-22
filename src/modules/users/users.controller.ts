@@ -61,7 +61,6 @@ export class UsersController {
   async getUsers(@Query("roleId") roleId: number) {
     try {
       const users = await this.usersService.getUsers(roleId);
-      console.log("users", users);
       return {
         statusCode: 200,
         message: "Users fetched successfully",

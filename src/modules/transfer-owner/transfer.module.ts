@@ -1,16 +1,16 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { BreTrasferOwnerRequest } from "./transfer.entity";
-import { TransferController } from "./transfer.controller";
-import { TransferService } from "./transfer.service";
-import { MailModule } from "src/lib/mail/mail.module";
 import { UsersModule } from "src/modules/users/users.module";
+import { TransferController } from "./transfer.controller";
+import { BreTrasferOwnerRequest } from "./transfer.entity";
+import { TransferService } from "./transfer.service";
+import { EmailModule } from "src/lib/mail/mail.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([BreTrasferOwnerRequest]),
-    MailModule,
     UsersModule,
+    EmailModule,
   ],
   controllers: [TransferController],
   providers: [TransferService],

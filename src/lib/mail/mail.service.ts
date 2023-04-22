@@ -1,19 +1,33 @@
-import { MailerService } from "@nestjs-modules/mailer";
 import { Injectable } from "@nestjs/common";
+import * as nodemailer from "nodemailer";
 
 @Injectable()
-export class MailService {
-  constructor(private mailerService: MailerService) {}
+export class EmailService {
+  private readonly transporter;
 
-  async sendMail(email: string, name: string) {
-    console.log(email);
-    await this.mailerService.sendMail({
-      to: email,
-      subject: "Greeting from NestJS NodeMailer",
-      template: "email",
-      context: {
-        name: name,
+  constructor() {
+    const options: nodemailer.TransportOptions = {
+      host: process.env.SMTP_HOST,
+      port: process.env.SMTP_PORT,
+      secure: process.env.SMTP_SECURE === "true", // set to true if using SSL/TLS
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
       },
-    });
+    } as nodemailer.TransportOptions;
+
+    this.transporter = nodemailer.createTransport(options);
+  }
+
+  async sendMail(to: string, subject: string, message: string): Promise<void> {
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to,
+      subject,
+      html: message,
+    };
+    const result = await this.transporter.sendMail(mailOptions);
+
+    return result;
   }
 }

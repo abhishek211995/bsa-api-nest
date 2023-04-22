@@ -1,14 +1,12 @@
 import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
 import { TransferService } from "./transfer.service";
 import { transferOwnerDto } from "./transfer.dto";
-import { MailService } from "src/lib/mail/mail.service";
 import { UsersService } from "src/modules/users/users.service";
 
 @Controller("transfer")
 export class TransferController {
   constructor(
     private readonly transferService: TransferService,
-    private readonly mailService: MailService,
     private readonly userService: UsersService,
   ) {}
 
@@ -23,7 +21,7 @@ export class TransferController {
         );
 
         // send email to the old owner
-        await this.mailService.sendMail(user.email, user.user_name);
+        // await this.mailService.sendMail(user.email, user.user_name);
 
         return {
           statusCode: 201,
