@@ -1,14 +1,14 @@
 import { IsNumber, IsString } from "class-validator";
 
-export class transferOwnerDto {
+export class TransferOwnerDto {
   @IsNumber()
   old_owner_id: number;
 
   @IsNumber()
   new_owner_id: number;
 
-  @IsNumber()
-  animal_id: number;
+  @IsString()
+  animal_id: string;
 
   @IsString()
   request_status: string;

@@ -11,8 +11,8 @@ import {
   UpdateDateColumn,
 } from "typeorm";
 
-@Entity("bre_trasfer_owner_request")
-export class BreTrasferOwnerRequest {
+@Entity("bre_transfer_owner_request")
+export class BreTransferOwnerRequest {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   transfer_id: number;
@@ -30,7 +30,7 @@ export class BreTrasferOwnerRequest {
   @ApiProperty()
   @ManyToOne(() => BreAnimal)
   @JoinColumn({ name: "animal_id" })
-  animal_id: number;
+  animal_id: string;
 
   @ApiProperty()
   @CreateDateColumn()

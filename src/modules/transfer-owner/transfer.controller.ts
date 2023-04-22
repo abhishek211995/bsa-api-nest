@@ -1,33 +1,25 @@
-import { Body, Controller, Get, Post, Put, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  HttpStatus,
+  Post,
+  Put,
+  Query,
+} from "@nestjs/common";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { TransferService } from "./transfer.service";
-import { transferOwnerDto } from "./transfer.dto";
-import { UsersService } from "src/modules/users/users.service";
+import { TransferOwnerDto } from "./transfer.dto";
 
 @Controller("transfer")
 export class TransferController {
-  constructor(
-    private readonly transferService: TransferService,
-    private readonly userService: UsersService,
-  ) {}
+  constructor(private readonly transferService: TransferService) {}
 
   @Post("addTransferRequest")
-  async addTransferRequest(@Body() transferDto: transferOwnerDto) {
+  async addTransferRequest(@Body() transferDto: TransferOwnerDto) {
     try {
       const transfer = await this.transferService.addRequest(transferDto);
-      if (transfer) {
-        // get email of user by id
-        const user = await this.userService.getUserById(
-          transferDto.old_owner_id,
-        );
-
-        // send email to the old owner
-        // await this.mailService.sendMail(user.email, user.user_name);
-
-        return {
-          statusCode: 201,
-          message: "Transfer request created successfully",
-        };
-      }
+      return makeHTTPResponse(transfer);
     } catch (error) {
       return {
         statusCode: 500,
@@ -40,13 +32,7 @@ export class TransferController {
   async getTransferRequestById(@Query("request_id") id: number) {
     try {
       const transfer = await this.transferService.getRequestById(id);
-      if (transfer) {
-        return {
-          statusCode: 200,
-          message: "Transfer request fetched successfully",
-          data: transfer,
-        };
-      }
+      return makeHTTPResponse(transfer);
     } catch (error) {
       return {
         statusCode: 500,
@@ -55,26 +41,23 @@ export class TransferController {
     }
   }
 
-  @Put("updateTransferRequest")
-  async updateTransferRequest(@Body() data) {
+  @Put("approve")
+  async approveTransferRequest(@Body() data) {
     try {
-      const transfer = await this.transferService.updateRequest(data);
-      if (transfer !== null) {
-        return {
-          statusCode: 200,
-          message: "Transfer request updated successfully",
-        };
-      } else {
-        return {
-          statusCode: 404,
-          message: "Transfer request not found",
-        };
-      }
+      const transfer = await this.transferService.approveRequest(data);
+      return makeHTTPResponse({}, HttpStatus.OK, "Transfer approved!");
     } catch (error) {
-      return {
-        statusCode: 500,
-        message: error.message,
-      };
+      throw error;
+    }
+  }
+
+  @Put("reject")
+  async rejectTransferRequest(@Body() data) {
+    try {
+      const transfer = await this.transferService.rejectRequest(data);
+      return makeHTTPResponse({}, HttpStatus.OK, "Transfer rejected!");
+    } catch (error) {
+      throw error;
     }
   }
 }

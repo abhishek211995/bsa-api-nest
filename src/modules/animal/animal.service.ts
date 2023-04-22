@@ -256,7 +256,7 @@ export class AnimalService {
         });
       }
 
-      let animalData = {
+      const animalData = {
         ...animal,
         animal_front_view: "",
         animal_right_view: "",
