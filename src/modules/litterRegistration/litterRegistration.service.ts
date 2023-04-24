@@ -42,7 +42,7 @@ export class LitterRegistrationService {
       throw error instanceof ServiceException
         ? error
         : new ServiceException({
-            message: "Failed to add litter",
+            message: error?.message ?? "Failed to add litter",
             serviceErrorCode: "LRS-100",
           });
     }

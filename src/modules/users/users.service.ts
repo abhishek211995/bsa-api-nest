@@ -11,6 +11,7 @@ import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
 import { BreederFarmService } from "../breederFarm/breederFarm.service";
 import { ServiceException } from "src/exception/base-exception";
+import { EmailService } from "src/lib/mail/mail.service";
 @Injectable()
 export class UsersService {
   constructor(
@@ -20,6 +21,7 @@ export class UsersService {
     private bcryptService: Bcrypt,
     private readonly s3Service: S3Service,
     private readonly breederFarmService: BreederFarmService,
+    private readonly emailService: EmailService,
   ) {}
 
   async createUser(
@@ -197,12 +199,17 @@ export class UsersService {
     try {
       const otp = Math.floor(1000 + Math.random() * 9000);
       // Send OTP to email
-
+      await this.emailService.sendMail(
+        email,
+        "OTP for login",
+        `Your OTP is ${otp}`,
+      );
       return otp;
     } catch (error) {
       throw new ServiceException({
-        message: "Error while creating OTP",
+        message: error?.message ?? "Error while creating OTP",
         serviceErrorCode: "US-500",
+        httpStatusCode: 400,
       });
     }
   }
