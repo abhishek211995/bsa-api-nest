@@ -302,6 +302,57 @@ export class AnimalService {
     }
   }
 
+  async getAnimalByRegNo(reg_no: string) {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { animal_registration_number: reg_no },
+        relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
+      });
+      if (!animal) {
+        throw new ServiceException({
+          message: "Animal not found",
+          serviceErrorCode: "AS-101",
+        });
+      }
+
+      const animalData = {
+        ...animal,
+        animal_front_view: "",
+        animal_right_view: "",
+        animal_left_view: "",
+        animal_registration: "",
+      };
+
+      if (animal.animal_front_view_image !== null) {
+        animalData.animal_front_view = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_front_view_image}`,
+        );
+      }
+      if (animal.animal_right_view_image !== null) {
+        animalData.animal_right_view = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_right_view_image}`,
+        );
+      }
+      if (animal.animal_left_view_image !== null) {
+        animalData.animal_left_view = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_left_view_image}`,
+        );
+      }
+      if (animal.animal_registration_doc !== null) {
+        animalData.animal_registration = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_registration_doc}`,
+        );
+      }
+      return animalData;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to get animal details",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    }
+  }
+
   async changeName(body: ChangeNamePayload) {
     try {
       await this.getAnimalById(body.animal_id);
@@ -325,6 +376,33 @@ export class AnimalService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to change animal name",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    }
+  }
+
+  async changeOwner(animal_id: string, owner_id: number) {
+    try {
+      const result = await this.animalRepository.update(
+        {
+          animal_id,
+        },
+        {
+          animal_owner_id: owner_id,
+        },
+      );
+      if (result.affected > 1) {
+        return result.affected;
+      }
+      throw new ServiceException({
+        message: "Failed to change animal owner",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to change animal owner",
         serviceErrorCode: "AS-100",
         httpStatusCode: 500,
       });

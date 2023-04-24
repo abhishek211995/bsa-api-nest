@@ -30,6 +30,7 @@ import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entit
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 
 @Module({
   imports: [

@@ -139,7 +139,7 @@ export class AnimalController {
     summary: "Get animal by id with document links",
   })
   @Get("/getAnimalById")
-  async getAnimalById(@Query() id: string) {
+  async getAnimalById(@Query("id") id: string) {
     try {
       const result = await this.animalService.getAnimalById(id);
       return makeHTTPResponse(result, 200, "Animal data fetched successfully");
@@ -148,6 +148,19 @@ export class AnimalController {
         status: 500,
         message: error.message,
       };
+    }
+  }
+
+  @ApiOperation({
+    summary: "Get animal by registration number with document links",
+  })
+  @Get("/getAnimalByRegNo")
+  async getAnimalByRegNo(@Query("reg_no") reg_no: string) {
+    try {
+      const result = await this.animalService.getAnimalByRegNo(reg_no);
+      return makeHTTPResponse(result, 200, "Animal data fetched successfully");
+    } catch (error) {
+      throw error;
     }
   }
 

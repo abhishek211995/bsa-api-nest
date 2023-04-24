@@ -83,12 +83,17 @@ export class TransferService {
 
   async approveRequest({ transfer_id, request_rejection_reason }) {
     try {
+      const transferDetails = await this.getRequestById(transfer_id);
       const data = await this.breTransferOwnerRequestRepository.update(
         transfer_id,
         {
           request_status: "Approved",
           request_rejection_reason,
         },
+      );
+      await this.animalService.changeOwner(
+        transferDetails.animal_id,
+        transferDetails.new_owner_id,
       );
       return data;
     } catch (error) {

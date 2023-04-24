@@ -9,7 +9,7 @@ import {
 } from "@nestjs/common";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { TransferService } from "./transfer.service";
-import { TransferOwnerDto } from "./transfer.dto";
+import { ApproveRejectTransferDto, TransferOwnerDto } from "./transfer.dto";
 
 @Controller("transfer")
 export class TransferController {
@@ -21,10 +21,7 @@ export class TransferController {
       const transfer = await this.transferService.addRequest(transferDto);
       return makeHTTPResponse(transfer);
     } catch (error) {
-      return {
-        statusCode: 500,
-        message: error.message,
-      };
+      throw error;
     }
   }
 
@@ -34,15 +31,12 @@ export class TransferController {
       const transfer = await this.transferService.getRequestById(id);
       return makeHTTPResponse(transfer);
     } catch (error) {
-      return {
-        statusCode: 500,
-        message: error.message,
-      };
+      throw error;
     }
   }
 
   @Put("approve")
-  async approveTransferRequest(@Body() data) {
+  async approveTransferRequest(@Body() data: ApproveRejectTransferDto) {
     try {
       const transfer = await this.transferService.approveRequest(data);
       return makeHTTPResponse({}, HttpStatus.OK, "Transfer approved!");
@@ -52,7 +46,7 @@ export class TransferController {
   }
 
   @Put("reject")
-  async rejectTransferRequest(@Body() data) {
+  async rejectTransferRequest(@Body() data: ApproveRejectTransferDto) {
     try {
       const transfer = await this.transferService.rejectRequest(data);
       return makeHTTPResponse({}, HttpStatus.OK, "Transfer rejected!");
