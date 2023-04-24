@@ -8,6 +8,8 @@ import { UsersService } from "../users/users.service";
 import { TransferOwnerDto } from "./transfer.dto";
 import { BreTransferOwnerRequest } from "./transfer.entity";
 import { transferMail } from "src/utils/mailTemplate.util";
+import { BreAnimal } from "../animal/animal.entity";
+import { BreUser } from "../users/users.entity";
 @Injectable()
 export class TransferService {
   constructor(
@@ -91,10 +93,9 @@ export class TransferService {
           request_rejection_reason,
         },
       );
-      await this.animalService.changeOwner(
-        transferDetails.animal_id,
-        transferDetails.new_owner_id,
-      );
+      const animal = transferDetails.animal_id as unknown as BreAnimal;
+      const newOwner = transferDetails.animal_id as unknown as BreUser;
+      await this.animalService.changeOwner(animal.animal_id, newOwner.id);
       return data;
     } catch (error) {
       console.log("Failed to approve request", JSON.stringify(error));

@@ -67,7 +67,7 @@ export class AnimalService {
     gender: string;
   }) {
     try {
-      let findWhereOptions: Record<string, any> = {};
+      const findWhereOptions: Record<string, any> = {};
       if (animal_owner_id) {
         findWhereOptions.animal_owner_id = Number(animal_owner_id);
       }
