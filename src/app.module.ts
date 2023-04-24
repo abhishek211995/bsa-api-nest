@@ -26,10 +26,10 @@ import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
 import { BreLitterRegistration } from "./modules/litterRegistration/litterRegistration.entity";
 import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
-import { BreTrasferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 
 @Module({
   imports: [
@@ -53,7 +53,7 @@ import { UsersModule } from "./modules/users/users.module";
           BreCostsMaster,
           BreSubscriptionsMaster,
           BreRoleMaster,
-          BreTrasferOwnerRequest,
+          BreTransferOwnerRequest,
           BreBreederFarm,
           BreLitterRegistration,
         ],

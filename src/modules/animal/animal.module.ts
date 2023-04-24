@@ -16,5 +16,6 @@ import { S3Module } from "src/lib/s3multer/s3.module";
   ],
   controllers: [AnimalController],
   providers: [AnimalService],
+  exports: [AnimalService],
 })
 export class AnimalModule {}
