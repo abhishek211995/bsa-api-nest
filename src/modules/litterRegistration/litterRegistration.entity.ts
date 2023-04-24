@@ -81,3 +81,39 @@ export class BreLitterRegistration {
   @IsString()
   otp: string;
 }
+
+@Entity("bre_otp_mapping")
+export class OtpMapping {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  otp: number;
+
+  @ApiProperty()
+  @CreateDateColumn()
+  created_at: Date;
+
+  @ApiProperty()
+  @Column()
+  validity: Date;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  reason: string;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  user_id: number;
+
+  @ApiProperty()
+  @JoinColumn({ name: "user_id" })
+  @ManyToOne(() => BreUser)
+  user: BreUser;
+
+  @ApiProperty()
+  @Column({ default: false })
+  verified: boolean;
+}
