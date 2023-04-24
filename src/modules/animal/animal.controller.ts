@@ -152,6 +152,22 @@ export class AnimalController {
   }
 
   @ApiOperation({
+    summary: "Get animal by registration number with document links",
+  })
+  @Get("/getAnimalByRegNo")
+  async getAnimalByRegNo(@Query() reg_no: string) {
+    try {
+      const result = await this.animalService.getAnimalByRegNo(reg_no);
+      return makeHTTPResponse(result, 200, "Animal data fetched successfully");
+    } catch (error) {
+      return {
+        status: 500,
+        message: error.message,
+      };
+    }
+  }
+
+  @ApiOperation({
     summary: "Change name of pet",
   })
   @Post("/changeName")
