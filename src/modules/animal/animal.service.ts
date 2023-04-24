@@ -374,4 +374,31 @@ export class AnimalService {
       });
     }
   }
+
+  async changeOwner(animal_id: string, owner_id: number) {
+    try {
+      const result = await this.animalRepository.update(
+        {
+          animal_id,
+        },
+        {
+          animal_owner_id: owner_id,
+        },
+      );
+      if (result.affected > 1) {
+        return result.affected;
+      }
+      throw new ServiceException({
+        message: "Failed to change animal owner",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to change animal owner",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    }
+  }
 }

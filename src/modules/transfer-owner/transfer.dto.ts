@@ -16,3 +16,11 @@ export class TransferOwnerDto {
   @IsString()
   request_rejection_reason: string;
 }
+
+export class ApproveRejectTransferDto {
+  @IsNumber()
+  transfer_id: number;
+
+  @IsString()
+  request_rejection_reason: string;
+}
