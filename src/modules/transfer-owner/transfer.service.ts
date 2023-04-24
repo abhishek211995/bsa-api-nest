@@ -94,7 +94,7 @@ export class TransferService {
         },
       );
       const animal = transferDetails.animal_id as unknown as BreAnimal;
-      const newOwner = transferDetails.animal_id as unknown as BreUser;
+      const newOwner = transferDetails.new_owner_id as unknown as BreUser;
       await this.animalService.changeOwner(animal.animal_id, newOwner.id);
       return data;
     } catch (error) {

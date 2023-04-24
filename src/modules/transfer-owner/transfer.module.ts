@@ -6,8 +6,6 @@ import { AnimalModule } from "../animal/animal.module";
 import { TransferController } from "./transfer.controller";
 import { BreTransferOwnerRequest } from "./transfer.entity";
 import { TransferService } from "./transfer.service";
-import { EmailModule } from "src/lib/mail/mail.module";
-import { AnimalModule } from "../animal/animal.module";
 
 @Module({
   imports: [
