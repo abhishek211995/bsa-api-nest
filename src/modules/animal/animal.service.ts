@@ -392,7 +392,7 @@ export class AnimalService {
           animal_owner_id: owner_id,
         },
       );
-      if (result.affected > 1) {
+      if (result.affected > 0) {
         return result.affected;
       }
       throw new ServiceException({

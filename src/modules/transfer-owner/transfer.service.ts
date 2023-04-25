@@ -38,7 +38,7 @@ export class TransferService {
         const animal = await this.animalService.getAnimalById(
           transferDto.animal_id,
         );
-        const link = `localhost:3000/confirmTransfer?transferId=${newTransfer.transfer_id}`;
+        const link = `http://localhost:3000/confirmTransfer?transferId=${newTransfer.transfer_id}`;
         const message = transferMail(
           user.user_name,
           animal.animal_name,

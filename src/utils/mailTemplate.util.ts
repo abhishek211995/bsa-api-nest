@@ -42,7 +42,7 @@ export const transferMail = (
 		<h1>Transfer Request Received</h1>
 		<p>Dear ${userName},</p>
 		<p>We have received your transfer request for animal ${animalName} from ${newOwner} and it is currently being processed.</p>
-		<p>Here is your transfer confirmation link: <a href=${link}>Confirm Transfer</a> or click <span style="color:#0F53AD">${link}</span></p>
+		<p>Here is your transfer confirmation link: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Transfer</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
 		<p>Thank you for using our service.</p>
 		<p>Best regards,</p>
 		<p>Breeders Association</p>
