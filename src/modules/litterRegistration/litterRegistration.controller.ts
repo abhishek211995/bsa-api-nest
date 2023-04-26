@@ -1,8 +1,11 @@
-import { Body, Controller, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
 import { LitterRegistrationService } from "./litterRegistration.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
-import { LitterRegistrationBody } from "./litterRegistration.dto";
+import {
+  ApproveLitterBody,
+  LitterRegistrationBody,
+} from "./litterRegistration.dto";
 
 @Controller("litter")
 export class LitterRegistrationController {
@@ -49,6 +52,64 @@ export class LitterRegistrationController {
   ) {
     try {
       const result = await this.litterService.verifyOtp(user_id, otp);
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Get list of registered litters",
+  })
+  @Get()
+  async getAllLitters() {
+    try {
+      const result = await this.litterService.getAllLitters();
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Get list of registered litters",
+  })
+  @Get("/:id")
+  async getLitterDetailsById(@Param("id") id: number) {
+    try {
+      const result = await this.litterService.getLitterDetailsById(id);
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Approve litter",
+  })
+  @Post("/approve")
+  async approveLitter(@Body() body: ApproveLitterBody) {
+    try {
+      const result = await this.litterService.approveLitter(
+        body.id,
+        body.remarks,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Reject litter",
+  })
+  @Post("/reject")
+  async rejectLitter(@Body() body: ApproveLitterBody) {
+    try {
+      const result = await this.litterService.rejectLitter(
+        body.id,
+        body.remarks,
+      );
       return makeHTTPResponse(result);
     } catch (error) {
       throw error;

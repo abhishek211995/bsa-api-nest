@@ -1,18 +1,18 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsString } from "class-validator";
+import { IsNumber, IsString } from "class-validator";
 
 export class SingleLitter {
   @ApiProperty()
   @IsString()
-  name: string;
+  litterName: string;
 
   @ApiProperty()
   @IsString()
-  gender: string;
+  litterGender: string;
 
   @ApiProperty()
   @IsString()
-  color_mark: string;
+  colorMark: string;
 }
 
 export class LitterRegistrationBody {
@@ -50,4 +50,13 @@ export class LitterRegistrationBody {
   @ApiProperty()
   @IsString()
   otp: string;
+}
+
+export class ApproveLitterBody {
+  @ApiProperty()
+  @IsNumber()
+  id: number;
+
+  @ApiProperty()
+  remarks: Array<{ message: string }>;
 }

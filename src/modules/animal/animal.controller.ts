@@ -176,4 +176,17 @@ export class AnimalController {
       throw error;
     }
   }
+
+  @ApiOperation({
+    summary: "Get list of registered animals",
+  })
+  @Get("/registered")
+  async getRegisteredAnimals() {
+    try {
+      const result = await this.animalService.getRegisteredAnimals();
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

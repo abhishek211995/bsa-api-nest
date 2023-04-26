@@ -86,4 +86,8 @@ export class BreAnimal {
   @ApiProperty()
   @Column({ default: false })
   is_active: boolean;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  registration_source: string;
 }

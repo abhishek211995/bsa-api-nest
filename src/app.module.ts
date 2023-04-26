@@ -24,7 +24,10 @@ import { BreBreeder } from "./modules/breeder/breeder.entity";
 import { BreederModule } from "./modules/breeder/breeder.module";
 import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
-import { BreLitterRegistration } from "./modules/litterRegistration/litterRegistration.entity";
+import {
+  BreLitterRegistration,
+  BreOtpMapping,
+} from "./modules/litterRegistration/litterRegistration.entity";
 import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
 import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
@@ -56,6 +59,7 @@ import { UsersModule } from "./modules/users/users.module";
           BreTransferOwnerRequest,
           BreBreederFarm,
           BreLitterRegistration,
+          BreOtpMapping,
         ],
         synchronize: true,
       }),

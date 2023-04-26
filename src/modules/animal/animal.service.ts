@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { InsertResult, QueryRunner, Repository } from "typeorm";
+import { InsertResult, QueryRunner, Raw, Repository } from "typeorm";
 import {
   AnimalDto,
   AnimalWithPedigreePayload,
@@ -14,6 +14,7 @@ import { generateRegNo } from "src/utils/generateReg.util";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
 import { ServiceException } from "src/exception/base-exception";
+import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 
 @Injectable()
 export class AnimalService {
@@ -30,7 +31,10 @@ export class AnimalService {
       animalDto.animal_breed_id,
       animalCount + 1,
     );
-    const AnimalData = await this.animalRepository.create(animalDto);
+    const AnimalData = await this.animalRepository.create({
+      ...animalDto,
+      registration_source: animalRegistrationSource.registration,
+    });
     const animal = await this.animalRepository.save(AnimalData);
     if (animal) {
       const uploadData = await this.s3Service.uploadMultiple(
@@ -83,12 +87,7 @@ export class AnimalService {
         where: findWhereOptions,
         relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
       });
-      if (data.length == 0) {
-        throw new ServiceException({
-          message: "No data found",
-          serviceErrorCode: "AS-101",
-        });
-      }
+
       return data;
     } catch (error) {
       console.log("error while fetching animal", error);
@@ -166,6 +165,7 @@ export class AnimalService {
         new Date(animalData.dob),
         animalData.microchip,
         "reg_doc",
+        animalRegistrationSource.registration,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
@@ -403,6 +403,29 @@ export class AnimalService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to change animal owner",
+        serviceErrorCode: "AS-100",
+        httpStatusCode: 500,
+      });
+    }
+  }
+
+  async getRegisteredAnimals() {
+    try {
+      const animals = await this.animalRepository.find({
+        where: [
+          {
+            registration_source: animalRegistrationSource.registration,
+          },
+          {
+            registration_source: animalRegistrationSource.litter,
+          },
+        ],
+        relations: ["animal_type_id", "animal_breed_id", "animal_owner_id"],
+      });
+      return animals;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to fetch animals",
         serviceErrorCode: "AS-100",
         httpStatusCode: 500,
       });

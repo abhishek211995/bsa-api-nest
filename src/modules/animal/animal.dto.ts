@@ -1,5 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 import { IsDate, IsJSON, IsNumber, IsString } from "class-validator";
+import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 
 export class AnimalDto {
   @IsString()
@@ -174,6 +175,7 @@ export class CreateAnimalDto {
     animal_date_of_birth: Date,
     animal_microchip_id: string,
     animal_registration_doc: string,
+    registration_source: string,
   ) {
     this.animal_id = animal_id;
     this.animal_name = animal_name;
@@ -189,6 +191,7 @@ export class CreateAnimalDto {
     this.animal_date_of_birth = animal_date_of_birth;
     this.animal_microchip_id = animal_microchip_id;
     this.animal_registration_doc = animal_registration_doc;
+    this.registration_source = animalRegistrationSource.registration;
   }
 
   @IsString()
@@ -246,6 +249,10 @@ export class CreateAnimalDto {
   @IsJSON()
   @ApiProperty()
   animal_pedigree: Record<string, any>;
+
+  @IsString()
+  @ApiProperty()
+  registration_source: string;
 }
 
 export class ChangeNamePayload {

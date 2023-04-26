@@ -20,7 +20,7 @@ export class BreLitterRegistration {
 
   @ApiProperty()
   @Column({ type: "json" })
-  litters: { name: string; color_mark: string; gender: string }[];
+  litters: { litterName: string; colorMark: string; litterGender: string }[];
 
   @ApiProperty()
   @Column({ type: "date" })
@@ -83,7 +83,7 @@ export class BreLitterRegistration {
 }
 
 @Entity("bre_otp_mapping")
-export class OtpMapping {
+export class BreOtpMapping {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
