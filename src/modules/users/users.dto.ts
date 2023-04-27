@@ -49,16 +49,25 @@ export class CreateUserDto extends BreederDto {
 export class IndividualUserDto {
   @IsString()
   user_name: string;
+
   @IsString()
   email: string;
+
   @IsString()
   password: string;
+
   @IsString()
   contact_no: string;
+
   // @IsString()
   identity_doc_name: string;
+
   @IsString()
-  identification_no: string;
+  identification_id_no: string;
+
+  @IsString()
+  identification_id_name: string;
+
   @IsString()
   user_country: string;
 }
