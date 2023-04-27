@@ -61,7 +61,7 @@ export class UsersController {
 
       return {
         status: 201,
-        data: res.updatedUser,
+        data: res.user,
         message: "User Created Successfully",
       };
     } catch (err) {

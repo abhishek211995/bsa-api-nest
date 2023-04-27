@@ -107,18 +107,18 @@ export class UsersService {
         password,
       });
 
-      const user = await this.breUsersRepository.save(newUser);
+      const savedUser = await this.breUsersRepository.save(newUser);
 
       const identity_doc_name = fileFilter(files, "identity_doc_name")[0];
 
-      await this.s3Service.uploadSingle(identity_doc_name, user.user_name);
+      await this.s3Service.uploadSingle(identity_doc_name, savedUser.user_name);
 
-      const updatedUser = await this.updateUserDoc(
+      const user = await this.updateUserDoc(
         newUser.id,
         identity_doc_name.originalname,
       );
 
-      return { updatedUser };
+      return { user };
     } catch (error) {
       throw error;
     }
