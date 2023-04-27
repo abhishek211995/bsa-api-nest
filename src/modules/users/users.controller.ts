@@ -14,7 +14,12 @@ import {
   ValidationPipe,
 } from "@nestjs/common";
 import * as dotenv from "dotenv";
-import { ChangeStatusPayload, CreateUserDto, LoginUserDto } from "./users.dto";
+import {
+  ChangeStatusPayload,
+  CreateUserDto,
+  IndividualUserDto,
+  LoginUserDto,
+} from "./users.dto";
 import { UsersService } from "./users.service";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
@@ -34,9 +39,33 @@ export class UsersController {
   ) {
     try {
       const res = await this.usersService.createUser(createUserDto, files);
+
       return { ...res };
     } catch (error) {
       throw error;
+    }
+  }
+  @Post("individual")
+  @HttpCode(201)
+  @UsePipes(ValidationPipe)
+  @UseInterceptors(AnyFilesInterceptor())
+  async createIndividualUser(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() IndividualUser: IndividualUserDto,
+  ) {
+    try {
+      const res = await this.usersService.createIndividualUser(
+        IndividualUser,
+        files,
+      );
+
+      return {
+        status: 201,
+        data: res.user,
+        message: "User Created Successfully",
+      };
+    } catch (err) {
+      throw err;
     }
   }
 

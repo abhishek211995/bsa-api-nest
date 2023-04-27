@@ -1,9 +1,14 @@
-import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
+import {
+  ConflictException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as jwt from "jsonwebtoken";
 import { Bcrypt } from "src/lib/bcrypt/bcrypt.util";
 import { Repository } from "typeorm";
-import { CreateUserDto, LoginUserDto } from "./users.dto";
+import { CreateUserDto, IndividualUserDto, LoginUserDto } from "./users.dto";
 import { BreUser, UserStatus } from "./users.entity";
 import { BreederService } from "../breeder/breeder.service";
 import { BreederDto } from "../breeder/breeder.dto";
@@ -77,6 +82,45 @@ export class UsersService {
       }
       return { user, breederDetails };
     } catch (error) {
+      throw error;
+    }
+  }
+  async createIndividualUser(
+    individualUser: IndividualUserDto,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const password = await this.bcryptService.hashPassword(
+        individualUser.password,
+      );
+
+      const existingUser = await this.breUsersRepository.findOne({
+        where: { email: individualUser.email },
+      });
+
+      if (existingUser) {
+        throw new ConflictException("User with this email already exists");
+      }
+
+      const newUser = this.breUsersRepository.create({
+        ...individualUser,
+        password,
+      });
+
+      const savedUser = await this.breUsersRepository.save(newUser);
+
+      const identity_doc_name = fileFilter(files, "identity_doc_name")[0];
+
+      await this.s3Service.uploadSingle(identity_doc_name, savedUser.user_name);
+
+      const user = await this.updateUserDoc(
+        newUser.id,
+        identity_doc_name.originalname,
+      );
+
+      return { user };
+    } catch (error) {
+      console.log("error here", error);
       throw error;
     }
   }
