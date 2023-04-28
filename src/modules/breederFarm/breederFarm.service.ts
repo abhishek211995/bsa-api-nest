@@ -5,6 +5,8 @@ import { InsertResult, QueryRunner, Repository } from "typeorm";
 import { BreederFarmDto } from "./breederFarm.dto";
 import TransactionUtil from "src/lib/db_utils/transaction.utils";
 
+JSON.stringify([1, 2]);
+
 @Injectable()
 export class BreederFarmService {
   constructor(
@@ -15,10 +17,11 @@ export class BreederFarmService {
 
   async createBreederFarm(breederFarmDto: BreederFarmDto) {
     try {
-      const farmIds = breederFarmDto.farm_id
-        .split(",")
-        .map((i) => Number(i.trim()));
+      const farmIds = JSON.parse(breederFarmDto.farm_id) as number[];
 
+      if (farmIds.length === 0) {
+        return;
+      }
       const data = farmIds.map((f) => ({
         farm_id: f,
         breeder_id: breederFarmDto.breeder_id,
