@@ -258,7 +258,7 @@ export class CreateAnimalDto {
 export class ChangeNamePayload {
   @IsString()
   @ApiProperty()
-  animal_id: string;
+  animal_registration_number: string;
 
   @IsString()
   @ApiProperty()

@@ -355,10 +355,19 @@ export class AnimalService {
 
   async changeName(body: ChangeNamePayload) {
     try {
-      await this.getAnimalById(body.animal_id);
+      const animal = await this.animalRepository.findOne({
+        where: { animal_registration_number: body.animal_registration_number },
+      });
+      if (!animal) {
+        throw new ServiceException({
+          message: "Animal not found",
+          serviceErrorCode: "AS-101",
+        });
+      }
+
       const result = await this.animalRepository.update(
         {
-          animal_id: body.animal_id,
+          animal_registration_number: body.animal_registration_number,
         },
         {
           animal_name: body.name,
