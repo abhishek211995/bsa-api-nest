@@ -17,11 +17,14 @@ import { fileFilter } from "src/utils/fileFilter.util";
 import { BreederFarmService } from "../breederFarm/breederFarm.service";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
+import { BreRoleMaster } from "src/master/master.entity";
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(BreUser)
     private readonly breUsersRepository: Repository<BreUser>,
+    @InjectRepository(BreRoleMaster)
+    private readonly breRoleRepository: Repository<BreRoleMaster>,
     private readonly breBreederService: BreederService,
     private bcryptService: Bcrypt,
     private readonly s3Service: S3Service,
@@ -135,13 +138,30 @@ export class UsersService {
       });
 
       if (!user) {
-        throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+        throw new ServiceException({
+          message: "User not found",
+          serviceErrorCode: "US",
+          httpStatusCode: HttpStatus.BAD_REQUEST,
+        });
       }
-
+      if (
+        user.user_status === UserStatus.Rejected ||
+        user.user_status === UserStatus["Verification Pending"]
+      ) {
+        throw new ServiceException({
+          message: "Your profile is not verified yet. Please contact admin",
+          serviceErrorCode: "US",
+          httpStatusCode: HttpStatus.UNAUTHORIZED,
+        });
+      }
       const isPasswordCorrect: boolean =
         await this.bcryptService.comparePassword(password, user.password);
       if (!isPasswordCorrect) {
-        throw new HttpException("User not found", HttpStatus.BAD_REQUEST);
+        throw new ServiceException({
+          message: "Incorrect password",
+          serviceErrorCode: "US",
+          httpStatusCode: HttpStatus.UNAUTHORIZED,
+        });
       }
 
       const token = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
@@ -168,14 +188,16 @@ export class UsersService {
     try {
       const query = { where: {} };
       if (roleId) {
-        query.where = { user_role_id: Number(roleId) };
+        const role = await this.breRoleRepository.findOne({
+          where: { role_id: roleId },
+        });
+        query.where = { user_role_id: role };
       }
 
       const res = await this.breUsersRepository.find({
         ...query,
         relations: ["user_role_id"],
       });
-
       const list = this.convertUsers(res);
       return list;
     } catch (error) {

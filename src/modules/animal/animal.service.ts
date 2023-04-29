@@ -81,13 +81,16 @@ export class AnimalService {
       if (gender) {
         findWhereOptions.animal_gender = gender;
       }
-      console.log("findWhereOptions", findWhereOptions);
 
-      const data = await this.animalRepository.find({
+      let data = await this.animalRepository.find({
         where: findWhereOptions,
         relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
       });
 
+      data = data.filter(
+        // @ts-expect-error typing issue from entity
+        (a) => a.animal_owner_id.id === Number(animal_owner_id),
+      );
       return data;
     } catch (error) {
       console.log("error while fetching animal", error);
