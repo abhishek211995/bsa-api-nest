@@ -13,8 +13,23 @@ export class AnimalBreedServices {
   ) {}
 
   // Add animal breed
-  addAnimalBreed(animalBreedDto: AnimalBreedDto) {
-    const breed = this.breAnimalBreedMasterRepository.create(animalBreedDto);
+  async addAnimalBreed(animalBreedDto: AnimalBreedDto) {
+    const existing = await this.breAnimalBreedMasterRepository.find({
+      where: {
+        animal_breed_name: animalBreedDto.animal_breed_name.trim(),
+        animal_type_id: animalBreedDto.animal_type_id,
+      },
+    });
+    if (existing) {
+      throw new ServiceException({
+        message: "Breed already added",
+        serviceErrorCode: "BMS",
+      });
+    }
+    const breed = this.breAnimalBreedMasterRepository.create({
+      ...animalBreedDto,
+      animal_breed_name: animalBreedDto.animal_breed_name.trim(),
+    });
     return this.breAnimalBreedMasterRepository.save(breed);
   }
 
