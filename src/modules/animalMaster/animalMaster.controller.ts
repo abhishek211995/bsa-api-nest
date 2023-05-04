@@ -1,4 +1,13 @@
-import { Body, Controller, Get, HttpStatus, Post, Put } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpStatus,
+  Param,
+  Post,
+  Put,
+} from "@nestjs/common";
 import { AnimalTypeDto, EditAnimalTypePayload } from "./animalMaster.dto";
 import { AnimalTypeServices } from "./animalMaster.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
@@ -55,6 +64,16 @@ export class AnimalMasterController {
       );
     } catch (error) {
       console.log(error);
+      throw error;
+    }
+  }
+
+  @Delete(":id")
+  async deleteAnimalType(@Param("id") id: number) {
+    try {
+      const result = await this.animalTypeServices.deleteAnimalType(Number(id));
+      return makeHTTPResponse(result);
+    } catch (error) {
       throw error;
     }
   }

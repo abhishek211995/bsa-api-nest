@@ -55,4 +55,19 @@ export class AnimalTypeServices {
           });
     }
   }
+
+  async deleteAnimalType(id: number) {
+    try {
+      const result = await this.breAnimalMasterRepository.update(
+        { animal_type_id: id },
+        { is_deleted: true },
+      );
+      return result;
+    } catch (error) {
+      throw new ServiceException({
+        message: "Failed to delete animal type",
+        serviceErrorCode: "AM",
+      });
+    }
+  }
 }

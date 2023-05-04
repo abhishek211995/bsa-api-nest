@@ -14,4 +14,8 @@ export class BreAnimalMaster {
   @ApiProperty()
   @Column({ nullable: false, length: 150 })
   animal_type_description: string;
+
+  @ApiProperty()
+  @Column({ default: false })
+  is_deleted: boolean;
 }

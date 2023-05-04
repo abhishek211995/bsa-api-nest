@@ -29,6 +29,10 @@ export class BreFarmMaster {
   @ApiProperty()
   @Column({ nullable: false, length: 150, default: "" })
   farm_description: string;
+
+  @ApiProperty()
+  @Column({ default: false })
+  is_deleted: boolean;
 }
 
 @Entity("bre_costs_master")
@@ -48,6 +52,10 @@ export class BreCostsMaster {
   @ApiProperty()
   @Column({ nullable: false, length: 150 })
   description: string;
+
+  @ApiProperty()
+  @Column({ default: false })
+  is_deleted: boolean;
 }
 
 @Entity("bre_subscriptions_master")
