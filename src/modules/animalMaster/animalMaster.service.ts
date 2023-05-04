@@ -20,7 +20,9 @@ export class AnimalTypeServices {
 
   // Get all animal Types
   getAllAnimalTypes() {
-    return this.breAnimalMasterRepository.find();
+    return this.breAnimalMasterRepository.find({
+      where: { is_deleted: false },
+    });
   }
 
   async editAnimalType(payload: EditAnimalTypePayload) {
