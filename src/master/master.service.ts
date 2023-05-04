@@ -42,7 +42,20 @@ export class FarmTypeServices {
   }
 
   getAllFarmTypes() {
-    return this.breFarmMasterRepository.find();
+    return this.breFarmMasterRepository.find({
+      where: { is_deleted: false },
+    });
+  }
+  async deleteFarmTypes(id: number) {
+    const response = await this.breFarmMasterRepository.update(
+      {
+        farm_id: id,
+      },
+      {
+        is_deleted: true,
+      },
+    );
+    return response;
   }
 
   async updateFarmType(farm_id: number, farmTypeDto: FarmTypeDto) {
@@ -76,7 +89,7 @@ export class CostsServices {
   }
 
   getCosts() {
-    return this.breCostsMasterRepository.find();
+    return this.breCostsMasterRepository.find({ where: { is_deleted: false } });
   }
   getCostById(param: any) {
     const { id } = param;
@@ -87,6 +100,18 @@ export class CostsServices {
 
   updateCosts(id: number, costsDto: CostsDto) {
     return this.breCostsMasterRepository.update(id, costsDto);
+  }
+  async deleteCost(id: number) {
+    const res = await this.breCostsMasterRepository.update(
+      {
+        id,
+      },
+      {
+        is_deleted: true,
+      },
+    );
+
+    return res;
   }
 }
 

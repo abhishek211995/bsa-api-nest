@@ -37,7 +37,7 @@ export class AnimalBreedServices {
   async getAnimalBreedByAnimalType(animal_type_id: number) {
     try {
       const breed = await this.breAnimalBreedMasterRepository.find({
-        where: { animal_type_id: animal_type_id },
+        where: { animal_type_id: animal_type_id, is_deleted: false },
         relations: { animal_type: true },
       });
       return breed;
@@ -84,6 +84,25 @@ export class AnimalBreedServices {
             httpStatusCode: HttpStatus.INTERNAL_SERVER_ERROR,
             serviceErrorCode: `BM-${HttpStatus.INTERNAL_SERVER_ERROR}`,
           });
+    }
+  }
+
+  async deleteAnimalBreedById(id: number) {
+    try {
+      console.log("iddd", id);
+
+      const res = await this.breAnimalBreedMasterRepository.update(
+        { animal_breed_id: id },
+        { is_deleted: true },
+      );
+      console.log("ressss", res);
+
+      return res;
+    } catch (error) {
+      throw new ServiceException({
+        message: "Failed to Delete Animal Breed",
+        serviceErrorCode: "AM",
+      });
     }
   }
 }

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
-import { Param, Put } from "@nestjs/common/decorators";
+import { Delete, Param, Put } from "@nestjs/common/decorators";
 import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import {
   CostsServices,
@@ -7,6 +7,7 @@ import {
   RoleServices,
   SubscriptionServices,
 } from "./master.service";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
 @Controller("master")
 export class MasterController {
@@ -176,7 +177,22 @@ export class MasterController {
       };
     }
   }
-
+  @Delete("cost/:id")
+  async deleteCostById(@Param("id") id: number) {
+    try {
+      const response = await this.costsServices.deleteCost(id);
+      return {
+        status: 200,
+        data: response,
+        message: "Cost Deleted Successfully!",
+      };
+    } catch (error) {
+      return {
+        status: 400,
+        message: error.message,
+      };
+    }
+  }
   @Put("updateCosts/:id")
   async updateCosts(@Body() costsDto: CostsDto, @Param() id: number) {
     try {
@@ -246,6 +262,15 @@ export class MasterController {
         status: 500,
         message: error.message,
       };
+    }
+  }
+  @Delete("farmtype/:id")
+  async deleteFarmType(@Param("id") id: number) {
+    try {
+      const result = await this.farmTypeServices.deleteFarmTypes(id);
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
     }
   }
 }
