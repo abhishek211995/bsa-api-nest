@@ -1,5 +1,6 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post } from "@nestjs/common";
 import { BreederService } from "./breeder.service";
+import { CreateBreederDto } from "./breeder.dto";
 
 @Controller("breeder")
 export class BreederController {
@@ -30,6 +31,14 @@ export class BreederController {
       };
     } catch (err) {
       throw err;
+    }
+  }
+
+  @Post("new")
+  async createBreeder(@Body() body: CreateBreederDto) {
+    try {
+    } catch (error) {
+      throw error;
     }
   }
 }

@@ -32,4 +32,28 @@ export class BreBreederFarm {
   @JoinColumn({ name: "breeder_id" })
   @ManyToOne(() => BreBreeder)
   breeder: BreBreeder;
+
+  @ApiProperty()
+  @Column({ default: "" })
+  farm_name: string;
+
+  @ApiProperty()
+  @Column({ default: "" })
+  farm_address: string;
+
+  @ApiProperty()
+  @Column({ nullable: false, length: 50, default: "" })
+  license_no: string;
+
+  @ApiProperty()
+  @Column({ nullable: true, length: 50 })
+  license_doc_name: string;
+
+  @ApiProperty()
+  @Column({ type: "date", nullable: true })
+  license_expiry_date: Date;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  logo: string;
 }

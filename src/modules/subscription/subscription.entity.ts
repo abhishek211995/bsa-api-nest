@@ -18,14 +18,13 @@ export class BreUserSubscription {
   id: number;
 
   @ApiProperty()
-  @ManyToOne(() => BreUser, (user) => user.id)
-  @JoinColumn({ name: "user_id" })
+  @Column({ nullable: false })
   user_id: number;
 
   @ApiProperty()
-  @ManyToOne(() => BreSubscriptionsMaster, (subscription) => subscription.id)
-  @JoinColumn({ name: "subscription_id" })
-  subscription_id: number;
+  @JoinColumn({ name: "user_id" })
+  @ManyToOne(() => BreUser)
+  user: BreUser;
 
   @ApiProperty()
   @Column({ nullable: false })
@@ -44,10 +43,10 @@ export class BreUserSubscription {
   subscription_updated_at: Date;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
-  Amount_paid: number;
+  @Column({ nullable: false, length: 50, default: 0 })
+  amount_paid: number;
 
   @ApiProperty()
   @Column({ nullable: false, length: 50, default: true })
-  subscription_status: string;
+  subscription_active: boolean;
 }

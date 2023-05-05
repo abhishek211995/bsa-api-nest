@@ -30,7 +30,7 @@ export class OrdersService {
       order = await this.orderRepository.save(payload);
       console.log("new order", order);
 
-      return { razorpay_order_id: razorpayOrder, order_id: order };
+      return { razorpay_order: razorpayOrder, order: order };
     } catch (error) {
       console.log(
         `Failed to create order for data ${JSON.stringify(body)}`,

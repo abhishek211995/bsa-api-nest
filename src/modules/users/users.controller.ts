@@ -46,7 +46,6 @@ export class UsersController {
     }
   }
   @Post("individual")
-  @HttpCode(201)
   @UsePipes(ValidationPipe)
   @UseInterceptors(AnyFilesInterceptor())
   async createIndividualUser(

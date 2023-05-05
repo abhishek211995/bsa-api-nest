@@ -79,3 +79,24 @@ export const sireOwnerVerificationEmail = (
 </body>
 </html>
 `;
+
+export const welcomeEmail = (userName: string, link: string) => `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Welcome to our service!</title>
+  </head>
+  <body style="font-family: Arial, sans-serif; font-size: 16px; line-height: 1.5; color: #333;">
+    <p>Dear ${userName},</p>
+    <p>Welcome to our service! We are thrilled to have you on board.</p>
+    <p>To get started, please click the button below to verify your email address:</p>
+    <p style="text-align: center;">
+      <a href=${link} style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #fff; text-decoration: none; border-radius: 5px;">Verify my email address</a>
+    </p>
+    <p>If you have any questions or concerns, please don't hesitate to contact us.</p>
+    <p>Best regards,</p>
+    <p>Breeders Association</p>
+  </body>
+</html>
+`;
