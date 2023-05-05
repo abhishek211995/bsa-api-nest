@@ -1,10 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { S3Service } from "src/lib/s3multer/s3.service";
-import { fileFilter } from "src/utils/fileFilter.util";
+import { ServiceException } from "src/exception/base-exception";
 import { Repository } from "typeorm";
-import { UserStatus } from "../users/users.entity";
-import { BreederDto } from "./breeder.dto";
+import { BreederFarmService } from "../breederFarm/breederFarm.service";
 import { BreBreeder } from "./breeder.entity";
 
 @Injectable()
@@ -12,44 +10,44 @@ export class BreederService {
   constructor(
     @InjectRepository(BreBreeder)
     private readonly breederRepository: Repository<BreBreeder>,
-    private readonly s3Service: S3Service,
+    private readonly breederFarmService: BreederFarmService,
   ) {}
 
-  async createBreeder(
-    breederDto: BreederDto,
-    user,
-    files: Array<Express.Multer.File>,
-  ) {
-    try {
-      const newBreeder = await this.breederRepository.create({
-        ...breederDto,
-        user_id: user.id,
-        breeder_license_expiry_date: new Date(
-          breederDto.breeder_license_expiry_date,
-        ),
-      });
-      const breeder = await this.breederRepository.save(newBreeder);
+  // async createBreeder(
+  //   breederDto: BreederDto,
+  //   user,
+  //   files: Array<Express.Multer.File>,
+  // ) {
+  //   try {
+  //     const newBreeder = await this.breederRepository.create({
+  //       ...breederDto,
+  //       user_id: user.id,
+  //       breeder_license_expiry_date: new Date(
+  //         breederDto.breeder_license_expiry_date,
+  //       ),
+  //     });
+  //     const breeder = await this.breederRepository.save(newBreeder);
 
-      if (breeder) {
-        const breeder_license_doc = fileFilter(
-          files,
-          "breeder_license_doc_name",
-        )[0];
-        const uploadData = await this.s3Service.uploadSingle(
-          breeder_license_doc,
-          user.user_name,
-        );
-        const updatedBreeder = await this.updateBreederDoc(
-          breeder.breeder_id,
-          breeder_license_doc.originalname,
-        );
-        return { breeder, uploadData };
-      }
-    } catch (err) {
-      console.log(err);
-      throw err;
-    }
-  }
+  //     if (breeder) {
+  //       const breeder_license_doc = fileFilter(
+  //         files,
+  //         "breeder_license_doc_name",
+  //       )[0];
+  //       const uploadData = await this.s3Service.uploadSingle(
+  //         breeder_license_doc,
+  //         user.user_name,
+  //       );
+  //       const updatedBreeder = await this.updateBreederDoc(
+  //         breeder.breeder_id,
+  //         breeder_license_doc.originalname,
+  //       );
+  //       return { breeder, uploadData };
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //     throw err;
+  //   }
+  // }
 
   async updateBreederDoc(breeder_id: number, doc_name: string) {
     try {
@@ -64,33 +62,18 @@ export class BreederService {
     }
   }
 
-  async getBreeder(user_id: any) {
+  async getBreeder(user_id: number) {
     try {
       const breeder = await this.breederRepository.findOne({
-        where: { user_id: user_id },
-        relations: ["user"],
+        where: { user_id },
+        relations: { user: true },
       });
-
-      let convertBreeder: BreBreeder & {
-        user_status_info: string;
-        idDoc: string;
-        licenseDoc: string;
-      } = {
-        ...breeder,
-        user_status_info: UserStatus[breeder.user.user_status],
-        idDoc: "",
-        licenseDoc: "",
-      };
-
-      const licenseDoc = await this.s3Service.getLink(
-        `${breeder.user.user_name}/${breeder.breeder_license_doc_name}`,
-      );
-      const idDoc = await this.s3Service.getLink(
-        `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
+      const farms = await this.breederFarmService.getBreederFarms(
+        breeder.breeder_id,
+        breeder.user.user_name,
       );
 
-      convertBreeder = { ...convertBreeder, idDoc, licenseDoc };
-      return convertBreeder;
+      return { ...breeder, farms };
     } catch (err) {
       throw err;
     }
@@ -105,6 +88,20 @@ export class BreederService {
       return list;
     } catch (err) {
       throw err;
+    }
+  }
+
+  async createBreeder(user_id: number) {
+    try {
+      let result = this.breederRepository.create({ user_id });
+      result = await this.breederRepository.save({ user_id });
+      return result;
+    } catch (error) {
+      console.log("failed to create breeder", error);
+      throw new ServiceException({
+        message: "Failed to create breeder entry",
+        serviceErrorCode: "BS",
+      });
     }
   }
 }

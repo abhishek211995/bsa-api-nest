@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { BreSubscriptionsMaster } from "src/master/master.entity";
 import { BreUser } from "src/modules/users/users.entity";
 import {
   Column,
@@ -7,9 +6,11 @@ import {
   Entity,
   JoinColumn,
   ManyToOne,
+  OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
+import { BreOrders } from "../orders/orders.entity";
 
 @Entity("bre_user_subscription")
 export class BreUserSubscription {
@@ -49,4 +50,13 @@ export class BreUserSubscription {
   @ApiProperty()
   @Column({ nullable: false, length: 50, default: true })
   subscription_active: boolean;
+
+  @ApiProperty()
+  @Column()
+  order_id: number;
+
+  @ApiProperty()
+  @JoinColumn({ name: "order_id" })
+  @OneToOne(() => BreOrders)
+  order: BreOrders;
 }

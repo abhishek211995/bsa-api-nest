@@ -5,7 +5,6 @@ import { EmailModule } from "src/lib/mail/mail.module";
 import { S3Module } from "src/lib/s3multer/s3.module";
 import { BreRoleMaster } from "src/master/master.entity";
 import { BreederModule } from "src/modules/breeder/breeder.module";
-import { BreederFarm } from "../breederFarm/breederFarm.module";
 import { UsersController } from "./users.controller";
 import { BreUser } from "./users.entity";
 import { UsersService } from "./users.service";
@@ -15,7 +14,6 @@ import { UsersService } from "./users.service";
     BreederModule,
     BcryptModule,
     S3Module,
-    BreederFarm,
     EmailModule,
   ],
   controllers: [UsersController],

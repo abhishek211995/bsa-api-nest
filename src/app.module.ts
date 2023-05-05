@@ -23,18 +23,18 @@ import { AnimalBreedMasterModule } from "./modules/breedMaster/breedMaster.modul
 import { BreBreeder } from "./modules/breeder/breeder.entity";
 import { BreederModule } from "./modules/breeder/breeder.module";
 import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
-import { BreederFarm } from "./modules/breederFarm/breederFarm.module";
+import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
 import {
   BreLitterRegistration,
   BreOtpMapping,
 } from "./modules/litterRegistration/litterRegistration.entity";
 import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
+import { BreOrders } from "./modules/orders/orders.entity";
+import { OrdersModule } from "./modules/orders/orders.module";
 import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
-import { BreOrders } from "./modules/orders/orders.entity";
-import { OrdersModule } from "./modules/orders/orders.module";
 
 @Module({
   imports: [
@@ -79,7 +79,7 @@ import { OrdersModule } from "./modules/orders/orders.module";
     JwtModule,
     EmailModule,
     S3Module,
-    BreederFarm,
+    BreederFarmModule,
     OrdersModule,
   ],
   controllers: [AppController],
@@ -87,17 +87,6 @@ import { OrdersModule } from "./modules/orders/orders.module";
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer
-      .apply(JWTMiddleware)
-      .forRoutes
-      // {
-      //   path: "auth/users",
-      //   method: RequestMethod.GET,
-      // },
-      // {
-      //   path: "animal/getAnimals",
-      //   method: RequestMethod.GET,
-      // },
-      ();
+    consumer.apply(JWTMiddleware).forRoutes();
   }
 }

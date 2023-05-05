@@ -1,21 +1,20 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNumber } from "class-validator";
 
-export class SubscriptionDto {
+export class BuySubscriptionDto {
   @IsNumber()
   user_id: number;
 
   @IsNumber()
-  subscription_id: number;
-
-  @IsString()
-  subscription_start_date: string;
-
-  @IsString()
-  subscription_end_date: string;
+  amount: number;
 
   @IsNumber()
-  Amount_paid: number;
+  order_id: number;
+}
 
-  @IsString()
-  subscription_status: string;
+export class GetUserSubscriptionQueries {
+  @IsNumber()
+  user_id: number;
+
+  @IsBoolean()
+  is_active: boolean;
 }

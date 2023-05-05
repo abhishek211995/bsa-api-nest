@@ -1,23 +1,16 @@
-import {
-  ConflictException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from "@nestjs/common";
+import { ConflictException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import * as jwt from "jsonwebtoken";
-import { Bcrypt } from "src/lib/bcrypt/bcrypt.util";
-import { Repository } from "typeorm";
-import { CreateUserDto, IndividualUserDto, LoginUserDto } from "./users.dto";
-import { BreUser, UserStatus } from "./users.entity";
-import { BreederService } from "../breeder/breeder.service";
-import { BreederDto } from "../breeder/breeder.dto";
-import { S3Service } from "src/lib/s3multer/s3.service";
-import { fileFilter } from "src/utils/fileFilter.util";
-import { BreederFarmService } from "../breederFarm/breederFarm.service";
 import { ServiceException } from "src/exception/base-exception";
+import { Bcrypt } from "src/lib/bcrypt/bcrypt.util";
 import { EmailService } from "src/lib/mail/mail.service";
+import { S3Service } from "src/lib/s3multer/s3.service";
 import { BreRoleMaster } from "src/master/master.entity";
+import { fileFilter } from "src/utils/fileFilter.util";
+import { Repository } from "typeorm";
+import { BreederService } from "../breeder/breeder.service";
+import { IndividualUserDto, LoginUserDto } from "./users.dto";
+import { BreUser, UserStatus } from "./users.entity";
 @Injectable()
 export class UsersService {
   constructor(
@@ -28,66 +21,68 @@ export class UsersService {
     private readonly breBreederService: BreederService,
     private bcryptService: Bcrypt,
     private readonly s3Service: S3Service,
-    private readonly breederFarmService: BreederFarmService,
     private readonly emailService: EmailService,
   ) {}
 
-  async createUser(
-    createUserDto: CreateUserDto,
-    files: Array<Express.Multer.File>,
-  ) {
-    try {
-      const password = await this.bcryptService.hashPassword(
-        createUserDto.password,
-      );
+  // for breeder => deprecated
+  // async createUser(
+  //   createUserDto: CreateUserDto,
+  //   files: Array<Express.Multer.File>,
+  // ) {
+  //   try {
+  //     const password = await this.bcryptService.hashPassword(
+  //       createUserDto.password,
+  //     );
 
-      const newUser = this.breUsersRepository.create({
-        ...createUserDto,
-        password,
-      });
+  //     const newUser = this.breUsersRepository.create({
+  //       ...createUserDto,
+  //       password,
+  //     });
 
-      const user = await this.breUsersRepository.save(newUser);
+  //     const user = await this.breUsersRepository.save(newUser);
 
-      const identity_doc = fileFilter(files, "identity_doc_name")[0];
+  //     const identity_doc = fileFilter(files, "identity_doc_name")[0];
 
-      const uploadData = await this.s3Service.uploadSingle(
-        identity_doc,
-        user.user_name,
-      );
+  //     const uploadData = await this.s3Service.uploadSingle(
+  //       identity_doc,
+  //       user.user_name,
+  //     );
 
-      const updateUser = await this.updateUserDoc(
-        newUser.id,
-        identity_doc.originalname,
-      );
+  //     const updateUser = await this.updateUserDoc(
+  //       newUser.id,
+  //       identity_doc.originalname,
+  //     );
 
-      const breeder = new BreederDto();
-      breeder.breeder_license_no = createUserDto.breeder_license_no;
-      breeder.breeder_license_expiry_date =
-        createUserDto.breeder_license_expiry_date;
-      breeder.farm_address = createUserDto.farm_address;
-      breeder.farm_name = createUserDto.farm_name;
-      const breederDetails = await this.breBreederService.createBreeder(
-        breeder,
-        updateUser,
-        files,
-      );
-      if (breederDetails) {
-        const newFarm = await this.breederFarmService.createBreederFarm({
-          breeder_id: breederDetails.breeder.breeder_id,
-          farm_id: createUserDto.farm_id,
-        });
-        if (newFarm)
-          console.log(
-            "Breeder farm relation created for user id",
-            user.id,
-            newFarm,
-          );
-      }
-      return { user, breederDetails };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     const breeder = new BreederDto();
+  //     breeder.breeder_license_no = createUserDto.breeder_license_no;
+  //     breeder.breeder_license_expiry_date =
+  //       createUserDto.breeder_license_expiry_date;
+  //     breeder.farm_address = createUserDto.farm_address;
+  //     breeder.farm_name = createUserDto.farm_name;
+  //     const breederDetails = await this.breBreederService.createBreeder(
+  //       breeder,
+  //       updateUser,
+  //       files,
+  //     );
+  //     if (breederDetails) {
+  //       const newFarm = await this.breederFarmService.createBreederFarm({
+  //         breeder_id: breederDetails.breeder.breeder_id,
+  //         farm_id: createUserDto.farm_id,
+  //       });
+  //       if (newFarm)
+  //         console.log(
+  //           "Breeder farm relation created for user id",
+  //           user.id,
+  //           newFarm,
+  //         );
+  //     }
+  //     return { user, breederDetails };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
+  // generic
   async createIndividualUser(
     individualUser: IndividualUserDto,
     files: Array<Express.Multer.File>,
@@ -120,6 +115,10 @@ export class UsersService {
         newUser.id,
         identity_doc_name.originalname,
       );
+
+      if (savedUser.user_role_id === 1) {
+        await this.breBreederService.createBreeder(savedUser.id);
+      }
 
       return { user };
     } catch (error) {

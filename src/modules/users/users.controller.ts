@@ -29,22 +29,23 @@ dotenv.config();
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post("register")
-  @HttpCode(200)
-  @UsePipes(ValidationPipe)
-  @UseInterceptors(AnyFilesInterceptor())
-  async createUser(
-    @UploadedFiles() files: Array<Express.Multer.File>,
-    @Body() createUserDto: CreateUserDto,
-  ) {
-    try {
-      const res = await this.usersService.createUser(createUserDto, files);
+  // @Post("register")
+  // @HttpCode(200)
+  // @UsePipes(ValidationPipe)
+  // @UseInterceptors(AnyFilesInterceptor())
+  // async createUser(
+  //   @UploadedFiles() files: Array<Express.Multer.File>,
+  //   @Body() createUserDto: CreateUserDto,
+  // ) {
+  //   try {
+  //     const res = await this.usersService.createUser(createUserDto, files);
 
-      return { ...res };
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return { ...res };
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
+
   @Post("individual")
   @UsePipes(ValidationPipe)
   @UseInterceptors(AnyFilesInterceptor())

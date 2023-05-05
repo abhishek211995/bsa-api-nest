@@ -1,20 +1,16 @@
-import { Body, Controller, Get, Param, Post } from "@nestjs/common";
+import { Controller, Get, Param } from "@nestjs/common";
 import { BreederService } from "./breeder.service";
-import { CreateBreederDto } from "./breeder.dto";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
 @Controller("breeder")
 export class BreederController {
   constructor(private readonly breederService: BreederService) {}
 
   @Get("getBreeder/:user_id")
-  async getBreeder(@Param("user_id") user_id: string) {
+  async getBreeder(@Param("user_id") user_id: number) {
     try {
       const res = await this.breederService.getBreeder(user_id);
-      return {
-        status: 200,
-        data: res,
-        message: "Breeder Found Successfully!",
-      };
+      makeHTTPResponse(res);
     } catch (err) {
       throw err;
     }
@@ -31,14 +27,6 @@ export class BreederController {
       };
     } catch (err) {
       throw err;
-    }
-  }
-
-  @Post("new")
-  async createBreeder(@Body() body: CreateBreederDto) {
-    try {
-    } catch (error) {
-      throw error;
     }
   }
 }
