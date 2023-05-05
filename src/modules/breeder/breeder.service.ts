@@ -68,29 +68,29 @@ export class BreederService {
     try {
       const breeder = await this.breederRepository.findOne({
         where: { user_id: user_id },
-        relations: ["user"],
+        // relations: ["user"],
       });
 
-      let convertBreeder: BreBreeder & {
-        user_status_info: string;
-        idDoc: string;
-        licenseDoc: string;
-      } = {
-        ...breeder,
-        user_status_info: UserStatus[breeder.user.user_status],
-        idDoc: "",
-        licenseDoc: "",
-      };
+      // let convertBreeder: BreBreeder & {
+      //   user_status_info: string;
+      //   idDoc: string;
+      //   licenseDoc: string;
+      // } = {
+      //   ...breeder,
+      //   user_status_info: UserStatus[breeder.user.user_status],
+      //   idDoc: "",
+      //   licenseDoc: "",
+      // };
 
-      const licenseDoc = await this.s3Service.getLink(
-        `${breeder.user.user_name}/${breeder.breeder_license_doc_name}`,
-      );
-      const idDoc = await this.s3Service.getLink(
-        `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
-      );
+      // const licenseDoc = await this.s3Service.getLink(
+      //   `${breeder.user.user_name}/${breeder.breeder_license_doc_name}`,
+      // );
+      // const idDoc = await this.s3Service.getLink(
+      //   `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
+      // );
 
-      convertBreeder = { ...convertBreeder, idDoc, licenseDoc };
-      return convertBreeder;
+      // convertBreeder = { ...convertBreeder, idDoc, licenseDoc };
+      return breeder;
     } catch (err) {
       throw err;
     }
