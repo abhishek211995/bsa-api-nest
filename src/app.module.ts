@@ -33,6 +33,8 @@ import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entit
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { BreOrders } from "./modules/orders/orders.entity";
+import { OrdersModule } from "./modules/orders/orders.module";
 
 @Module({
   imports: [
@@ -60,6 +62,7 @@ import { UsersModule } from "./modules/users/users.module";
           BreBreederFarm,
           BreLitterRegistration,
           BreOtpMapping,
+          BreOrders,
         ],
         synchronize: true,
       }),
@@ -77,6 +80,7 @@ import { UsersModule } from "./modules/users/users.module";
     EmailModule,
     S3Module,
     BreederFarm,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
