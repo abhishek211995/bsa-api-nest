@@ -54,7 +54,7 @@ export class BreederService {
       const breeder = await this.breederRepository.findOne({
         where: { breeder_id: breeder_id },
       });
-      breeder.breeder_license_doc_name = doc_name;
+      // breeder.breeder_license_doc_name = doc_name;
       const updatedBreeder = await this.breederRepository.save(breeder);
       return updatedBreeder;
     } catch (err) {
@@ -64,16 +64,19 @@ export class BreederService {
 
   async getBreeder(user_id: number) {
     try {
+      console.log("Hi");
+
       const breeder = await this.breederRepository.findOne({
         where: { user_id },
         relations: { user: true },
       });
+
       const farms = await this.breederFarmService.getBreederFarms(
         breeder.breeder_id,
         breeder.user.user_name,
       );
 
-      return { ...breeder, farms };
+      return { breeder, farms };
     } catch (err) {
       throw err;
     }

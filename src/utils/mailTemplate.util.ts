@@ -100,3 +100,58 @@ export const welcomeEmail = (userName: string, link: string) => `
   </body>
 </html>
 `;
+
+export const litterRegistrationRequest = (
+  sireOwner: string,
+  sireName: string,
+  litterName: string,
+  damOwner: string,
+  link: string,
+) => `
+  <!DOCTYPE html>
+  <html lang="en">
+  <head>
+	  <meta charset="UTF-8">
+	  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+	  <title>Litter Sire Confirmation Request Received</title>
+	  <style>
+		  body {
+			  font-family: Arial, sans-serif;
+			  font-size: 16px;
+			  line-height: 1.5;
+			  margin: 0;
+			  padding: 0;
+			  background-color: #f1f1f1;
+		  }
+		  .container {
+			  max-width: 600px;
+			  margin: 0 auto;
+			  padding: 20px;
+			  background-color: #ffffff;
+		  }
+		  h1 {
+			  margin: 0 0 20px;
+		  }
+		  p {
+			  margin: 0 0 10px;
+		  }
+		  a {
+			  color: #0066cc;
+			  text-decoration: none;
+		  }
+	  </style>
+  </head>
+  <body>
+	  <div class="container">
+		  <h1>Litter Sire Confirmation Request Received</h1>
+		  <p>Dear ${sireOwner},</p>
+		  <p>We have received sire confirmation request for animal ${sireName} from ${damOwner} for litter ${litterName} and it is currently being processed.</p>
+		  <p>Here is your sire confirmation link for more details and further action: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Sire</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
+		  <p>Thank you for using our service.</p>
+		  <p>Best regards,</p>
+		  <p>Breeders Association</p>
+	  </div>
+  </body>
+  </html>
+  
+  `;

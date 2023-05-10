@@ -42,7 +42,7 @@ export class BreBreederFarm {
   farm_address: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 50, default: "", unique: true })
   license_no: string;
 
   @ApiProperty()

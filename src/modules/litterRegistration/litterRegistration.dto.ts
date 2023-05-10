@@ -33,6 +33,10 @@ export class LitterRegistrationBody {
 
   @ApiProperty()
   @IsString()
+  mating_date: string;
+
+  @ApiProperty()
+  @IsString()
   owner_id: string; // id of dam owner
 
   @ApiProperty()
@@ -41,15 +45,15 @@ export class LitterRegistrationBody {
 
   @ApiProperty()
   @IsString()
+  sire_owner_id: string; // id of sire owner
+
+  @ApiProperty()
+  @IsString()
   meeting_date: string;
 
   @ApiProperty()
   @IsString()
   meeting_time: string;
-
-  @ApiProperty()
-  @IsString()
-  otp: string;
 }
 
 export class ApproveLitterBody {
