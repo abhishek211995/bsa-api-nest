@@ -74,7 +74,6 @@ export class LitterRegistrationService {
         const message = litterRegistrationRequest(
           getLitter.owner.user_name,
           getLitter.sire_owner.user_name,
-          getLitter.litters[0].litterName,
           sire.animal_name,
           link,
         );

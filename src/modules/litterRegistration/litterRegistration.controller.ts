@@ -84,7 +84,7 @@ export class LitterRegistrationController {
   @ApiOperation({
     summary: "Sire Request for approval",
   })
-  @Get("/sireLitterApproval/:id")
+  @Get("/litterDetails/:id")
   async sireLitterApproval(@Param("id") id: number) {
     try {
       const data = await this.litterService.getLitterDetailsById(id);
