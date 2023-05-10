@@ -171,13 +171,14 @@ export class UsersController {
     }
   }
 
-  @Get("getOTP")
-  async getOTP(@Query("email") email: string) {
-    try {
-      const res = await this.usersService.getOTP(email);
-      return makeHTTPResponse(res, HttpStatus.OK, "OTP sent successfully");
-    } catch (error) {
-      throw error;
-    }
-  }
+  //! get otp api is not used anymore
+  // @Get("getOTP")
+  // async getOTP(@Query("email") email: string) {
+  //   try {
+  //     const res = await this.usersService.getOTP(email);
+  //     return makeHTTPResponse(res, HttpStatus.OK, "OTP sent successfully");
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 }
