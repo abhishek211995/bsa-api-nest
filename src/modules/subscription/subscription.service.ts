@@ -6,9 +6,11 @@ import {
   BuySubscriptionDto,
   GetUserSubscriptionQueries,
 } from "./subscription.dto";
+import { InjectRepository } from "@nestjs/typeorm";
 @Injectable()
 export class SubscriptionService {
   constructor(
+    @InjectRepository(BreUserSubscription)
     private readonly subscriptionRepository: Repository<BreUserSubscription>,
   ) {}
 

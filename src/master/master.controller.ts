@@ -1,13 +1,12 @@
 import { Body, Controller, Get, Post } from "@nestjs/common";
 import { Delete, Param, Put } from "@nestjs/common/decorators";
+import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import {
   CostsServices,
   FarmTypeServices,
   RoleServices,
-  SubscriptionServices,
 } from "./master.service";
-import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
 @Controller("master")
 export class MasterController {
@@ -16,7 +15,6 @@ export class MasterController {
     private readonly roleServices: RoleServices,
     private readonly farmTypeServices: FarmTypeServices,
     private readonly costsServices: CostsServices,
-    private readonly subscriptionServices: SubscriptionServices,
   ) {}
 
   // Add Roles
@@ -216,54 +214,6 @@ export class MasterController {
     }
   }
 
-  @Post("addSubscription")
-  async addSubscription(@Body() subscriptionDto: SubscriptionDto) {
-    try {
-      const subscription = await this.subscriptionServices.addSubscription(
-        subscriptionDto,
-      );
-      if (subscription) {
-        return {
-          status: 200,
-          message: "Subscription added successfully",
-        };
-      } else {
-        return {
-          status: 400,
-          message: "Error in adding subscription",
-        };
-      }
-    } catch (error) {
-      return {
-        status: 500,
-        message: error.message,
-      };
-    }
-  }
-
-  @Get("getAllSubscriptions")
-  async getAllSubscriptions() {
-    try {
-      const subscriptions = await this.subscriptionServices.getSubscriptions();
-      if (subscriptions) {
-        return {
-          status: 200,
-          message: "Subscriptions fetched successfully",
-          data: subscriptions,
-        };
-      } else {
-        return {
-          status: 400,
-          message: "No subscriptions found",
-        };
-      }
-    } catch (error) {
-      return {
-        status: 500,
-        message: error.message,
-      };
-    }
-  }
   @Delete("farmtype/:id")
   async deleteFarmType(@Param("id") id: number) {
     try {

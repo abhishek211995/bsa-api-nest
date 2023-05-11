@@ -2,12 +2,7 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
-import {
-  BreCostsMaster,
-  BreFarmMaster,
-  BreRoleMaster,
-  BreSubscriptionsMaster,
-} from "./master.entity";
+import { BreCostsMaster, BreFarmMaster, BreRoleMaster } from "./master.entity";
 
 @Injectable()
 export class RoleServices {
@@ -91,6 +86,7 @@ export class CostsServices {
   getCosts() {
     return this.breCostsMasterRepository.find({ where: { is_deleted: false } });
   }
+
   getCostById(param: any) {
     const { id } = param;
     return this.breCostsMasterRepository.find({
@@ -101,6 +97,7 @@ export class CostsServices {
   updateCosts(id: number, costsDto: CostsDto) {
     return this.breCostsMasterRepository.update(id, costsDto);
   }
+
   async deleteCost(id: number) {
     const res = await this.breCostsMasterRepository.update(
       {
@@ -112,23 +109,5 @@ export class CostsServices {
     );
 
     return res;
-  }
-}
-
-@Injectable()
-export class SubscriptionServices {
-  constructor(
-    @InjectRepository(BreSubscriptionsMaster)
-    private readonly breSubscriptionMasterRepository: Repository<BreSubscriptionsMaster>,
-  ) {}
-
-  addSubscription(subscriptionDto: SubscriptionDto) {
-    const subscription =
-      this.breSubscriptionMasterRepository.create(subscriptionDto);
-    return this.breSubscriptionMasterRepository.save(subscription);
-  }
-
-  getSubscriptions() {
-    return this.breSubscriptionMasterRepository.find();
   }
 }

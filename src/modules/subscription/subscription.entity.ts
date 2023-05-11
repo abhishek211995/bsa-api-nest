@@ -44,11 +44,11 @@ export class BreUserSubscription {
   subscription_updated_at: Date;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: 0 })
+  @Column({ nullable: false, default: 0 })
   amount_paid: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
+  @Column({ nullable: false, default: true })
   subscription_active: boolean;
 
   @ApiProperty()

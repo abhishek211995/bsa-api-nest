@@ -9,7 +9,6 @@ import {
   BreCostsMaster,
   BreFarmMaster,
   BreRoleMaster,
-  BreSubscriptionsMaster,
 } from "./master/master.entity";
 import { MasterModule } from "./master/master.module";
 import { JWTMiddleware } from "./middleware/jwt/jwt.middleware";
@@ -31,6 +30,8 @@ import {
 import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
 import { BreOrders } from "./modules/orders/orders.entity";
 import { OrdersModule } from "./modules/orders/orders.module";
+import { BreUserSubscription } from "./modules/subscription/subscription.entity";
+import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entity";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
@@ -56,13 +57,13 @@ import { UsersModule } from "./modules/users/users.module";
           BreAnimalBreedMaster,
           BreAnimal,
           BreCostsMaster,
-          BreSubscriptionsMaster,
           BreRoleMaster,
           BreTransferOwnerRequest,
           BreBreederFarm,
           BreLitterRegistration,
           BreOtpMapping,
           BreOrders,
+          BreUserSubscription,
         ],
         synchronize: true,
       }),
@@ -81,6 +82,7 @@ import { UsersModule } from "./modules/users/users.module";
     S3Module,
     BreederFarmModule,
     OrdersModule,
+    SubscriptionModule,
   ],
   controllers: [AppController],
   providers: [AppService],

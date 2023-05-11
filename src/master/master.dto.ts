@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsNumber, IsString } from "class-validator";
 
 export class RoleDto {
   @IsString()
@@ -25,6 +25,12 @@ export class CostsDto {
 
   @IsString()
   description: string;
+
+  @IsNumber()
+  tax: number;
+
+  @IsNumber()
+  delivery_fee: number;
 }
 
 export class SubscriptionDto {
