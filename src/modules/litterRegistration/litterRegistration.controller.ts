@@ -24,41 +24,6 @@ export class LitterRegistrationController {
   }
 
   @ApiOperation({
-    summary: "Send OTP to sire owner",
-  })
-  @Post("/sendOtp")
-  async sendOtpToSireOwner(
-    @Query("sire_owner_id") sire_owner_id: number,
-    @Query("req_username") req_username: string,
-  ) {
-    try {
-      const result = await this.litterService.sendOtpToSireOwner(
-        sire_owner_id,
-        req_username,
-      );
-      return makeHTTPResponse(result);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @ApiOperation({
-    summary: "Verify OTP of sire owner",
-  })
-  @Post("/verifyOtp")
-  async verifyOtp(
-    @Query("sire_owner_id") user_id: number,
-    @Query("req_username") otp: number,
-  ) {
-    try {
-      const result = await this.litterService.verifyOtp(user_id, otp);
-      return makeHTTPResponse(result);
-    } catch (error) {
-      throw error;
-    }
-  }
-
-  @ApiOperation({
     summary: "Get list of registered litters",
   })
   @Get()
@@ -108,6 +73,57 @@ export class LitterRegistrationController {
     try {
       const result = await this.litterService.rejectLitter(
         body.id,
+        body.remarks,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Sire Request for approval",
+  })
+  @Get("/litterDetails/:id")
+  async sireLitterApproval(@Param("id") id: number) {
+    try {
+      const data = await this.litterService.getLitterDetailsById(id);
+      return makeHTTPResponse(
+        data,
+        200,
+        "Litter details fetched successfully!",
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Sire Approval",
+  })
+  @Post("/sire-approve")
+  async sireApproval(@Body() id: number, remarks: Array<{ message: string }>) {
+    try {
+      const result = await this.litterService.sireApproval(id, remarks);
+      return makeHTTPResponse(
+        result,
+        200,
+        "Litter Approved by sire owner Successfully!",
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Sire Reject the litter",
+  })
+  @Post("/sire-reject")
+  async sireRejectLitter(@Body() body) {
+    try {
+      const result = await this.litterService.sireRejection(
+        body.id,
+        body.remark,
         body.remarks,
       );
       return makeHTTPResponse(result);

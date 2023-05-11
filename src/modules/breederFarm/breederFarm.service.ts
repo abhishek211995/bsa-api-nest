@@ -84,20 +84,23 @@ export class BreederFarmService {
         license_expiry_date: data.license_expiry_date,
         license_no: data.license_no,
       });
-
       const logo = fileFilter(files, "logo")[0];
-      await this.s3Service.uploadSingle(logo, user.user_name);
+      const license_doc_name = fileFilter(files, "license_doc_name")[0];
+      await this.s3Service.uploadMultiple(files, user.user_name);
 
       await this.breederFarmRepository.update(
         { breeder_id: data.breeder_id },
-        { logo },
+        {
+          logo: logo.originalname,
+          license_doc_name: license_doc_name.originalname,
+        },
       );
 
       return breederFarm;
     } catch (error) {
-      console.log("error while adding breeder farm", error);
+      console.log("error while adding breeder farm", error.message);
       throw new ServiceException({
-        message: "Failed to add farm",
+        message: error?.message ?? "Failed to add farm",
         serviceErrorCode: "BFS",
       });
     }

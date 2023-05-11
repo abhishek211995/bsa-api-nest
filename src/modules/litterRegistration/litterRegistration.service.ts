@@ -4,7 +4,10 @@ import { litterSireVerification } from "src/constants/otp.reasons.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
 import { generateOtp } from "src/utils/generateOtp";
-import { sireOwnerVerificationEmail } from "src/utils/mailTemplate.util";
+import {
+  litterRegistrationRequest,
+  sireOwnerVerificationEmail,
+} from "src/utils/mailTemplate.util";
 import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
@@ -40,7 +43,8 @@ export class LitterRegistrationService {
         sire_id: body.sire_id,
         dam_id: body.dam_id,
         owner_id: body.owner_id,
-        otp: body.otp,
+        sire_owner_id: body.sire_owner_id,
+        mating_date: body.mating_date,
         completed: false,
         remarks: [
           {
@@ -54,8 +58,38 @@ export class LitterRegistrationService {
       const registration = await this.litterRegistrationRepository.save(
         payload,
       );
+      const getLitter = await this.litterRegistrationRepository.findOne({
+        where: { id: registration.id },
+        relations: ["owner", "sire_owner"],
+      });
 
-      return registration;
+      const sire = await this.animalRepository.findOne({
+        where: { animal_id: getLitter.sire_id },
+      });
+
+      const link = `http://localhost:3000/litterRegistration/${getLitter.id}`;
+      console.log("Link created");
+
+      if (getLitter) {
+        const message = litterRegistrationRequest(
+          getLitter.owner.user_name,
+          getLitter.sire_owner.user_name,
+          sire.animal_name,
+          link,
+        );
+        console.log("Message created");
+        console.log("Mail", getLitter.sire_owner.email);
+
+        await this.mailService.sendMail(
+          getLitter.sire_owner.email,
+          "Sire Confirmation Request Received",
+          message,
+        );
+        console.log("Mail sent");
+      }
+      console.log("Returning litter");
+
+      return getLitter;
     } catch (error) {
       throw error instanceof ServiceException
         ? error
@@ -63,91 +97,6 @@ export class LitterRegistrationService {
             message: error?.message ?? "Failed to add litter",
             serviceErrorCode: "LRS-100",
           });
-    }
-  }
-
-  async sendOtpToSireOwner(sire_owner_id: number, req_username: string) {
-    try {
-      const user = await this.userService.getUserById(sire_owner_id);
-      const otp = generateOtp();
-      const message = sireOwnerVerificationEmail(
-        user.user_name,
-        otp,
-        req_username,
-      );
-      const currentDate = new Date();
-      // Add 30 minutes
-      currentDate.setMinutes(currentDate.getMinutes() + 30);
-
-      await this.otpRepository.insert([
-        {
-          otp,
-          reason: litterSireVerification,
-          user_id: user.id,
-          validity: currentDate,
-        },
-      ]);
-      await this.mailService.sendMail(
-        user.email,
-        "Litter Registration Verification",
-        message,
-      );
-
-      return otp;
-    } catch (error) {
-      throw error instanceof ServiceException
-        ? error
-        : new ServiceException({
-            message: error?.message ?? "Failed to send otp to sire owner",
-            serviceErrorCode: "LRS-100",
-          });
-    }
-  }
-
-  async verifyOtp(user_id: number, otp: number) {
-    try {
-      const existingOtp = await this.otpRepository.findOne({
-        where: { user_id, reason: litterSireVerification },
-      });
-
-      if (!existingOtp) {
-        throw new ServiceException({
-          message: "OTP not found",
-          serviceErrorCode: "LRS-104",
-          httpStatusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-
-      if (new Date() > existingOtp.validity) {
-        throw new ServiceException({
-          message: "OTP expired",
-          serviceErrorCode: "LRS-104",
-          httpStatusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-
-      if (otp !== existingOtp.otp) {
-        throw new ServiceException({
-          message: "Invalid OTP",
-          serviceErrorCode: "LRS-104",
-          httpStatusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
-
-      if (otp === existingOtp.otp) {
-        await this.otpRepository.update(
-          { id: existingOtp.id },
-          { verified: true },
-        );
-
-        return existingOtp;
-      }
-    } catch (error) {
-      throw new ServiceException({
-        message: "OTP not found",
-        serviceErrorCode: "LRS-104",
-        httpStatusCode: HttpStatus.BAD_REQUEST,
-      });
     }
   }
 
@@ -262,6 +211,42 @@ export class LitterRegistrationService {
       console.log("Failed to reject litter", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to reject litter",
+        serviceErrorCode: "LRS",
+      });
+    }
+  }
+
+  async sireApproval(id: number, remarks: Array<{ message: string }>) {
+    try {
+      console.log("id", id);
+
+      await this.litterRegistrationRepository.update(
+        { id },
+        { sire_approval: true, remarks },
+      );
+      return true;
+    } catch (error) {
+      return new ServiceException({
+        message: error?.message ?? "Failed to approve litter from sire owner",
+        serviceErrorCode: "LRS",
+      });
+    }
+  }
+
+  async sireRejection(
+    id: number,
+    remark: string,
+    remarks: Array<{ message: string }>,
+  ) {
+    try {
+      await this.litterRegistrationRepository.update(
+        { id },
+        { sire_approval: false, sire_rejection_reason: remark, remarks },
+      );
+      return true;
+    } catch (error) {
+      return new ServiceException({
+        message: error?.message ?? "Failed to reject litter from sire owner",
         serviceErrorCode: "LRS",
       });
     }

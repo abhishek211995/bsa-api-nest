@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from "@nestjs/common";
+import { Controller, Get, Param, Query } from "@nestjs/common";
 import { BreederService } from "./breeder.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
@@ -6,11 +6,11 @@ import { makeHTTPResponse } from "src/utils/httpResponse.util";
 export class BreederController {
   constructor(private readonly breederService: BreederService) {}
 
-  @Get("getBreeder/:user_id")
-  async getBreeder(@Param("user_id") user_id: number) {
+  @Get("getBreeder")
+  async getBreeder(@Query("user_id") user_id: number) {
     try {
       const res = await this.breederService.getBreeder(user_id);
-      makeHTTPResponse(res);
+      return makeHTTPResponse(res, 200, "Breeder Found Successfully!");
     } catch (err) {
       throw err;
     }

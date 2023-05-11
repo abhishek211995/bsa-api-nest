@@ -17,6 +17,18 @@ export class BreBreeder {
   breeder_id: number;
 
   @ApiProperty()
+  @Column({ nullable: true, length: 50, default: "" })
+  breeder_license_no: string;
+
+  @ApiProperty()
+  @Column({ nullable: true, length: 50 })
+  breeder_license_doc_name: string;
+
+  @ApiProperty()
+  @Column({ type: "date", nullable: true })
+  breeder_license_expiry_date: Date;
+
+  @ApiProperty()
   @Column({ nullable: false })
   user_id: number;
 

@@ -116,7 +116,7 @@ export class UsersService {
         identity_doc_name.originalname,
       );
 
-      if (savedUser.user_role_id === 1) {
+      if (Number(savedUser.user_role_id) === 1) {
         await this.breBreederService.createBreeder(savedUser.id);
       }
 
@@ -259,23 +259,23 @@ export class UsersService {
       throw error;
     }
   }
-
-  async getOTP(email: string) {
-    try {
-      const otp = Math.floor(1000 + Math.random() * 9000);
-      // Send OTP to email
-      await this.emailService.sendMail(
-        email,
-        "OTP for login",
-        `Your OTP is ${otp}`,
-      );
-      return otp;
-    } catch (error) {
-      throw new ServiceException({
-        message: error?.message ?? "Error while creating OTP",
-        serviceErrorCode: "US-500",
-        httpStatusCode: 400,
-      });
-    }
-  }
+  //! Get OTP is not used anywhere
+  // async getOTP(email: string) {
+  //   try {
+  //     const otp = Math.floor(1000 + Math.random() * 9000);
+  //     // Send OTP to email
+  //     await this.emailService.sendMail(
+  //       email,
+  //       "OTP for login",
+  //       `Your OTP is ${otp}`,
+  //     );
+  //     return otp;
+  //   } catch (error) {
+  //     throw new ServiceException({
+  //       message: error?.message ?? "Error while creating OTP",
+  //       serviceErrorCode: "US-500",
+  //       httpStatusCode: 400,
+  //     });
+  //   }
+  // }
 }

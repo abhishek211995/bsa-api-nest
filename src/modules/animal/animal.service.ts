@@ -88,10 +88,24 @@ export class AnimalService {
         relations: ["animal_breed_id", "animal_type_id", "animal_owner_id"],
       });
 
-      data = data.filter(
-        // @ts-expect-error typing issue from entity
-        (a) => a.animal_owner_id.id === Number(animal_owner_id),
-      );
+      if (animal_owner_id) {
+        data = data.filter((item) => {
+          return (
+            // @ts-expect-error
+            item.animal_owner_id.id == animal_owner_id
+          );
+        });
+      }
+
+      if (animal_type_id) {
+        data = data.filter((item) => {
+          return (
+            // @ts-expect-error
+            item.animal_type_id.animal_type_id == animal_type_id
+          );
+        });
+      }
+
       return data;
     } catch (error) {
       console.log("error while fetching animal", error);

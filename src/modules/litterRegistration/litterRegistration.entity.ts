@@ -11,6 +11,7 @@ import {
 import { BreUser } from "../users/users.entity";
 import { BreAnimal } from "../animal/animal.entity";
 import { IsString } from "class-validator";
+import { type } from "os";
 
 @Entity("bre_litter_registration")
 export class BreLitterRegistration {
@@ -53,6 +54,10 @@ export class BreLitterRegistration {
   dam: BreAnimal;
 
   @ApiProperty()
+  @Column({ type: "date" })
+  mating_date: string;
+
+  @ApiProperty()
   @Column()
   owner_id: string;
 
@@ -62,12 +67,29 @@ export class BreLitterRegistration {
   owner: BreUser;
 
   @ApiProperty()
-  @Column({ default: false })
-  completed: boolean;
+  @Column()
+  sire_owner_id: string;
+
+  @ApiProperty()
+  @JoinColumn({ name: "sire_owner_id" })
+  @ManyToOne(() => BreUser)
+  sire_owner: BreUser;
 
   @ApiProperty()
   @Column({ type: "json" })
   remarks: { message: string; user_name: string }[];
+
+  @ApiProperty()
+  @Column({ default: false })
+  sire_approval: boolean; // 1 for approved, 0 for pending/declined depending on sire_rejection_reason
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  sire_rejection_reason: string; // if string then sire rejected a litter
+
+  @ApiProperty()
+  @Column({ default: false })
+  completed: boolean;
 
   @ApiProperty()
   @CreateDateColumn()
@@ -76,10 +98,6 @@ export class BreLitterRegistration {
   @ApiProperty()
   @UpdateDateColumn()
   updated_at: Date;
-
-  @ApiProperty()
-  @IsString()
-  otp: string;
 }
 
 @Entity("bre_otp_mapping")
