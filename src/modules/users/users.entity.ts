@@ -60,6 +60,10 @@ export class BreUser {
   identity_doc_name: string;
 
   @ApiProperty()
+  @Column({ nullable: false, length: 250 })
+  user_address: string;
+
+  @ApiProperty()
   @CreateDateColumn()
   user_created_at: Date;
 

@@ -20,6 +20,7 @@ export class BreederFarmService {
     private readonly s3Service: S3Service, // private readonly userService: UsersService,
   ) {}
 
+  // deprecated
   async createBreederFarm(breederFarmDto: BreederFarmDto) {
     try {
       const farmIds = JSON.parse(breederFarmDto.farm_id) as number[];
@@ -42,6 +43,7 @@ export class BreederFarmService {
     }
   }
 
+  // deprecated
   upsertFarmRelations(data: { farm_id: number; breeder_id: number }[]) {
     try {
       return async function (queryRunner: QueryRunner): Promise<InsertResult> {
