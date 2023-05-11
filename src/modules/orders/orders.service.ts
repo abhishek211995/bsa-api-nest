@@ -22,14 +22,13 @@ export class OrdersService {
       const razorpayOrder = await this.razorpay.orders.create({
         amount: body.amount * 100,
         currency: "INR",
-        receipt: "rec",
+        receipt: "rec", // TODO: generate receipt function needs to be added here
       });
-      console.log("razorpayOrder", razorpayOrder);
+
       const payload = { ...body, order_id: razorpayOrder.id, receipt: "rec" };
       let order = this.orderRepository.create(payload);
 
       order = await this.orderRepository.save(payload);
-      console.log("new order", order);
 
       return { razorpay_order: razorpayOrder, order: order };
     } catch (error) {
@@ -81,6 +80,7 @@ export class OrdersService {
 
         return { res };
       } else {
+        // TODO: update order as failed
         throw new ServiceException({
           message: "Failed to Verify Signature",
           serviceErrorCode: "OS",

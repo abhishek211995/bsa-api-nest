@@ -25,6 +25,7 @@ export class AnimalService {
     private readonly s3Service: S3Service,
   ) {}
 
+  // single animal
   async createAnimal(animalDto: AnimalDto, files: Array<Express.Multer.File>) {
     const animalCount = await this.animalRepository.count();
     animalDto.animal_registration_number = generateRegNo(
@@ -144,6 +145,7 @@ export class AnimalService {
     return this.animalRepository.save(animal);
   }
 
+  // animal with pedigree
   async createAnimalWithPedigree(
     payload: AnimalWithPedigreePayload,
     files: Array<Express.Multer.File>,
@@ -167,7 +169,7 @@ export class AnimalService {
         animalData.colorMarking,
         new Date(animalData.dob),
         animalData.microchip,
-        "reg_doc",
+        "",
         animalRegistrationSource.registration,
       );
 
