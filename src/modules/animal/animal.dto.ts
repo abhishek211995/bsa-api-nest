@@ -47,6 +47,12 @@ export class AnimalDto {
 
   @IsString()
   animal_dam_id: string;
+
+  @IsString()
+  animal_dna_doc: string;
+
+  @IsString()
+  animal_hded_doc: string;
 }
 
 export class AnimalDataDto {
@@ -191,7 +197,7 @@ export class CreateAnimalDto {
     this.animal_date_of_birth = animal_date_of_birth;
     this.animal_microchip_id = animal_microchip_id;
     this.animal_registration_doc = animal_registration_doc;
-    this.registration_source = animalRegistrationSource.registration;
+    this.registration_source = registration_source;
   }
 
   @IsString()

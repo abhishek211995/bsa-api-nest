@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { litterSireVerification } from "src/constants/otp.reasons.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
-import { generateOtp } from "src/utils/generateOtp";
 import {
   litterRegistrationRequest,
   sireOwnerVerificationEmail,

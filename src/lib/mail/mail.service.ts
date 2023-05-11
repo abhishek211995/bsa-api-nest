@@ -26,8 +26,10 @@ export class EmailService {
       subject,
       html: message,
     };
-    const result = await this.transporter.sendMail(mailOptions);
+    console.log(mailOptions, "mailOptions");
 
+    const result = await this.transporter.sendMail(mailOptions);
+    console.log("result", result);
     return result;
   }
 }

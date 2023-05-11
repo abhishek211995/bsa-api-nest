@@ -41,20 +41,39 @@ export class AnimalService {
         files,
         animal.animal_registration_number,
       );
+      const animal_front = fileFilter(files, "animal_front_view_image")[0]
+        .originalname;
+      const animal_left = fileFilter(files, "animal_left_view_image")[0]
+        .originalname;
+      const animal_right = fileFilter(files, "animal_right_view_image")[0]
+        .originalname;
       if (uploadData) {
-        const updateDoc = await this.updateAnimalDocDetails({
-          animal_id: animal.animal_id,
-          animal_front_view_image: fileFilter(
-            files,
-            "animal_front_view_image",
-          )[0].originalname,
-          animal_left_view_image: fileFilter(files, "animal_left_view_image")[0]
-            .originalname,
-          animal_right_view_image: fileFilter(
-            files,
-            "animal_right_view_image",
-          )[0].originalname,
-        });
+        await this.animalRepository.update(
+          { animal_id: animal.animal_id },
+          {
+            animal_front_view_image: animal_front,
+            animal_left_view_image: animal_left,
+            animal_right_view_image: animal_right,
+          },
+        );
+        const dna_doc = fileFilter(files, "animal_dna_doc");
+        if (dna_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animal.animal_id },
+            {
+              animal_dna_doc: dna_doc[0].originalname,
+            },
+          );
+        }
+        const hded_doc = fileFilter(files, "animal_hded_doc");
+        if (hded_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animal.animal_id },
+            {
+              animal_hded_doc: hded_doc[0].originalname,
+            },
+          );
+        }
       }
       return { animal, uploadData };
     }
@@ -140,24 +159,6 @@ export class AnimalService {
     }
   }
 
-  // update animal document details
-  async updateAnimalDocDetails({
-    animal_front_view_image,
-    animal_right_view_image,
-    animal_left_view_image,
-    animal_id,
-  }) {
-    const animal = await this.animalRepository.findOne({
-      where: {
-        animal_id,
-      },
-    });
-    animal.animal_front_view_image = animal_front_view_image;
-    animal.animal_right_view_image = animal_right_view_image;
-    animal.animal_left_view_image = animal_left_view_image;
-    return this.animalRepository.save(animal);
-  }
-
   async createAnimalWithPedigree(
     payload: AnimalWithPedigreePayload,
     files: Array<Express.Multer.File>,
@@ -188,8 +189,8 @@ export class AnimalService {
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
         this.upsertAnimal([animalDataDto]),
       );
-      const uploadData = await this.s3Service.uploadSingle(
-        files[0],
+      const uploadData = await this.s3Service.uploadMultiple(
+        files,
         animalDataDto.animal_registration_number,
       );
       if (uploadData) {
@@ -200,6 +201,25 @@ export class AnimalService {
               .originalname,
           },
         );
+        const dna_doc = fileFilter(files, "dnaDoc");
+
+        if (dna_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animalDataDto.animal_id },
+            {
+              animal_dna_doc: dna_doc[0].originalname,
+            },
+          );
+        }
+        const hded_doc = fileFilter(files, "hdedDoc");
+        if (hded_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animalDataDto.animal_id },
+            {
+              animal_hded_doc: hded_doc[0].originalname,
+            },
+          );
+        }
       }
 
       animalsCount++;
@@ -454,6 +474,100 @@ export class AnimalService {
         message: error?.message ?? "Failed to fetch animals",
         serviceErrorCode: "AS-100",
         httpStatusCode: 500,
+      });
+    }
+  }
+
+  async importPedigree(
+    payload: AnimalWithPedigreePayload,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const animalData = JSON.parse(payload.animalData);
+      const generations = JSON.parse(payload.generations);
+      const { animalTypeId, breedId } = payload;
+      let animalsCount = await this.animalRepository.count();
+      const animalDataDto = new CreateAnimalDto(
+        animalData.id,
+        animalData.name,
+        animalTypeId,
+        breedId,
+        animalData.gender,
+        payload.userId,
+        animalData.sireId,
+        animalData.damId,
+        animalData.pedigree,
+        generateRegNo(breedId, animalsCount + 1),
+        animalData.colorMarking,
+        new Date(animalData.dob),
+        animalData.microchip,
+        "reg_doc",
+        animalRegistrationSource.pedigree,
+      );
+
+      const mainAnimalResult = await this.transactionUtils.executeInTransaction(
+        this.upsertAnimal([animalDataDto]),
+      );
+      const uploadData = await this.s3Service.uploadMultiple(
+        files,
+        animalDataDto.animal_registration_number,
+      );
+      if (uploadData) {
+        await this.animalRepository.update(
+          { animal_id: animalDataDto.animal_id },
+          {
+            animal_registration_doc: fileFilter(files, "certificate")[0]
+              .originalname,
+          },
+        );
+        const dna_doc = fileFilter(files, "dnaDoc");
+
+        if (dna_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animalDataDto.animal_id },
+            {
+              animal_dna_doc: dna_doc[0].originalname,
+            },
+          );
+        }
+        const hded_doc = fileFilter(files, "hdedDoc");
+        if (hded_doc.length > 0) {
+          await this.animalRepository.update(
+            { animal_id: animalDataDto.animal_id },
+            {
+              animal_hded_doc: hded_doc[0].originalname,
+            },
+          );
+        }
+      }
+
+      animalsCount++;
+
+      const genData = generations.map((g, i) => {
+        const reg_no = generateRegNo(breedId, animalsCount + 1 + i);
+        return new CreateGenerationsDto(
+          g.id,
+          g.name,
+          animalTypeId,
+          breedId,
+          g.gender,
+          payload.userId,
+          g.sireId,
+          g.damId,
+          g.pedigree,
+          reg_no,
+        );
+      });
+      const result = await this.transactionUtils.executeInTransaction(
+        this.upsertGenerations(genData),
+      );
+
+      return { mainAnimalResult, result };
+    } catch (error) {
+      console.log("error", error);
+      throw new ServiceException({
+        message: error?.message ?? "Failed to add animals",
+        serviceErrorCode: "AS-100",
       });
     }
   }
