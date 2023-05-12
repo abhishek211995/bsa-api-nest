@@ -16,7 +16,6 @@ import {
 import * as dotenv from "dotenv";
 import {
   ChangeStatusPayload,
-  CreateUserDto,
   IndividualUserDto,
   LoginUserDto,
 } from "./users.dto";

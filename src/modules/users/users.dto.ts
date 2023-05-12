@@ -16,36 +16,6 @@ export class LoginUserDto {
   password: string;
 }
 
-export class CreateUserDto extends BreederDto {
-  @IsString()
-  user_name: string;
-
-  @IsString()
-  @IsEmail()
-  email: string;
-
-  @IsString()
-  @MinLength(8)
-  password: string;
-
-  @IsString()
-  @MinLength(10)
-  @MaxLength(10)
-  contact_no: string;
-
-  @IsString()
-  user_country: string;
-
-  @IsString()
-  identification_id_no: string;
-
-  @IsString()
-  identification_id_name: string;
-
-  // @IsString()
-  identity_doc_name: string;
-}
-
 export class IndividualUserDto {
   @IsString()
   user_name: string;
@@ -70,6 +40,9 @@ export class IndividualUserDto {
 
   @IsString()
   user_country: string;
+
+  @IsString()
+  user_address: string;
 }
 
 export class ChangeStatusPayload {

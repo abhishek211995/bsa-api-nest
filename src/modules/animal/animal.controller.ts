@@ -189,4 +189,29 @@ export class AnimalController {
       throw error;
     }
   }
+
+  @ApiOperation({
+    summary: "Animal Pedigry",
+  })
+  @Post("/import-pedigree")
+  @UseInterceptors(AnyFilesInterceptor())
+  async importPedigry(
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
+    @Body() animalPedigreeDto: AnimalWithPedigreePayload,
+  ) {
+    try {
+      const res = await this.animalService.importPedigree(
+        animalPedigreeDto,
+        files,
+      );
+
+      if (res) {
+        return { status: 200, message: "Pedigree created successfully" };
+      }
+    } catch (error) {
+      // return { status: 500, message: error.message };
+      throw error;
+    }
+  }
 }
