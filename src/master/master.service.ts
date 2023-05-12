@@ -87,11 +87,11 @@ export class CostsServices {
     return this.breCostsMasterRepository.find({ where: { is_deleted: false } });
   }
 
-  getCostById(param: any) {
-    const { id } = param;
-    return this.breCostsMasterRepository.find({
-      where: { id: id },
+  async getCostById(id: any) {
+    const data = await this.breCostsMasterRepository.findOne({
+      where: { id },
     });
+    return data;
   }
 
   updateCosts(id: number, costsDto: CostsDto) {

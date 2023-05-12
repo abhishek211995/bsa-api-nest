@@ -64,8 +64,6 @@ export class BreederService {
 
   async getBreeder(user_id: number) {
     try {
-      console.log("Hi");
-
       const breeder = await this.breederRepository.findOne({
         where: { user_id },
         relations: { user: true },

@@ -160,19 +160,12 @@ export class MasterController {
     }
   }
   @Get("getCost/:id")
-  async getCostById(@Param() id: number) {
+  async getCostById(@Param("id") id: number) {
     try {
       const cost = await this.costsServices.getCostById(id);
-      return {
-        status: 200,
-        data: cost,
-        message: "Cost Found Successfully!",
-      };
+      return makeHTTPResponse(cost, 200, "Cost fetched successfully");
     } catch (error) {
-      return {
-        status: 400,
-        message: error.message,
-      };
+      throw error;
     }
   }
   @Delete("cost/:id")
