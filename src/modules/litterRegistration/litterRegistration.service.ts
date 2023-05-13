@@ -172,9 +172,27 @@ export class LitterRegistrationService {
         };
         if (damPedigree) {
           animalPedigree.children.push(damPedigree);
+        } else {
+          animalPedigree.children.push({
+            name: litterDetails.dam.animal_name,
+            attributes: {
+              uuid: litterDetails.dam.animal_id,
+              level: 1,
+              parentType: "Dam",
+            },
+          });
         }
         if (sirePedigree) {
           animalPedigree.children.push(sirePedigree);
+        } else {
+          animalPedigree.children.push({
+            name: litterDetails.sire.animal_name,
+            attributes: {
+              uuid: litterDetails.sire.animal_id,
+              level: 1,
+              parentType: "Sire",
+            },
+          });
         }
         return {
           animal_id,
