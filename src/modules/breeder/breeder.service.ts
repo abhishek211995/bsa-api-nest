@@ -4,6 +4,7 @@ import { ServiceException } from "src/exception/base-exception";
 import { Repository } from "typeorm";
 import { BreederFarmService } from "../breederFarm/breederFarm.service";
 import { BreBreeder } from "./breeder.entity";
+import { S3Service } from "src/lib/s3multer/s3.service";
 
 @Injectable()
 export class BreederService {
@@ -11,6 +12,7 @@ export class BreederService {
     @InjectRepository(BreBreeder)
     private readonly breederRepository: Repository<BreBreeder>,
     private readonly breederFarmService: BreederFarmService,
+    private readonly s3Service: S3Service,
   ) {}
 
   // async createBreeder(
@@ -64,10 +66,17 @@ export class BreederService {
 
   async getBreeder(user_id: number) {
     try {
-      const breeder = await this.breederRepository.findOne({
+      let breeder = await this.breederRepository.findOne({
         where: { user_id },
         relations: { user: true },
       });
+
+      const identification_doc = await this.s3Service.getLink(
+        `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
+      );
+
+      // @ts-expect-error
+      breeder.user.identification_doc = identification_doc;
 
       const farms = await this.breederFarmService.getBreederFarms(
         breeder.breeder_id,
