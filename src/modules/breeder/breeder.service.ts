@@ -66,7 +66,7 @@ export class BreederService {
 
   async getBreeder(user_id: number) {
     try {
-      let breeder = await this.breederRepository.findOne({
+      const breeder = await this.breederRepository.findOne({
         where: { user_id },
         relations: { user: true },
       });
@@ -75,7 +75,7 @@ export class BreederService {
         `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
       );
 
-      // @ts-expect-error
+      // @ts-expect-error adding property abruptly
       breeder.user.identification_doc = identification_doc;
 
       const farms = await this.breederFarmService.getBreederFarms(
