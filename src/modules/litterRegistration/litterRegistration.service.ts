@@ -72,7 +72,7 @@ export class LitterRegistrationService {
         where: { animal_id: getLitter.sire_id },
       });
       const encryptId = encryptNumber(getLitter.id);
-      const link = `http://localhost:3000/litterRegistration/${encryptId}`;
+      const link = `http://localhost:3000/litterRegistration?requestId=${encryptId}`;
       console.log("Link created");
 
       if (getLitter) {
@@ -262,17 +262,21 @@ export class LitterRegistrationService {
     }
   }
 
-  async sireRejection(
-    id: string,
-    remark: string,
-    remarks: Array<{ message: string }>,
-  ) {
+  async sireRejection({
+    id,
+    reason,
+    remarks,
+  }: {
+    id: string;
+    reason: string;
+    remarks: Array<{ message: string }>;
+  }) {
     try {
       const decryptedId = decryptNumber(id);
 
       await this.litterRegistrationRepository.update(
         { id: decryptedId },
-        { sire_approval: false, sire_rejection_reason: remark, remarks },
+        { sire_approval: false, sire_rejection_reason: reason, remarks },
       );
       return true;
     } catch (error) {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
 import { LitterRegistrationService } from "./litterRegistration.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
@@ -101,10 +101,15 @@ export class LitterRegistrationController {
   @ApiOperation({
     summary: "Sire Approval",
   })
-  @Post("/sire-approve")
-  async sireApproval(@Body() id: string, remarks: Array<{ message: string }>) {
+  @Put("/sire-approve")
+  async sireApproval(
+    @Body() data: { id: string; remarks: Array<{ message: string }> },
+  ) {
     try {
-      const result = await this.litterService.sireApproval(id, remarks);
+      const result = await this.litterService.sireApproval(
+        data.id,
+        data.remarks,
+      );
       return makeHTTPResponse(
         result,
         200,
@@ -118,15 +123,26 @@ export class LitterRegistrationController {
   @ApiOperation({
     summary: "Sire Reject the litter",
   })
-  @Post("/sire-reject")
-  async sireRejectLitter(@Body() body) {
+  @Put("/sire-reject")
+  async sireRejectLitter(
+    @Body()
+    data: {
+      id: string;
+      reason: string;
+      remarks: Array<{ message: string }>;
+    },
+  ) {
     try {
-      const result = await this.litterService.sireRejection(
-        body.id,
-        body.remark,
-        body.remarks,
+      const result = await this.litterService.sireRejection({
+        id: data.id,
+        reason: data.reason,
+        remarks: data.remarks,
+      });
+      return makeHTTPResponse(
+        result,
+        200,
+        "Litter Rejected by sire owner Successfully!",
       );
-      return makeHTTPResponse(result);
     } catch (error) {
       throw error;
     }
