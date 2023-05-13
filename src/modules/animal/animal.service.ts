@@ -330,6 +330,16 @@ export class AnimalService {
           `${animal.animal_registration_number}/${animal.animal_registration_doc}`,
         );
       }
+      if (animal.animal_hded_doc !== null) {
+        animalData.animal_hded_doc = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_hded_doc}`,
+        );
+      }
+      if (animal.animal_dna_doc !== null) {
+        animalData.animal_dna_doc = await this.s3Service.getLink(
+          `${animal.animal_registration_number}/${animal.animal_dna_doc}`,
+        );
+      }
       return animalData;
     } catch (error) {
       throw new ServiceException({
