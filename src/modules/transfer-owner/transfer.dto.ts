@@ -19,7 +19,7 @@ export class TransferOwnerDto {
 
 export class ApproveRejectTransferDto {
   @IsNumber()
-  transfer_id: number;
+  transfer_id: string;
 
   @IsString()
   request_rejection_reason: string;

@@ -103,7 +103,7 @@ export const welcomeEmail = (userName: string, link: string) => `
 
 export const litterRegistrationRequest = (
   sireOwner: string,
-  sireName: string,
+  animalName: string,
   damOwner: string,
   link: string,
 ) => `
@@ -144,7 +144,7 @@ export const litterRegistrationRequest = (
 	  <div class="container">
 		  <h1>Litter Sire Confirmation Request Received</h1>
 		  <p>Dear ${sireOwner},</p>
-		  <p>We have received sire confirmation request for animal ${sireName} from ${damOwner} and it is currently being processed.</p>
+		  <p>We have received sire confirmation request for animal ${animalName} from ${damOwner} and it is currently being processed.</p>
 		  <p>Here is your sire confirmation link for more details and further action: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Sire</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
 		  <p>Thank you for using our service.</p>
 		  <p>Best regards,</p>

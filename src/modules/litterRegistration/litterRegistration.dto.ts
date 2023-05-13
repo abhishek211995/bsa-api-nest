@@ -59,7 +59,7 @@ export class LitterRegistrationBody {
 export class ApproveLitterBody {
   @ApiProperty()
   @IsNumber()
-  id: number;
+  id: string;
 
   @ApiProperty()
   remarks: Array<{ message: string }>;

@@ -10,6 +10,7 @@ import { BreTransferOwnerRequest } from "./transfer.entity";
 import { transferMail } from "src/utils/mailTemplate.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { BreUser } from "../users/users.entity";
+import { decryptNumber, encryptNumber } from "src/utils/encryption";
 @Injectable()
 export class TransferService {
   constructor(
@@ -38,7 +39,8 @@ export class TransferService {
         const animal = await this.animalService.getAnimalById(
           transferDto.animal_id,
         );
-        const link = `http://localhost:3000/confirmTransfer?transferId=${newTransfer.transfer_id}`;
+        const encryptId = encryptNumber(newTransfer.transfer_id);
+        const link = `http://localhost:3000/confirmTransfer?transferId=${encryptId}`;
         const message = transferMail(
           user.user_name,
           animal.animal_name,
@@ -61,10 +63,11 @@ export class TransferService {
     }
   }
 
-  async getRequestById(id: number) {
+  async getRequestById(id: string) {
     try {
+      const decryptedId = decryptNumber(id);
       const transfer = await this.breTransferOwnerRequestRepository.findOne({
-        where: { transfer_id: id },
+        where: { transfer_id: decryptedId },
         relations: ["animal_id", "new_owner_id", "old_owner_id"],
       });
       if (!transfer) {
@@ -85,9 +88,11 @@ export class TransferService {
 
   async approveRequest({ transfer_id, request_rejection_reason }) {
     try {
+      const decryptedId = decryptNumber(transfer_id);
+
       const transferDetails = await this.getRequestById(transfer_id);
       const data = await this.breTransferOwnerRequestRepository.update(
-        transfer_id,
+        { transfer_id: decryptedId },
         {
           request_status: "Approved",
           request_rejection_reason,
@@ -108,8 +113,10 @@ export class TransferService {
 
   async rejectRequest({ transfer_id, request_rejection_reason }) {
     try {
+      const decryptedId = decryptNumber(transfer_id);
+
       const data = await this.breTransferOwnerRequestRepository.update(
-        transfer_id,
+        { transfer_id: decryptedId },
         {
           request_status: "Reject",
           request_rejection_reason,

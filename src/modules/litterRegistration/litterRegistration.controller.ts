@@ -40,7 +40,7 @@ export class LitterRegistrationController {
     summary: "Get list of registered litters",
   })
   @Get("/:id")
-  async getLitterDetailsById(@Param("id") id: number) {
+  async getLitterDetailsById(@Param("id") id: string) {
     try {
       const result = await this.litterService.getLitterDetailsById(id);
       return makeHTTPResponse(result);
@@ -85,7 +85,7 @@ export class LitterRegistrationController {
     summary: "Sire Request for approval",
   })
   @Get("/litterDetails/:id")
-  async sireLitterApproval(@Param("id") id: number) {
+  async sireLitterApproval(@Param("id") id: string) {
     try {
       const data = await this.litterService.getLitterDetailsById(id);
       return makeHTTPResponse(
@@ -102,7 +102,7 @@ export class LitterRegistrationController {
     summary: "Sire Approval",
   })
   @Post("/sire-approve")
-  async sireApproval(@Body() id: number, remarks: Array<{ message: string }>) {
+  async sireApproval(@Body() id: string, remarks: Array<{ message: string }>) {
     try {
       const result = await this.litterService.sireApproval(id, remarks);
       return makeHTTPResponse(

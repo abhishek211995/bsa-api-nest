@@ -26,7 +26,7 @@ export class TransferController {
   }
 
   @Get("getTransferRequestById")
-  async getTransferRequestById(@Query("request_id") id: number) {
+  async getTransferRequestById(@Query("request_id") id: string) {
     try {
       const transfer = await this.transferService.getRequestById(id);
       return makeHTTPResponse(transfer);
