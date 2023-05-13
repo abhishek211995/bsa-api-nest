@@ -1,5 +1,5 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsDate, IsJSON, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsJSON, IsNumber, IsString } from "class-validator";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 
 export class AnimalDto {
@@ -269,4 +269,12 @@ export class ChangeNamePayload {
   @IsString()
   @ApiProperty()
   name: string;
+}
+
+export class ChangeAnimalStatusPayload {
+  @IsString()
+  animal_id: string;
+
+  @IsBoolean()
+  status: boolean;
 }

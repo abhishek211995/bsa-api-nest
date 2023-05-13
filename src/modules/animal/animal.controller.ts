@@ -13,6 +13,7 @@ import { S3Service } from "src/lib/s3multer/s3.service";
 import {
   AnimalDto,
   AnimalWithPedigreePayload,
+  ChangeAnimalStatusPayload,
   ChangeNamePayload,
 } from "./animal.dto";
 import { AnimalService } from "./animal.service";
@@ -191,7 +192,7 @@ export class AnimalController {
   }
 
   @ApiOperation({
-    summary: "Animal Pedigry",
+    summary: "Animal Pedigree",
   })
   @Post("/import-pedigree")
   @UseInterceptors(AnyFilesInterceptor())
@@ -211,6 +212,19 @@ export class AnimalController {
       }
     } catch (error) {
       // return { status: 500, message: error.message };
+      throw error;
+    }
+  }
+
+  @Post("/change-status")
+  async changeAnimalStatus(@Body() body: ChangeAnimalStatusPayload) {
+    try {
+      const result = await this.animalService.changeStatus(
+        body.animal_id,
+        body.status,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
       throw error;
     }
   }

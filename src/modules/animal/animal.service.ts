@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { InsertResult, QueryRunner, Raw, Repository } from "typeorm";
 import {
@@ -110,7 +110,7 @@ export class AnimalService {
       if (animal_owner_id) {
         data = data.filter((item) => {
           return (
-            // @ts-expect-error
+            // @ts-expect-error entity type issue
             item.animal_owner_id.id == animal_owner_id
           );
         });
@@ -119,7 +119,7 @@ export class AnimalService {
       if (animal_type_id) {
         data = data.filter((item) => {
           return (
-            // @ts-expect-error
+            // @ts-expect-error entity type issue
             item.animal_type_id.animal_type_id == animal_type_id
           );
         });
@@ -466,6 +466,9 @@ export class AnimalService {
           {
             registration_source: animalRegistrationSource.litter,
           },
+          {
+            registration_source: animalRegistrationSource.pedigree,
+          },
         ],
         relations: ["animal_type_id", "animal_breed_id", "animal_owner_id"],
       });
@@ -568,6 +571,25 @@ export class AnimalService {
       console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to add animals",
+        serviceErrorCode: "AS-100",
+      });
+    }
+  }
+
+  async changeStatus(animal_id: string, status: boolean) {
+    try {
+      await this.getAnimalById(animal_id);
+      const result = await this.animalRepository.update(
+        { animal_id: animal_id },
+        {
+          is_active: status,
+        },
+      );
+      return result;
+    } catch (error) {
+      console.error(`Error while changing status ${error}`);
+      throw new ServiceException({
+        message: error?.message ?? "Failed to change animal status",
         serviceErrorCode: "AS-100",
       });
     }
