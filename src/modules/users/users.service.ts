@@ -259,6 +259,64 @@ export class UsersService {
       throw error;
     }
   }
+  async updateUserDetails(
+    body: {
+      user_id: number;
+      user_name: string;
+      user_address: string;
+      identification_id_name: string;
+      identification_id_no: string;
+      contact_no: string;
+    },
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const user = await this.breUsersRepository.findOne({
+        where: { id: body.user_id },
+      });
+      if (!user) {
+        throw new ServiceException({
+          message: "User not found",
+          serviceErrorCode: "US-404",
+        });
+      }
+      const oldDocName = user.user_name;
+      user.user_name = body.user_name;
+      user.user_address = body.user_address;
+      user.identification_id_name = body.identification_id_name;
+      user.identification_id_no = body.identification_id_no;
+      user.contact_no = body.contact_no;
+      const updatedUser = await this.breUsersRepository.save(user);
+      const identification_doc_name = fileFilter(
+        files,
+        "identification_doc_name",
+      )[0];
+      const data = await this.s3Service.renameFolder(
+        oldDocName,
+        user.user_name,
+      );
+      console.log("data", data);
+
+      if (data) {
+        await this.s3Service.uploadSingle(
+          identification_doc_name,
+          updatedUser.user_name,
+        );
+        const updateUserDoc = await this.updateUserDoc(
+          updatedUser.id,
+          identification_doc_name.originalname,
+        );
+      }
+
+      return updatedUser;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error while updating user details",
+        serviceErrorCode: "US-500",
+        httpStatusCode: 400,
+      });
+    }
+  }
   //! Get OTP is not used anywhere
   // async getOTP(email: string) {
   //   try {

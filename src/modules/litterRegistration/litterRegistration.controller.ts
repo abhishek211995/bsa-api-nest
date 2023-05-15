@@ -17,7 +17,7 @@ export class LitterRegistrationController {
   async addLitter(@Body() body: LitterRegistrationBody) {
     try {
       const result = await this.litterService.registerLitter(body);
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Litter registered successfully!");
     } catch (error) {
       throw error;
     }
@@ -30,20 +30,24 @@ export class LitterRegistrationController {
   async getAllLitters() {
     try {
       const result = await this.litterService.getAllLitters();
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Litters fetched successfully!");
     } catch (error) {
       throw error;
     }
   }
 
   @ApiOperation({
-    summary: "Get list of registered litters",
+    summary: "Get litter details by id",
   })
   @Get("/:id")
   async getLitterDetailsById(@Param("id") id: string) {
     try {
       const result = await this.litterService.getLitterDetailsById(id);
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(
+        result,
+        200,
+        "Litter details fetched successfully!",
+      );
     } catch (error) {
       throw error;
     }
@@ -59,7 +63,7 @@ export class LitterRegistrationController {
         body.id,
         body.remarks,
       );
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Litter approved successfully!");
     } catch (error) {
       throw error;
     }
@@ -75,7 +79,7 @@ export class LitterRegistrationController {
         body.id,
         body.remarks,
       );
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Litter rejected successfully!");
     } catch (error) {
       throw error;
     }

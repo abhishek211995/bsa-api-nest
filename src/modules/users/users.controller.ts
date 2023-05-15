@@ -22,6 +22,7 @@ import {
 import { UsersService } from "./users.service";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
+import { ApiOperation } from "@nestjs/swagger";
 dotenv.config();
 
 @Controller("auth")
@@ -148,6 +149,34 @@ export class UsersController {
         body.reason,
       );
       return makeHTTPResponse(update, HttpStatus.OK, "Updated successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Update user details",
+  })
+  @Put("/update-user")
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateUser(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body()
+    body: {
+      user_id: number;
+      user_name: string;
+      user_address: string;
+      identification_id_name: string;
+      identification_id_no: string;
+      contact_no: string;
+    },
+  ) {
+    try {
+      console.log("body", body);
+      console.log("files", files);
+
+      const res = this.usersService.updateUserDetails(body, files);
+      return makeHTTPResponse(res, 200, "User details updated successfully");
     } catch (error) {
       throw error;
     }
