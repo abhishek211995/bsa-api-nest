@@ -16,6 +16,9 @@ export class CreateBreederFarmDto {
   breeder_id: number;
 
   @IsNumber()
+  animal_type_id: number;
+
+  @IsNumber()
   farm_id: number;
 
   @IsString()

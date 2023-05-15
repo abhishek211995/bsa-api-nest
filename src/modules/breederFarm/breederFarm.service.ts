@@ -71,6 +71,7 @@ export class BreederFarmService {
       let breederFarm = this.breederFarmRepository.create({
         breeder_id: data.breeder_id,
         farm_address: data.farm_address,
+        animal_type_id: data.animal_type_id,
         farm_id: data.farm_id,
         farm_name: data.farm_name,
         license_expiry_date: data.license_expiry_date,
@@ -79,6 +80,7 @@ export class BreederFarmService {
       breederFarm = await this.breederFarmRepository.save({
         breeder_id: data.breeder_id,
         farm_address: data.farm_address,
+        animal_type_id: data.animal_type_id,
         farm_id: data.farm_id,
         farm_name: data.farm_name,
         license_expiry_date: data.license_expiry_date,

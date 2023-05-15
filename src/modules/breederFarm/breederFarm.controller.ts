@@ -22,7 +22,7 @@ export class BreederFarmController {
   ) {
     try {
       const result = await this.breederFarmService.addBreederFarm(body, files);
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Breeder Farm created successfully");
     } catch (error) {
       throw error;
     }
