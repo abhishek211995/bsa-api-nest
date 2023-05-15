@@ -84,34 +84,15 @@ export class AnimalController {
   @Get("/getAnimalAndOwner")
   async getAnimalAndOwner(
     @Query()
-    {
-      animal_microchip_id,
-      animal_registration_number,
-    }: {
-      animal_microchip_id: string;
-      animal_registration_number: string;
-    },
+    { animal_microchip_id }: { animal_microchip_id: string },
   ) {
     try {
       const res = await this.animalService.getAnimalAndOwner({
         animal_microchip_id,
-        animal_registration_number,
       });
-      if (res) {
-        return {
-          status: 200,
-          message: "Animal and owner details fetched successfully",
-          data: res,
-        };
-      } else {
-        return {
-          status: 200,
-          message: "No data found",
-          data: res,
-        };
-      }
+      return makeHTTPResponse(res, 200, "Animal data fetched successfully");
     } catch (error) {
-      return { status: 500, message: error.message };
+      throw error;
     }
   }
 

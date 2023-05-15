@@ -136,26 +136,19 @@ export class AnimalService {
   }
 
   // get animal and owner details by animal microchip id or registration id
-  getAnimalAndOwner({
-    animal_microchip_id,
-    animal_registration_number,
-  }: {
-    animal_microchip_id: string;
-    animal_registration_number: string;
-  }) {
-    if (animal_microchip_id != "") {
-      return this.animalRepository.findOne({
+  getAnimalAndOwner({ animal_microchip_id }: { animal_microchip_id: string }) {
+    try {
+      const data = this.animalRepository.findOne({
         where: {
           animal_microchip_id,
         },
         relations: ["animal_owner_id"],
       });
-    } else {
-      return this.animalRepository.findOne({
-        where: {
-          animal_registration_number,
-        },
-        relations: ["animal_owner"],
+      return data;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to fetch animal and owner details",
+        serviceErrorCode: "AS-101",
       });
     }
   }
