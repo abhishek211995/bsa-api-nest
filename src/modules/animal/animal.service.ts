@@ -597,9 +597,31 @@ export class AnimalService {
       );
       return result;
     } catch (error) {
-      console.error(`Error while changing status ${error}`);
       throw new ServiceException({
         message: error?.message ?? "Failed to change animal status",
+        serviceErrorCode: "AS-100",
+      });
+    }
+  }
+
+  async changeMicrochipId(
+    animal_registration_number: string,
+    microchip_id: string,
+  ) {
+    try {
+      const result = await this.animalRepository.update(
+        { animal_registration_number: animal_registration_number },
+        {
+          animal_microchip_id: microchip_id,
+        },
+      );
+      const animal = await this.animalRepository.findOne({
+        where: { animal_registration_number: animal_registration_number },
+      });
+      return animal;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to change animal microchip id",
         serviceErrorCode: "AS-100",
       });
     }

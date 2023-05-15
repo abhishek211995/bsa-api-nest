@@ -3,6 +3,7 @@ import {
   Body,
   Get,
   Post,
+  Put,
   Query,
   UploadedFiles,
   UseInterceptors,
@@ -42,7 +43,6 @@ export class AnimalController {
         return { status: 200, message: "Animal created successfully" };
       }
     } catch (error) {
-      // return { status: 500, message: error.message };
       throw error;
     }
   }
@@ -224,6 +224,22 @@ export class AnimalController {
         body.status,
       );
       return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // Change Microchip Id
+  @Put("/change-microchip-id")
+  async changeMicrochipId(
+    @Body() body: { animal_registration_number: string; microchip_id: string },
+  ) {
+    try {
+      const result = await this.animalService.changeMicrochipId(
+        body.animal_registration_number,
+        body.microchip_id,
+      );
+      return makeHTTPResponse(result, 200, "Microchip Id changed successfully");
     } catch (error) {
       throw error;
     }
