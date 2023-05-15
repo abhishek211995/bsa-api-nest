@@ -143,13 +143,16 @@ export class UsersService {
           httpStatusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      if (user.user_status === UserStatus.Rejected) {
-        throw new ServiceException({
-          message: "Your profile is rejected by admin. Please contact admin",
-          serviceErrorCode: "US",
-          httpStatusCode: HttpStatus.UNAUTHORIZED,
-        });
-      }
+      // if (
+      //   user.user_status === UserStatus.Rejected ||
+      //   user.user_status === UserStatus["Verification Pending"]
+      // ) {
+      //   throw new ServiceException({
+      //     message: "Your profile is not verified yet. Please contact admin",
+      //     serviceErrorCode: "US",
+      //     httpStatusCode: HttpStatus.UNAUTHORIZED,
+      //   });
+      // }
       const isPasswordCorrect: boolean =
         await this.bcryptService.comparePassword(password, user.password);
       if (!isPasswordCorrect) {
