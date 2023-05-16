@@ -291,22 +291,14 @@ export class UsersService {
         files,
         "identification_doc_name",
       )[0];
-      const data = await this.s3Service.renameFolder(
-        oldDocName,
-        user.user_name,
+      await this.s3Service.uploadSingle(
+        identification_doc_name,
+        updatedUser.user_name,
       );
-      console.log("data", data);
-
-      if (data) {
-        await this.s3Service.uploadSingle(
-          identification_doc_name,
-          updatedUser.user_name,
-        );
-        const updateUserDoc = await this.updateUserDoc(
-          updatedUser.id,
-          identification_doc_name.originalname,
-        );
-      }
+      const updateUserDoc = await this.updateUserDoc(
+        updatedUser.id,
+        identification_doc_name.originalname,
+      );
 
       return updatedUser;
     } catch (error) {
