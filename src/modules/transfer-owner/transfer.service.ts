@@ -1,4 +1,4 @@
-import { Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
@@ -63,7 +63,7 @@ export class TransferService {
     }
   }
 
-  async getRequestById(id: string) {
+  async getRequestById(id: string, user_id?: number) {
     try {
       const decryptedId = decryptNumber(id);
       const transfer = await this.breTransferOwnerRequestRepository.findOne({
@@ -76,11 +76,22 @@ export class TransferService {
           serviceErrorCode: "TS",
         });
       }
+      // @ts-ignore
+      console.log(transfer.old_owner_id.id, user_id);
+
+      // @ts-ignore
+      if (user_id && transfer.old_owner_id.id !== user_id) {
+        throw new ServiceException({
+          message: "You are not authorized to view this transfer request",
+          serviceErrorCode: "LRS-105",
+          httpStatusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
       return transfer;
     } catch (error) {
-      console.log("Failed to fetch request", JSON.stringify(error));
+      console.log("Failed to fetch request", error?.message);
       throw new ServiceException({
-        message: "Failed to fetch transfer request",
+        message: error?.message ?? "Failed to fetch transfer request",
         serviceErrorCode: "TS",
       });
     }
@@ -91,6 +102,8 @@ export class TransferService {
       const decryptedId = decryptNumber(transfer_id);
 
       const transferDetails = await this.getRequestById(transfer_id);
+      console.log(transferDetails);
+
       const data = await this.breTransferOwnerRequestRepository.update(
         { transfer_id: decryptedId },
         {
@@ -103,9 +116,8 @@ export class TransferService {
       await this.animalService.changeOwner(animal.animal_id, newOwner.id);
       return data;
     } catch (error) {
-      console.log("Failed to approve request", JSON.stringify(error));
       throw new ServiceException({
-        message: "Failed to approve transfer request",
+        message: error?.message ?? "Failed to approve transfer request",
         serviceErrorCode: "TS",
       });
     }

@@ -89,9 +89,9 @@ export class LitterRegistrationController {
     summary: "Sire Request for approval",
   })
   @Get("/litterDetails/:id")
-  async sireLitterApproval(@Param("id") id: string) {
+  async sireLitterApproval(@Body() body, @Param("id") id: string) {
     try {
-      const data = await this.litterService.getLitterDetailsById(id);
+      const data = await this.litterService.getLitterDetailsById(id, body);
       return makeHTTPResponse(
         data,
         200,
