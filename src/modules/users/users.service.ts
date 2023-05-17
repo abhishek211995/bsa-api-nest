@@ -109,7 +109,7 @@ export class UsersService {
 
       const identity_doc_name = fileFilter(files, "identity_doc_name")[0];
 
-      await this.s3Service.uploadSingle(identity_doc_name, savedUser.user_name);
+      await this.s3Service.uploadSingle(identity_doc_name, savedUser.email);
 
       const user = await this.updateUserDoc(
         newUser.id,
@@ -163,7 +163,7 @@ export class UsersService {
         });
       }
 
-      const token = jwt.sign({ foo: "bar" }, process.env.TOKEN_SECRET);
+      const token = jwt.sign({ user_id: user.id }, process.env.TOKEN_SECRET);
       return { user, token };
     } catch (error) {
       throw error;
@@ -287,20 +287,14 @@ export class UsersService {
       user.identification_id_no = body.identification_id_no;
       user.contact_no = body.contact_no;
       const updatedUser = await this.breUsersRepository.save(user);
-      const identification_doc_name = fileFilter(
-        files,
-        "identification_doc_name",
-      )[0];
-      const data = await this.s3Service.renameFolder(
-        oldDocName,
-        user.user_name,
-      );
-      console.log("data", data);
-
-      if (data) {
+      if (files.length > 0) {
+        const identification_doc_name = fileFilter(
+          files,
+          "identification_doc_name",
+        )[0];
         await this.s3Service.uploadSingle(
           identification_doc_name,
-          updatedUser.user_name,
+          updatedUser.email,
         );
         const updateUserDoc = await this.updateUserDoc(
           updatedUser.id,

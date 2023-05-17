@@ -26,9 +26,12 @@ export class TransferController {
   }
 
   @Get("getTransferRequestById")
-  async getTransferRequestById(@Query("request_id") id: string) {
+  async getTransferRequestById(@Query("request_id") id: string, @Body() body) {
     try {
-      const transfer = await this.transferService.getRequestById(id);
+      const transfer = await this.transferService.getRequestById(
+        id,
+        body.user.id,
+      );
       return makeHTTPResponse(transfer);
     } catch (error) {
       throw error;
@@ -36,9 +39,9 @@ export class TransferController {
   }
 
   @Put("approve")
-  async approveTransferRequest(@Body() data: ApproveRejectTransferDto) {
+  async approveTransferRequest(@Body() body: any) {
     try {
-      const transfer = await this.transferService.approveRequest(data);
+      const transfer = await this.transferService.approveRequest(body);
       return makeHTTPResponse({}, HttpStatus.OK, "Transfer approved!");
     } catch (error) {
       throw error;

@@ -123,7 +123,7 @@ export class LitterRegistrationService {
     }
   }
 
-  async getLitterDetailsById(id: string) {
+  async getLitterDetailsById(id: string, body?: any) {
     try {
       const decryptedId = decryptNumber(id);
       const list = await this.litterRegistrationRepository.findOne({
@@ -138,6 +138,17 @@ export class LitterRegistrationService {
           "sire.animal_owner_id",
         ],
       });
+      console.log(list.sire_owner_id, body.user.id);
+      console.log(body);
+
+      if (list.sire_owner_id !== body.user.id) {
+        throw new ServiceException({
+          message: "You are not authorized to view this litter",
+          serviceErrorCode: "LRS-105",
+          httpStatusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
+
       return list;
     } catch (error) {
       throw new ServiceException({
