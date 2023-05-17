@@ -12,7 +12,7 @@ export class SubscriptionController {
   @Post("buy")
   async buySubscription(@Body() body: BuySubscriptionDto) {
     try {
-      const result = this.subscriptionService.buySubscription(body);
+      const result = await this.subscriptionService.buySubscription(body);
       return makeHTTPResponse(result);
     } catch (error) {
       throw error;
@@ -22,7 +22,7 @@ export class SubscriptionController {
   @Get("user-subscription")
   async getUserSubscription(@Query() queries: GetUserSubscriptionQueries) {
     try {
-      const result = this.subscriptionService.getSubscriptions(queries);
+      const result = await this.subscriptionService.getSubscriptions(queries);
       return makeHTTPResponse(result);
     } catch (error) {
       throw error;

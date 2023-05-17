@@ -1,4 +1,4 @@
-import { IsBoolean, IsNumber, IsOptional } from "class-validator";
+import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class BuySubscriptionDto {
   @IsNumber()
@@ -16,7 +16,7 @@ export class GetUserSubscriptionQueries {
   @IsOptional()
   user_id: number;
 
-  @IsBoolean()
+  @IsString()
   @IsOptional()
-  is_active: boolean;
+  is_active: "true" | "false";
 }

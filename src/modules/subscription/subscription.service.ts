@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { BreUserSubscription } from "./subscription.entity";
-import { FindOptionsWhere, Repository } from "typeorm";
+import { Between, FindOptionsWhere, Repository } from "typeorm";
 import { ServiceException } from "src/exception/base-exception";
 import {
   BuySubscriptionDto,
@@ -20,7 +20,7 @@ export class SubscriptionService {
       const end_date = this.addYears(start_date, 2);
       const subscription = {
         user_id: data.user_id,
-        subscription_start_date: start_date,
+        subscription_start_date: new Date(),
         subscription_end_date: end_date,
         amount_paid: data.amount,
         subscription_active: true,
@@ -31,6 +31,7 @@ export class SubscriptionService {
 
       return subscription;
     } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: "Failed to buy subscription",
         serviceErrorCode: "SC",
@@ -41,21 +42,24 @@ export class SubscriptionService {
   async getSubscriptions(queries: GetUserSubscriptionQueries) {
     try {
       const findWhere: FindOptionsWhere<BreUserSubscription> = {};
-      if (queries?.is_active) {
-        findWhere.subscription_active = queries.is_active;
-      }
 
       if (queries?.user_id) {
-        findWhere.user_id = queries.user_id;
+        findWhere.user_id = Number(queries.user_id);
       }
-      const result = this.subscriptionRepository.find({
+      if (queries.is_active === "true") {
+        const date = new Date();
+        findWhere.subscription_end_date = Between(
+          new Date(),
+          this.addYears(date, 2),
+        );
+      }
+      const result = await this.subscriptionRepository.find({
         where: findWhere,
       });
-
       return result;
     } catch (error) {
       throw new ServiceException({
-        message: "Failed to buy subscription",
+        message: "Failed to get subscription",
         serviceErrorCode: "SC",
       });
     }
