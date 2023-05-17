@@ -120,10 +120,12 @@ export class UsersService {
         await this.breBreederService.createBreeder(savedUser.id);
       }
 
-      return { user };
+      return user;
     } catch (error) {
-      console.log("error here", error);
-      throw error;
+      throw new ServiceException({
+        message: error?.message ?? "Error while creating user",
+        serviceErrorCode: "US-500",
+      });
     }
   }
 
@@ -287,7 +289,7 @@ export class UsersService {
       user.identification_id_no = body.identification_id_no;
       user.contact_no = body.contact_no;
       const updatedUser = await this.breUsersRepository.save(user);
-      if (files.length > 0) {
+      if (files && files?.length > 0) {
         const identification_doc_name = fileFilter(
           files,
           "identification_doc_name",
@@ -303,6 +305,33 @@ export class UsersService {
       }
 
       return updatedUser;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error while updating user details",
+        serviceErrorCode: "US-500",
+        httpStatusCode: 400,
+      });
+    }
+  }
+
+  async uploadProfileImage(files, user_id) {
+    try {
+      const user = await this.breUsersRepository.findOne({
+        where: { id: user_id },
+      });
+      if (!user) {
+        throw new ServiceException({
+          message: "User not found",
+          serviceErrorCode: "US-404",
+        });
+      }
+      const profile_image = fileFilter(files, "profile_image")[0];
+      await this.s3Service.uploadSingle(profile_image, user.email);
+      // const updateUserDoc = await this.breUsersRepository.update(
+      //   { id: user_id },
+      //   { profile_image: profile_image.originalname },
+      // );
+      // return updateUserDoc;
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Error while updating user details",

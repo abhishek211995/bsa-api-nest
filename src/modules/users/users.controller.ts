@@ -41,12 +41,7 @@ export class UsersController {
         IndividualUser,
         files,
       );
-
-      return {
-        status: 201,
-        data: res.user,
-        message: "User Created Successfully",
-      };
+      return makeHTTPResponse(res, 200, "User created successfully");
     } catch (err) {
       throw err;
     }
@@ -177,6 +172,23 @@ export class UsersController {
 
       const res = this.usersService.updateUserDetails(body, files);
       return makeHTTPResponse(res, 200, "User details updated successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Upload user profile image",
+  })
+  @Post("/upload-profile-image")
+  @UseInterceptors(AnyFilesInterceptor())
+  async uploadProfileImage(
+    @UploadedFiles() files: Array<Express.Multer.File>,
+    @Body() body: { user_id: number },
+  ) {
+    try {
+      const res = await this.usersService.uploadProfileImage(body, files);
+      return makeHTTPResponse(res, 200, "Profile image uploaded successfully");
     } catch (error) {
       throw error;
     }

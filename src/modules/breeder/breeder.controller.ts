@@ -20,11 +20,7 @@ export class BreederController {
   async getBreederList() {
     try {
       const res = await this.breederService.getBreederList();
-      return {
-        status: 200,
-        data: res,
-        message: "Breeder List Found Successfully!",
-      };
+      return makeHTTPResponse(res, 200, "Breeder List Fetched Successfully!");
     } catch (err) {
       throw err;
     }

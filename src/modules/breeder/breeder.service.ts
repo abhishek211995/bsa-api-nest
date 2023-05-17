@@ -76,11 +76,11 @@ export class BreederService {
       );
 
       // @ts-expect-error adding property abruptly
-      breeder.user.identification_doc = identification_doc;
+      breeder?.user.identification_doc = identification_doc;
 
       const farms = await this.breederFarmService.getBreederFarms(
         breeder.breeder_id,
-        breeder.user.user_name,
+        breeder?.user.user_name,
       );
 
       return { breeder, farms };
@@ -97,7 +97,10 @@ export class BreederService {
 
       return list;
     } catch (err) {
-      throw err;
+      throw new ServiceException({
+        message: err.message ?? "Failed to fetch breeder list",
+        serviceErrorCode: "BS",
+      });
     }
   }
 
