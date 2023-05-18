@@ -187,21 +187,13 @@ export class UsersController {
     @Body() body: { user_id: number },
   ) {
     try {
-      const res = await this.usersService.uploadProfileImage(body, files);
+      const res = await this.usersService.uploadProfileImage(
+        files,
+        body.user_id,
+      );
       return makeHTTPResponse(res, 200, "Profile image uploaded successfully");
     } catch (error) {
       throw error;
     }
   }
-
-  //! get otp api is not used anymore
-  // @Get("getOTP")
-  // async getOTP(@Query("email") email: string) {
-  //   try {
-  //     const res = await this.usersService.getOTP(email);
-  //     return makeHTTPResponse(res, HttpStatus.OK, "OTP sent successfully");
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
 }

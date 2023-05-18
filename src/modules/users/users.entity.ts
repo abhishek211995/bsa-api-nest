@@ -60,8 +60,12 @@ export class BreUser {
   identity_doc_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 250 })
+  @Column({ nullable: false, length: 250, default: "" })
   user_address: string;
+
+  @ApiProperty()
+  @Column({ nullable: true, length: 250 })
+  profile_pic: string;
 
   @ApiProperty()
   @CreateDateColumn()

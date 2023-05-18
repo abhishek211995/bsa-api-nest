@@ -314,7 +314,7 @@ export class UsersService {
     }
   }
 
-  async uploadProfileImage(files, user_id) {
+  async uploadProfileImage(files: Array<Express.Multer.File>, user_id: number) {
     try {
       const user = await this.breUsersRepository.findOne({
         where: { id: user_id },
@@ -325,13 +325,13 @@ export class UsersService {
           serviceErrorCode: "US-404",
         });
       }
-      const profile_image = fileFilter(files, "profile_image")[0];
-      await this.s3Service.uploadSingle(profile_image, user.email);
-      // const updateUserDoc = await this.breUsersRepository.update(
-      //   { id: user_id },
-      //   { profile_image: profile_image.originalname },
-      // );
-      // return updateUserDoc;
+      const profile_pic = fileFilter(files, "profile_pic")[0];
+      await this.s3Service.uploadSingle(profile_pic, user.email);
+      const updateUserPic = await this.breUsersRepository.update(
+        { id: user_id },
+        { profile_pic: profile_pic.originalname },
+      );
+      return true;
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Error while updating user details",
@@ -340,23 +340,4 @@ export class UsersService {
       });
     }
   }
-  //! Get OTP is not used anywhere
-  // async getOTP(email: string) {
-  //   try {
-  //     const otp = Math.floor(1000 + Math.random() * 9000);
-  //     // Send OTP to email
-  //     await this.emailService.sendMail(
-  //       email,
-  //       "OTP for login",
-  //       `Your OTP is ${otp}`,
-  //     );
-  //     return otp;
-  //   } catch (error) {
-  //     throw new ServiceException({
-  //       message: error?.message ?? "Error while creating OTP",
-  //       serviceErrorCode: "US-500",
-  //       httpStatusCode: 400,
-  //     });
-  //   }
-  // }
 }

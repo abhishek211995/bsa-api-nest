@@ -41,37 +41,14 @@ import { BreTransferOwnerRequest } from "./modules/transfer-owner/transfer.entit
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { BreUser } from "./modules/users/users.entity";
 import { UsersModule } from "./modules/users/users.module";
+import { dataSourceOptions } from "../db/data-source";
 
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        type: "mysql",
-        host: configService.get("DB_HOST"),
-        port: configService.get("DB_PORT"),
-        username: configService.get("DB_USER"),
-        password: configService.get("DB_PASSWORD"),
-        database: configService.get("DB_NAME"),
-        entities: [
-          BreUser,
-          BreBreeder,
-          BreFarmMaster,
-          BreAnimalMaster,
-          BreAnimalBreedMaster,
-          BreAnimal,
-          BreCostsMaster,
-          BreRoleMaster,
-          BreTransferOwnerRequest,
-          BreBreederFarm,
-          BreLitterRegistration,
-          BreOtpMapping,
-          BreOrders,
-          BreUserSubscription,
-        ],
-        synchronize: true,
-      }),
+      useFactory: (configService: ConfigService) => dataSourceOptions,
       inject: [ConfigService],
     }),
     UsersModule,
