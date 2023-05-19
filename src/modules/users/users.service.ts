@@ -223,9 +223,21 @@ export class UsersService {
           serviceErrorCode: "US-404",
         });
       }
-      return user;
+
+      console.log("user", user);
+
+      // get link
+      const identification_doc = await this.s3Service.getLink(
+        `${user.email}/${user.identity_doc_name}`,
+      );
+
+      const data = { ...user, identification_doc: identification_doc };
+      return data;
     } catch (error) {
-      throw error;
+      throw new ServiceException({
+        message: error?.message ?? "Error while fetching user",
+        serviceErrorCode: "US-500",
+      });
     }
   }
 

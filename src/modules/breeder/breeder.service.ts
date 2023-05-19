@@ -72,7 +72,7 @@ export class BreederService {
       });
 
       const identification_doc = await this.s3Service.getLink(
-        `${breeder.user.user_name}/${breeder.user.identity_doc_name}`,
+        `${breeder.user.email}/${breeder.user.identity_doc_name}`,
       );
 
       // @ts-expect-error adding property abruptly
@@ -80,7 +80,7 @@ export class BreederService {
 
       const farms = await this.breederFarmService.getBreederFarms(
         breeder.breeder_id,
-        breeder?.user.user_name,
+        breeder?.user.email,
       );
 
       return { breeder, farms };

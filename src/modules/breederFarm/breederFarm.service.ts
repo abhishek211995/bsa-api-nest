@@ -108,7 +108,7 @@ export class BreederFarmService {
     }
   }
 
-  async getBreederFarms(breeder_id: number, user_name: string) {
+  async getBreederFarms(breeder_id: number, email: string) {
     try {
       let farms = await this.breederFarmRepository.find({
         where: {
@@ -118,7 +118,7 @@ export class BreederFarmService {
 
       farms = await Promise.all(
         farms.map(async (f) => {
-          const logo = await this.s3Service.getLink(`${user_name}/${f.logo}`);
+          const logo = await this.s3Service.getLink(`${email}/${f.logo}`);
           f.logo = logo;
           return f;
         }),
