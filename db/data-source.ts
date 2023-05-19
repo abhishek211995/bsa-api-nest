@@ -1,4 +1,7 @@
 import { DataSource, DataSourceOptions } from "typeorm";
+// dotenv
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export const dataSourceOptions: DataSourceOptions = {
   type: "mysql",
@@ -9,6 +12,8 @@ export const dataSourceOptions: DataSourceOptions = {
   database: process.env.DB_NAME,
   entities: ["dist/**/*.entity{.ts,.js}"],
   migrations: ["dist/db/migrations/*{.ts,.js}"],
+  migrationsRun: true,
+  synchronize: false,
 };
 
 const dataSource = new DataSource(dataSourceOptions);
