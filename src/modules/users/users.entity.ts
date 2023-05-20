@@ -23,7 +23,7 @@ export class BreUser {
   id: number;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: true })
+  @Column({ nullable: false, length: 100, default: true })
   user_name: string;
 
   @ApiProperty()
@@ -44,7 +44,7 @@ export class BreUser {
   contact_no: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 100, default: "" })
   user_country: string;
 
   @ApiProperty()
@@ -52,19 +52,19 @@ export class BreUser {
   identification_id_no: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 50, default: "" })
+  @Column({ nullable: false, length: 450, default: "" })
   identification_id_name: string;
 
   @ApiProperty()
-  @Column({ nullable: true, length: 250 })
+  @Column({ nullable: true, length: 450 })
   identity_doc_name: string;
 
   @ApiProperty()
-  @Column({ nullable: false, length: 250, default: "" })
+  @Column({ nullable: false, length: 900, default: "" })
   user_address: string;
 
   @ApiProperty()
-  @Column({ nullable: true, length: 250 })
+  @Column({ nullable: true, length: 450 })
   profile_pic: string;
 
   @ApiProperty()

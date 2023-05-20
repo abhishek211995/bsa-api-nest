@@ -40,9 +40,9 @@ export class LitterRegistrationController {
     summary: "Get litter details by id",
   })
   @Get("/:id")
-  async getLitterDetailsById(@Param("id") id: string) {
+  async getLitterDetailsById(@Param("id") id: string, @Body() body) {
     try {
-      const result = await this.litterService.getLitterDetailsById(id);
+      const result = await this.litterService.getLitterDetailsById(id, body);
       return makeHTTPResponse(
         result,
         200,

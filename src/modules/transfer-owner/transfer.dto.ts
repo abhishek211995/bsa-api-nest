@@ -9,12 +9,6 @@ export class TransferOwnerDto {
 
   @IsString()
   animal_id: string;
-
-  @IsString()
-  request_status: string;
-
-  @IsString()
-  request_rejection_reason: string;
 }
 
 export class ApproveRejectTransferDto {

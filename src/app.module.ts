@@ -28,10 +28,7 @@ import { BreBreeder } from "./modules/breeder/breeder.entity";
 import { BreederModule } from "./modules/breeder/breeder.module";
 import { BreBreederFarm } from "./modules/breederFarm/breederFarm.entity";
 import { BreederFarmModule } from "./modules/breederFarm/breederFarm.module";
-import {
-  BreLitterRegistration,
-  BreOtpMapping,
-} from "./modules/litterRegistration/litterRegistration.entity";
+import { BreLitterRegistration } from "./modules/litterRegistration/litterRegistration.entity";
 import { LitterRegistrationModule } from "./modules/litterRegistration/litterRegistration.module";
 import { BreOrders } from "./modules/orders/orders.entity";
 import { OrdersModule } from "./modules/orders/orders.module";

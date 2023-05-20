@@ -88,6 +88,14 @@ export class BreLitterRegistration {
   sire_rejection_reason: string; // if string then sire rejected a litter
 
   @ApiProperty()
+  @Column({ nullable: true })
+  sire_action_taken: boolean;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  sire_action_time: Date;
+
+  @ApiProperty()
   @Column({ default: false })
   completed: boolean;
 
@@ -100,38 +108,38 @@ export class BreLitterRegistration {
   updated_at: Date;
 }
 
-@Entity("bre_otp_mapping")
-export class BreOtpMapping {
-  @ApiProperty()
-  @PrimaryGeneratedColumn()
-  id: number;
+// @Entity("bre_otp_mapping")
+// export class BreOtpMapping {
+//   @ApiProperty()
+//   @PrimaryGeneratedColumn()
+//   id: number;
 
-  @ApiProperty()
-  @Column({ nullable: false })
-  otp: number;
+//   @ApiProperty()
+//   @Column({ nullable: false })
+//   otp: number;
 
-  @ApiProperty()
-  @CreateDateColumn()
-  created_at: Date;
+//   @ApiProperty()
+//   @CreateDateColumn()
+//   created_at: Date;
 
-  @ApiProperty()
-  @Column()
-  validity: Date;
+//   @ApiProperty()
+//   @Column()
+//   validity: Date;
 
-  @ApiProperty()
-  @Column({ nullable: false })
-  reason: string;
+//   @ApiProperty()
+//   @Column({ nullable: false })
+//   reason: string;
 
-  @ApiProperty()
-  @Column({ nullable: false })
-  user_id: number;
+//   @ApiProperty()
+//   @Column({ nullable: false })
+//   user_id: number;
 
-  @ApiProperty()
-  @JoinColumn({ name: "user_id" })
-  @ManyToOne(() => BreUser)
-  user: BreUser;
+//   @ApiProperty()
+//   @JoinColumn({ name: "user_id" })
+//   @ManyToOne(() => BreUser)
+//   user: BreUser;
 
-  @ApiProperty()
-  @Column({ default: false })
-  verified: boolean;
-}
+//   @ApiProperty()
+//   @Column({ default: false })
+//   verified: boolean;
+// }

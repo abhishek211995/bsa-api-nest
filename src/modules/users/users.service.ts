@@ -224,8 +224,6 @@ export class UsersService {
         });
       }
 
-      console.log("user", user);
-
       // get link
       const identification_doc = await this.s3Service.getLink(
         `${user.email}/${user.identity_doc_name}`,

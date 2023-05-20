@@ -10,10 +10,7 @@ import {
 import { Repository } from "typeorm";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
-import {
-  BreLitterRegistration,
-  BreOtpMapping,
-} from "./litterRegistration.entity";
+import { BreLitterRegistration } from "./litterRegistration.entity";
 import { BreAnimal } from "../animal/animal.entity";
 import { generateRegNo } from "src/utils/generateReg.util";
 import { v4 as uuidv4 } from "uuid";
@@ -30,8 +27,6 @@ export class LitterRegistrationService {
   constructor(
     @InjectRepository(BreLitterRegistration)
     private readonly litterRegistrationRepository: Repository<BreLitterRegistration>,
-    @InjectRepository(BreOtpMapping)
-    private readonly otpRepository: Repository<BreOtpMapping>,
     @InjectRepository(BreAnimal)
     private readonly animalRepository: Repository<BreAnimal>,
     private readonly userService: UsersService,
@@ -73,7 +68,6 @@ export class LitterRegistrationService {
       });
       const encryptId = encryptNumber(getLitter.id);
       const link = `http://localhost:3000/litterRegistration?requestId=${encryptId}`;
-      console.log("Link created");
 
       if (getLitter) {
         const message = litterRegistrationRequest(
@@ -82,17 +76,13 @@ export class LitterRegistrationService {
           getLitter.owner.user_name,
           link,
         );
-        console.log("Message created");
-        console.log("Mail", getLitter.sire_owner.email);
 
         await this.mailService.sendMail(
           getLitter.sire_owner.email,
           "Sire Confirmation Request Received",
           message,
         );
-        console.log("Mail sent");
       }
-      console.log("Returning litter");
 
       return getLitter;
     } catch (error) {
@@ -109,8 +99,9 @@ export class LitterRegistrationService {
     try {
       let list = await this.litterRegistrationRepository.find({
         // where: { completed: false },
-        relations: ["owner"],
+        relations: ["owner", "sire_owner"],
       });
+      console.log("Here", list);
       // @ts-expect-error changing number to string
       list = list.map((l) => ({ ...l, id: encryptNumber(l.id) }));
       return list;
@@ -138,16 +129,16 @@ export class LitterRegistrationService {
           "sire.animal_owner_id",
         ],
       });
-      console.log(list.sire_owner_id, body.user.id);
-      console.log(body);
+      console.log("sadjgasjd", body?.user?.user_role_id?.role_id);
 
-      if (list.sire_owner_id !== body.user.id) {
-        throw new ServiceException({
-          message: "You are not authorized to view this litter",
-          serviceErrorCode: "LRS-105",
-          httpStatusCode: HttpStatus.BAD_REQUEST,
-        });
-      }
+      if (body?.user?.user_role_id?.role_id !== 3)
+        if (list.sire_owner_id !== body?.user?.id) {
+          throw new ServiceException({
+            message: "You are not authorized to view this litter",
+            serviceErrorCode: "LRS-105",
+            httpStatusCode: HttpStatus.BAD_REQUEST,
+          });
+        }
 
       return list;
     } catch (error) {
@@ -230,7 +221,6 @@ export class LitterRegistrationService {
       const animalsAdded = await this.animalRepository.insert(animals);
       return animalsAdded.generatedMaps.length;
     } catch (error) {
-      console.log("Failed to approve litter", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to approve litter",
         serviceErrorCode: "LRS",
@@ -248,7 +238,6 @@ export class LitterRegistrationService {
       );
       return update.affected;
     } catch (error) {
-      console.log("Failed to reject litter", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to reject litter",
         serviceErrorCode: "LRS",
@@ -259,10 +248,15 @@ export class LitterRegistrationService {
   async sireApproval(id: string, remarks: Array<{ message: string }>) {
     try {
       const decryptedId = decryptNumber(id);
-
+      const date = new Date();
       await this.litterRegistrationRepository.update(
         { id: decryptedId },
-        { sire_approval: true, remarks },
+        {
+          sire_approval: true,
+          sire_action_taken: true,
+          sire_action_time: date,
+          remarks,
+        },
       );
       return true;
     } catch (error) {
@@ -284,10 +278,16 @@ export class LitterRegistrationService {
   }) {
     try {
       const decryptedId = decryptNumber(id);
-
+      const date = new Date();
       await this.litterRegistrationRepository.update(
         { id: decryptedId },
-        { sire_approval: false, sire_rejection_reason: reason, remarks },
+        {
+          sire_approval: false,
+          sire_action_taken: true,
+          sire_action_time: date,
+          sire_rejection_reason: reason,
+          remarks,
+        },
       );
       return true;
     } catch (error) {
