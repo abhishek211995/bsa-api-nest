@@ -11,6 +11,8 @@ import { Repository } from "typeorm";
 import { BreederService } from "../breeder/breeder.service";
 import { IndividualUserDto, LoginUserDto } from "./users.dto";
 import { BreUser, UserStatus } from "./users.entity";
+import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
+import { SubscriptionService } from "../subscription/subscription.service";
 @Injectable()
 export class UsersService {
   constructor(
@@ -22,6 +24,7 @@ export class UsersService {
     private bcryptService: Bcrypt,
     private readonly s3Service: S3Service,
     private readonly emailService: EmailService,
+    private readonly subscriptionService: SubscriptionService,
   ) {}
 
   // for breeder => deprecated
@@ -345,6 +348,25 @@ export class UsersService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Error while updating user details",
+        serviceErrorCode: "US-500",
+        httpStatusCode: 400,
+      });
+    }
+  }
+
+  async getUserDetailsWithSubscription(queries: GetUserSubscriptionQueries) {
+    try {
+      const user_data = await this.breBreederService.getBreeder(
+        queries.user_id,
+      );
+      const subscription_data = await this.subscriptionService.getSubscriptions(
+        queries,
+      );
+      const data = { ...user_data, subscription_data };
+      return data;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error while fetching user details",
         serviceErrorCode: "US-500",
         httpStatusCode: 400,
       });

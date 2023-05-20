@@ -8,6 +8,7 @@ import { BreederModule } from "src/modules/breeder/breeder.module";
 import { UsersController } from "./users.controller";
 import { BreUser } from "./users.entity";
 import { UsersService } from "./users.service";
+import { SubscriptionModule } from "../subscription/subscription.module";
 @Module({
   imports: [
     TypeOrmModule.forFeature([BreUser, BreRoleMaster]),
@@ -15,6 +16,7 @@ import { UsersService } from "./users.service";
     BcryptModule,
     S3Module,
     EmailModule,
+    SubscriptionModule,
   ],
   controllers: [UsersController],
   providers: [UsersService],

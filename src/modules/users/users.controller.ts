@@ -23,6 +23,7 @@ import { UsersService } from "./users.service";
 import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
+import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
 dotenv.config();
 
 @Controller("auth")
@@ -192,6 +193,23 @@ export class UsersController {
         body.user_id,
       );
       return makeHTTPResponse(res, 200, "Profile image uploaded successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Get complete user details with subscription",
+  })
+  @Get("/user-details-with-subscription")
+  async getUserDetailsWithSubscription(
+    @Query() queries: GetUserSubscriptionQueries,
+  ) {
+    try {
+      const res = await this.usersService.getUserDetailsWithSubscription(
+        queries,
+      );
+      return makeHTTPResponse(res, 200, "User details fetched successfully");
     } catch (error) {
       throw error;
     }
