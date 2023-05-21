@@ -27,64 +27,6 @@ export class UsersService {
     private readonly subscriptionService: SubscriptionService,
   ) {}
 
-  // for breeder => deprecated
-  // async createUser(
-  //   createUserDto: CreateUserDto,
-  //   files: Array<Express.Multer.File>,
-  // ) {
-  //   try {
-  //     const password = await this.bcryptService.hashPassword(
-  //       createUserDto.password,
-  //     );
-
-  //     const newUser = this.breUsersRepository.create({
-  //       ...createUserDto,
-  //       password,
-  //     });
-
-  //     const user = await this.breUsersRepository.save(newUser);
-
-  //     const identity_doc = fileFilter(files, "identity_doc_name")[0];
-
-  //     const uploadData = await this.s3Service.uploadSingle(
-  //       identity_doc,
-  //       user.user_name,
-  //     );
-
-  //     const updateUser = await this.updateUserDoc(
-  //       newUser.id,
-  //       identity_doc.originalname,
-  //     );
-
-  //     const breeder = new BreederDto();
-  //     breeder.breeder_license_no = createUserDto.breeder_license_no;
-  //     breeder.breeder_license_expiry_date =
-  //       createUserDto.breeder_license_expiry_date;
-  //     breeder.farm_address = createUserDto.farm_address;
-  //     breeder.farm_name = createUserDto.farm_name;
-  //     const breederDetails = await this.breBreederService.createBreeder(
-  //       breeder,
-  //       updateUser,
-  //       files,
-  //     );
-  //     if (breederDetails) {
-  //       const newFarm = await this.breederFarmService.createBreederFarm({
-  //         breeder_id: breederDetails.breeder.breeder_id,
-  //         farm_id: createUserDto.farm_id,
-  //       });
-  //       if (newFarm)
-  //         console.log(
-  //           "Breeder farm relation created for user id",
-  //           user.id,
-  //           newFarm,
-  //         );
-  //     }
-  //     return { user, breederDetails };
-  //   } catch (error) {
-  //     throw error;
-  //   }
-  // }
-
   // generic
   async createIndividualUser(
     individualUser: IndividualUserDto,
@@ -148,16 +90,26 @@ export class UsersService {
           httpStatusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      // if (
-      //   user.user_status === UserStatus.Rejected ||
-      //   user.user_status === UserStatus["Verification Pending"]
-      // ) {
-      //   throw new ServiceException({
-      //     message: "Your profile is not verified yet. Please contact admin",
-      //     serviceErrorCode: "US",
-      //     httpStatusCode: HttpStatus.UNAUTHORIZED,
-      //   });
-      // }
+      let breederDetails = null;
+      let subscription = [];
+      // @ts-expect-error entity types
+      if (user.user_role_id.role_id === 1) {
+        breederDetails = await this.breBreederService.getBreeder(user.id);
+      }
+
+      subscription = await this.subscriptionService.getSubscriptions({
+        is_active: "true",
+        user_id: user.id,
+      });
+
+      // get link
+      const identification_doc = await this.s3Service.getLink(
+        `${user.email}/${user.identity_doc_name}`,
+      );
+      const profile_pic = await this.s3Service.getLink(
+        `${user.email}/${user.profile_pic}`,
+      );
+
       const isPasswordCorrect: boolean =
         await this.bcryptService.comparePassword(password, user.password);
       if (!isPasswordCorrect) {
@@ -169,7 +121,15 @@ export class UsersService {
       }
 
       const token = jwt.sign({ user_id: user.id }, process.env.TOKEN_SECRET);
-      return { user, token };
+      const data = {
+        ...user,
+        identification_doc: identification_doc,
+        profile_pic,
+        breederDetails,
+        subscription,
+      };
+      console.log("data", data);
+      return { user: data, token };
     } catch (error) {
       throw error;
     }
@@ -226,13 +186,32 @@ export class UsersService {
           serviceErrorCode: "US-404",
         });
       }
+      let breederDetails = null;
+      let subscription = [];
+      // @ts-expect-error entity types
+      if (user.user_role_id.role_id === 1) {
+        breederDetails = await this.breBreederService.getBreeder(id);
+      }
 
+      subscription = await this.subscriptionService.getSubscriptions({
+        is_active: "true",
+        user_id: id,
+      });
       // get link
       const identification_doc = await this.s3Service.getLink(
         `${user.email}/${user.identity_doc_name}`,
       );
+      const profile_pic = await this.s3Service.getLink(
+        `${user.email}/${user.profile_pic}`,
+      );
 
-      const data = { ...user, identification_doc: identification_doc };
+      const data = {
+        ...user,
+        identification_doc: identification_doc,
+        profile_pic,
+        breederDetails,
+        subscription,
+      };
       return data;
     } catch (error) {
       throw new ServiceException({
