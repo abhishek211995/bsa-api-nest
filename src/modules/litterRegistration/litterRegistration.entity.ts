@@ -8,10 +8,8 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from "typeorm";
-import { BreUser } from "../users/users.entity";
 import { BreAnimal } from "../animal/animal.entity";
-import { IsString } from "class-validator";
-import { type } from "os";
+import { BreUser } from "../users/users.entity";
 
 @Entity("bre_litter_registration")
 export class BreLitterRegistration {
