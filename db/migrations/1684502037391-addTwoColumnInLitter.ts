@@ -5,10 +5,10 @@ export class AddTwoColumnInLitter1684502037391 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE \`bre_litter_registration\` ADD \`sire_action_taken\` tinyint NULL`,
+      `ALTER TABLE \`bre_litter_registration\` ADD COLUMN IF NOT EXISTS \`sire_action_taken\` tinyint NULL`,
     );
     await queryRunner.query(
-      `ALTER TABLE \`bre_litter_registration\` ADD \`sire_action_time\` datetime NULL`,
+      `ALTER TABLE \`bre_litter_registration\` ADD COLUMN IF NOT EXISTS \`sire_action_time\` datetime NULL`,
     );
   }
 

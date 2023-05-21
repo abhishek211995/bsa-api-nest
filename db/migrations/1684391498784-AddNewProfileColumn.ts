@@ -5,7 +5,7 @@ export class AddNewProfileColumn1684391498784 implements MigrationInterface {
 
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE \`bre_user\` ADD \`profile_pic\` varchar(250) NULL`,
+      `ALTER TABLE \`bre_user\` ADD COLUMN IF NOT EXISTS \`profile_pic\` varchar(250) NULL`,
     );
     await queryRunner.query(
       `ALTER TABLE \`bre_user\` CHANGE \`user_address\` \`user_address\` varchar(250) NOT NULL DEFAULT ''`,
