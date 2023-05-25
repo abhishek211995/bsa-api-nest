@@ -225,4 +225,19 @@ export class AnimalController {
       throw error;
     }
   }
+
+  @ApiOperation({
+    summary: "Get animal all data for cerificate",
+  })
+  @Get("/CertificateData")
+  async getAnimalDataForCertificate(@Query("animal_id") animal_id: string) {
+    try {
+      const result = await this.animalService.getAnimalDataForCertificate(
+        animal_id,
+      );
+      return makeHTTPResponse(result, 200, "Animal data fetched successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
 }

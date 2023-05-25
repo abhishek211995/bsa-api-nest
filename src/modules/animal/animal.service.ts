@@ -15,6 +15,7 @@ import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
 import { ServiceException } from "src/exception/base-exception";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
+import { BreederService } from "../breeder/breeder.service";
 
 @Injectable()
 export class AnimalService {
@@ -23,6 +24,7 @@ export class AnimalService {
     private readonly animalRepository: Repository<BreAnimal>,
     private transactionUtils: TransactionUtil,
     private readonly s3Service: S3Service,
+    private readonly breederService: BreederService,
   ) {}
 
   // single animal
@@ -615,6 +617,26 @@ export class AnimalService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to change animal microchip id",
+        serviceErrorCode: "AS-100",
+      });
+    }
+  }
+
+  async getAnimalDataForCertificate(animal_id: string) {
+    try {
+      const animal = await this.getAnimalById(animal_id);
+      console.log("animal", animal);
+
+      const farm = await this.breederService.getBreeder(
+        // @ts-ignore
+        animal.animal_owner_id?.id,
+      );
+      console.log("farm", farm);
+
+      return { animal, farm };
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to fetch animal data",
         serviceErrorCode: "AS-100",
       });
     }

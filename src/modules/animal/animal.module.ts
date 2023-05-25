@@ -7,6 +7,7 @@ import { AnimalService } from "./animal.service";
 import { DBUtilsModule } from "src/lib/db_utils/db.utils.module";
 import { S3Module } from "src/lib/s3multer/s3.module";
 import { UsersModule } from "../users/users.module";
+import { BreederModule } from "../breeder/breeder.module";
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { UsersModule } from "../users/users.module";
     DBUtilsModule,
     S3Module,
     UsersModule,
+    BreederModule,
   ],
   controllers: [AnimalController],
   providers: [AnimalService],
