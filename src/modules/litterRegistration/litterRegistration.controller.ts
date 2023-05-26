@@ -59,10 +59,7 @@ export class LitterRegistrationController {
   @Post("/approve")
   async approveLitter(@Body() body: ApproveLitterBody) {
     try {
-      const result = await this.litterService.approveLitter(
-        body.id,
-        body.remarks,
-      );
+      const result = await this.litterService.approveLitter(body);
       return makeHTTPResponse(result, 200, "Litter approved successfully!");
     } catch (error) {
       throw error;

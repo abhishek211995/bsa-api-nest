@@ -150,14 +150,14 @@ export class LitterRegistrationService {
     }
   }
 
-  async approveLitter(id: string, remarks: Array<{ message: string }>) {
+  async approveLitter(body: any) {
     try {
-      const decryptedId = decryptNumber(id);
+      const decryptedId = decryptNumber(body.id);
       const update = await this.litterRegistrationRepository.update(
         { id: decryptedId },
-        { completed: true, remarks },
+        { completed: true, remarks: body.remarks },
       );
-      const litterDetails = await this.getLitterDetailsById(id);
+      const litterDetails = await this.getLitterDetailsById(body.id, body);
       const animalsCount = await this.animalRepository.count();
       const animals = litterDetails.litters.map((l, index) => {
         const damPedigree = litterDetails.dam.animal_pedigree;
