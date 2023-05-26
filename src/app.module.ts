@@ -72,6 +72,7 @@ export class AppModule implements NestModule {
       .apply(JWTMiddleware)
       .exclude(
         { path: "/auth/login", method: RequestMethod.POST },
+        { path: "/", method: RequestMethod.GET },
         {
           path: "/auth/individual",
           method: RequestMethod.POST,
