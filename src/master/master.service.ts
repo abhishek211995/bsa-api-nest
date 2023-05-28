@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CostsDto, FarmTypeDto, RoleDto, SubscriptionDto } from "./master.dto";
 import { BreCostsMaster, BreFarmMaster, BreRoleMaster } from "./master.entity";
+import { ServiceException } from "../exception/base-exception";
 
 @Injectable()
 export class RoleServices {
@@ -94,8 +95,25 @@ export class CostsServices {
     return data;
   }
 
-  updateCosts(id: number, costsDto: CostsDto) {
-    return this.breCostsMasterRepository.update(id, costsDto);
+  async updateCosts(id: number, costsDto: CostsDto) {
+    try {
+      const update = await this.breCostsMasterRepository.update(
+        { id },
+        {
+          amount: costsDto.amount,
+          delivery_fee: costsDto.delivery_fee,
+          description: costsDto.description,
+          name: costsDto.name,
+          tax: costsDto.tax,
+        },
+      );
+      return update;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to update cost",
+        serviceErrorCode: "CM",
+      });
+    }
   }
 
   async deleteCost(id: number) {

@@ -79,7 +79,6 @@ export class UsersService {
       const { email, password } = loginUserDto;
       const user = await this.breUsersRepository.findOne({
         where: { email: email },
-        loadRelationIds: true,
         relations: ["user_role_id"],
       });
 

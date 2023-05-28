@@ -1,6 +1,13 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { InsertResult, QueryRunner, Raw, Repository } from "typeorm";
+import {
+  FindOptionsWhere,
+  In,
+  InsertResult,
+  QueryRunner,
+  Raw,
+  Repository,
+} from "typeorm";
 import {
   AnimalDto,
   AnimalWithPedigreePayload,
@@ -93,7 +100,12 @@ export class AnimalService {
     gender: string;
   }) {
     try {
-      const findWhereOptions: Record<string, any> = {};
+      const findWhereOptions: FindOptionsWhere<BreAnimal> = {};
+      findWhereOptions.registration_source = In([
+        animalRegistrationSource.litter,
+        animalRegistrationSource.pedigree,
+        animalRegistrationSource.registration,
+      ]);
       if (animal_owner_id) {
         findWhereOptions.animal_owner_id = Number(animal_owner_id);
       }
@@ -605,7 +617,7 @@ export class AnimalService {
   ) {
     try {
       const result = await this.animalRepository.update(
-        { animal_registration_number: animal_registration_number },
+        { animal_id: animal_registration_number },
         {
           animal_microchip_id: microchip_id,
         },
@@ -625,10 +637,9 @@ export class AnimalService {
   async getAnimalDataForCertificate(animal_id: string) {
     try {
       const animal = await this.getAnimalById(animal_id);
-      console.log("animal", animal);
 
       const farm = await this.breederService.getBreeder(
-        // @ts-ignore
+        // @ts-expect-error type issue in repo
         animal.animal_owner_id?.id,
       );
       console.log("farm", farm);
