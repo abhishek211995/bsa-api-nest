@@ -67,7 +67,7 @@ export class LitterRegistrationService {
         where: { animal_id: getLitter.sire_id },
       });
       const encryptId = encryptNumber(getLitter.id);
-      const link = `http://localhost:3000/litterRegistration?requestId=${encryptId}`;
+      const link = `${process.env.WEB_URL}/litterRegistration?requestId=${encryptId}`;
 
       if (getLitter) {
         const message = litterRegistrationRequest(

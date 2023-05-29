@@ -21,7 +21,6 @@ async function bootstrap() {
     credentials: true,
     exposedHeaders: ["set-cookie"],
   });
-  // app.enableCors({ origin: "http://localhost:3000", credentials: true })
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup("api", app, document);
   app.use(cookieParser());
