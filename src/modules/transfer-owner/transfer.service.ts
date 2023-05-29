@@ -40,7 +40,7 @@ export class TransferService {
           transferDto.animal_id,
         );
         const encryptId = encryptNumber(newTransfer.transfer_id);
-        const link = `http://localhost:3000/confirmTransfer?transferId=${encryptId}`;
+        const link = `${process.env.WEB_URL}/confirmTransfer?transferId=${encryptId}`;
         const message = transferMail(
           user.user_name,
           animal.animal_name,
@@ -76,10 +76,7 @@ export class TransferService {
           serviceErrorCode: "TS",
         });
       }
-      // @ts-ignore
-      console.log(transfer.old_owner_id.id, user_id);
-
-      // @ts-ignore
+      // @ts-expect-error entity types
       if (user_id && transfer.old_owner_id.id !== user_id) {
         throw new ServiceException({
           message: "You are not authorized to view this transfer request",
