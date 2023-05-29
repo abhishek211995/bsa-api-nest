@@ -168,10 +168,7 @@ export class UsersController {
     },
   ) {
     try {
-      console.log("body", body);
-      console.log("files", files);
-
-      const res = this.usersService.updateUserDetails(body, files);
+      const res = await this.usersService.updateUserDetails(body, files);
       return makeHTTPResponse(res, 200, "User details updated successfully");
     } catch (error) {
       throw error;

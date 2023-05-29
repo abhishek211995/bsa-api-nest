@@ -81,6 +81,7 @@ export class UsersService {
         where: { email: email },
         relations: ["user_role_id"],
       });
+      console.log("user", user);
 
       if (!user) {
         throw new ServiceException({
@@ -273,24 +274,24 @@ export class UsersService {
           serviceErrorCode: "US-404",
         });
       }
-      const oldDocName = user.user_name;
-      user.user_name = body.user_name;
-      user.user_address = body.user_address;
-      user.identification_id_name = body.identification_id_name;
-      user.identification_id_no = body.identification_id_no;
-      user.contact_no = body.contact_no;
-      const updatedUser = await this.breUsersRepository.save(user);
+      const updatedUser = await this.breUsersRepository.update(
+        { id: body.user_id },
+        {
+          user_name: body.user_name,
+          user_address: body.user_address,
+          identification_id_name: body.identification_id_name,
+          identification_id_no: body.identification_id_no,
+          contact_no: body.contact_no,
+        },
+      );
       if (files && files?.length > 0) {
         const identification_doc_name = fileFilter(
           files,
           "identification_doc_name",
         )[0];
-        await this.s3Service.uploadSingle(
-          identification_doc_name,
-          updatedUser.email,
-        );
+        await this.s3Service.uploadSingle(identification_doc_name, user.email);
         const updateUserDoc = await this.updateUserDoc(
-          updatedUser.id,
+          user.id,
           identification_doc_name.originalname,
         );
       }
