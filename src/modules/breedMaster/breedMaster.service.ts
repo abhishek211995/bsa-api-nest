@@ -14,12 +14,13 @@ export class AnimalBreedServices {
 
   // Add animal breed
   async addAnimalBreed(animalBreedDto: AnimalBreedDto) {
-    const existing = await this.breAnimalBreedMasterRepository.find({
+    const existing = await this.breAnimalBreedMasterRepository.findOne({
       where: {
         animal_breed_name: animalBreedDto.animal_breed_name.trim(),
         animal_type_id: animalBreedDto.animal_type_id,
       },
     });
+
     if (existing) {
       throw new ServiceException({
         message: "Breed already added",
