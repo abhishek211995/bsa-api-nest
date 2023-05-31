@@ -194,6 +194,9 @@ export class AnimalService {
         animalRegistrationSource.registration,
       );
 
+      console.log("pedigree", animalDataDto.animal_pedigree);
+      console.log("generations", generations);
+
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
         this.upsertAnimal([animalDataDto]),
       );
@@ -229,6 +232,7 @@ export class AnimalService {
           );
         }
       }
+      console.log("generations", payload.generations);
 
       animalsCount++;
 
@@ -648,6 +652,139 @@ export class AnimalService {
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch animal data",
+        serviceErrorCode: "AS-100",
+      });
+    }
+  }
+
+  async updateAnimalData(
+    animal_id: string,
+    animalData: any,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { animal_id },
+      });
+
+      if (!animal) {
+        throw new ServiceException({
+          message: "Animal not found",
+          serviceErrorCode: "AS-101",
+        });
+      }
+      let result;
+      // animalData is taken in payload without generations
+      const { generations, ...payload } = animalData;
+      if (Object.keys(payload).length !== 0) {
+        console.log("hi");
+
+        result = await this.animalRepository.update(
+          { animal_id },
+          {
+            ...payload,
+          },
+        );
+      }
+      if (files.length > 0) {
+        const uploadData = await this.s3Service.uploadMultiple(
+          files,
+          animal.animal_registration_number,
+        );
+        if (uploadData) {
+          const animal_front = fileFilter(files, "animal_front_view_image");
+          const animal_left = fileFilter(files, "animal_left_view_image");
+          const animal_right = fileFilter(files, "animal_right_view_image");
+          const dna_doc = fileFilter(files, "animal_dna_doc");
+          const hded_doc = fileFilter(files, "animal_hded_doc");
+          const animal_registration_doc = fileFilter(
+            files,
+            "animal_registration_doc",
+          );
+          if (animal_registration_doc.length > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_registration_doc:
+                  animal_registration_doc[0].originalname,
+              },
+            );
+          }
+
+          if (animal_front.length > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_front_view_image: animal_front[0].originalname,
+              },
+            );
+          }
+          if (animal_left > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_left_view_image: animal_left,
+              },
+            );
+          }
+          if (animal_right > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_right_view_image: animal_right,
+              },
+            );
+          }
+
+          if (dna_doc.length > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_dna_doc: dna_doc[0].originalname,
+              },
+            );
+          }
+
+          if (hded_doc.length > 0) {
+            await this.animalRepository.update(
+              { animal_id: animal.animal_id },
+              {
+                animal_hded_doc: hded_doc[0].originalname,
+              },
+            );
+          }
+        }
+      }
+      // take json of animalData.pedigree and update the previous animal data
+      if (animalData.generations) {
+        const pedigree = JSON.parse(animalData.generations);
+
+        const animalCount = await this.animalRepository.count();
+        const genData = pedigree.map((g, i) => {
+          const reg_no = generateRegNo(g.breedId, animalCount + 1 + i);
+          return new CreateGenerationsDto(
+            g.id,
+            g.name,
+            g.animalType,
+            g.breedId,
+            g.gender,
+            animalData.animal_owner_id,
+            g.sireId,
+            g.damId,
+            g.pedigree,
+            reg_no,
+          );
+        });
+        const generation = await this.animalRepository.upsert(genData, [
+          "animal_id",
+        ]);
+        console.log("generation", generation);
+      }
+
+      return result;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Failed to update animal data",
         serviceErrorCode: "AS-100",
       });
     }

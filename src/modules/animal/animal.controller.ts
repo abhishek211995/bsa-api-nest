@@ -2,6 +2,7 @@ import { Controller } from "@nestjs/common";
 import {
   Body,
   Get,
+  Param,
   Post,
   Put,
   Query,
@@ -22,10 +23,7 @@ import { makeHTTPResponse } from "src/utils/httpResponse.util";
 
 @Controller("animal")
 export class AnimalController {
-  constructor(
-    private readonly animalService: AnimalService,
-    private readonly s3Service: S3Service,
-  ) {}
+  constructor(private readonly animalService: AnimalService) {}
 
   @Post("create")
   @UseInterceptors(AnyFilesInterceptor())
@@ -236,6 +234,25 @@ export class AnimalController {
         animal_id,
       );
       return makeHTTPResponse(result, 200, "Animal data fetched successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Update animal data",
+  })
+  @Put("update/:id")
+  @UseInterceptors(AnyFilesInterceptor())
+  async updateAnimalData(
+    @Param("id") id: string,
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
+    @Body() body: any,
+  ) {
+    try {
+      const result = await this.animalService.updateAnimalData(id, body, files);
+      return makeHTTPResponse(result, 200, "Animal data updated successfully");
     } catch (error) {
       throw error;
     }
