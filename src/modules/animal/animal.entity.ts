@@ -52,6 +52,14 @@ export class BreAnimal {
   animal_owner_id: number;
 
   @ApiProperty()
+  @Column({ nullable: false, length: 50, default: "" })
+  animal_country: string;
+
+  @ApiProperty()
+  @Column({ nullable: true, length: 1000, default: "" })
+  animal_rejection_reason: string;
+
+  @ApiProperty()
   @Column({ nullable: true, length: 150 })
   animal_front_view_image: string;
 

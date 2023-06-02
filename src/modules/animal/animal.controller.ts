@@ -203,6 +203,7 @@ export class AnimalController {
       const result = await this.animalService.changeStatus(
         body.animal_id,
         body.status,
+        body.animal_rejection_reason,
       );
       return makeHTTPResponse(result);
     } catch (error) {
