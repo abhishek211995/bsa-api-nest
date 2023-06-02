@@ -28,6 +28,9 @@ export class AnimalDto {
   animal_owner_id: number;
 
   @IsString()
+  animal_country: string;
+
+  @IsString()
   animal_front_view_image: string;
 
   @IsString()
@@ -97,6 +100,7 @@ export class AnimalWithPedigreePayload {
   //   pedigree: Record<string, any>;
   // }[];
   userId: number;
+  animal_country: string;
 }
 
 export class CreateGenerationsDto {
@@ -173,6 +177,7 @@ export class CreateAnimalDto {
     animal_breed_id: number,
     animal_gender: string,
     animal_owner_id: number,
+    animal_country: string,
     animal_sire_id: string,
     animal_dam_id: string,
     animal_pedigree: Record<string, any>,
@@ -189,6 +194,7 @@ export class CreateAnimalDto {
     this.animal_breed_id = animal_breed_id;
     this.animal_gender = animal_gender;
     this.animal_owner_id = animal_owner_id;
+    this.animal_country = animal_country;
     this.animal_sire_id = animal_sire_id;
     this.animal_dam_id = animal_dam_id;
     this.animal_pedigree = animal_pedigree;
@@ -238,6 +244,10 @@ export class CreateAnimalDto {
 
   @IsString()
   @ApiProperty()
+  animal_country: string;
+
+  @IsString()
+  @ApiProperty()
   animal_registration_doc: string;
 
   @IsString()
@@ -277,4 +287,7 @@ export class ChangeAnimalStatusPayload {
 
   @IsBoolean()
   status: boolean;
+
+  @IsString()
+  animal_rejection_reason: string;
 }

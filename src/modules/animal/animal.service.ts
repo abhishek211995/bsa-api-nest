@@ -172,6 +172,8 @@ export class AnimalService {
     files: Array<Express.Multer.File>,
   ) {
     try {
+      console.log("payload", payload);
+
       const animalData = JSON.parse(payload.animalData);
       const generations = JSON.parse(payload.generations);
       const { animalTypeId, breedId } = payload;
@@ -183,6 +185,7 @@ export class AnimalService {
         breedId,
         animalData.gender,
         payload.userId,
+        payload.animal_country,
         animalData.sireId,
         animalData.damId,
         animalData.pedigree,
@@ -238,6 +241,7 @@ export class AnimalService {
           g.id,
           g.name,
           animalTypeId,
+
           breedId,
           g.gender,
           payload.userId,
@@ -517,6 +521,7 @@ export class AnimalService {
         breedId,
         animalData.gender,
         payload.userId,
+        payload.animal_country,
         animalData.sireId,
         animalData.damId,
         animalData.pedigree,
@@ -595,13 +600,18 @@ export class AnimalService {
     }
   }
 
-  async changeStatus(animal_id: string, status: boolean) {
+  async changeStatus(
+    animal_id: string,
+    status: boolean,
+    animal_rejection_reason: string,
+  ) {
     try {
       await this.getAnimalById(animal_id);
       const result = await this.animalRepository.update(
         { animal_id: animal_id },
         {
           is_active: status,
+          animal_rejection_reason,
         },
       );
       return result;
