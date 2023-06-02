@@ -315,6 +315,8 @@ export class AnimalService {
         animal_right_view: "",
         animal_left_view: "",
         animal_registration: "",
+        animal_hded: "",
+        animal_dna: "",
       };
 
       if (animal.animal_front_view_image !== null) {
@@ -338,12 +340,12 @@ export class AnimalService {
         );
       }
       if (animal.animal_hded_doc !== null) {
-        animalData.animal_hded_doc = await this.s3Service.getLink(
+        animalData.animal_hded = await this.s3Service.getLink(
           `${animal.animal_registration_number}/${animal.animal_hded_doc}`,
         );
       }
       if (animal.animal_dna_doc !== null) {
-        animalData.animal_dna_doc = await this.s3Service.getLink(
+        animalData.animal_dna = await this.s3Service.getLink(
           `${animal.animal_registration_number}/${animal.animal_dna_doc}`,
         );
       }
