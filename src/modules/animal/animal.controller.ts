@@ -187,7 +187,7 @@ export class AnimalController {
       );
 
       if (res) {
-        return { status: 200, message: "Pedigree created successfully" };
+        return makeHTTPResponse(res, 200, "Pedigree imported successfully");
       }
     } catch (error) {
       // return { status: 500, message: error.message };

@@ -773,7 +773,9 @@ export class AnimalService {
 
         const animalCount = await this.animalRepository.count();
         const genData = pedigree.map((g, i) => {
-          const reg_no = generateRegNo(g.breedId, animalCount + 1 + i);
+          const reg_no = g.registration_no
+            ? g.registration_no
+            : generateRegNo(g.breedId, animalCount + 1 + i);
           return new CreateGenerationsDto(
             g.id,
             g.name,
