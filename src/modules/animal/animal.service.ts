@@ -768,31 +768,35 @@ export class AnimalService {
         }
       }
       // take json of animalData.pedigree and update the previous animal data
-      if (animalData.generations) {
+      if (generations) {
         const pedigree = JSON.parse(animalData.generations);
-
+        console.log("pedigree", pedigree.length);
         const animalCount = await this.animalRepository.count();
-        const genData = pedigree.map((g, i) => {
-          const reg_no = g.registration_no
-            ? g.registration_no
-            : generateRegNo(g.breedId, animalCount + 1 + i);
-          return new CreateGenerationsDto(
-            g.id,
-            g.name,
-            g.animalType,
-            g.breedId,
-            g.gender,
-            animalData.animal_owner_id,
-            g.sireId,
-            g.damId,
-            g.pedigree,
-            reg_no,
-          );
-        });
+        const genData = await Promise.all(
+          pedigree.map(async (g, i) => {
+            const existingReg = await this.getAnimalRegNo(g.id);
+            const reg_no = existingReg
+              ? existingReg
+              : generateRegNo(g.breedId, animalCount + 1 + i);
+            return new CreateGenerationsDto(
+              g.id,
+              g.name,
+              g.animalType,
+              g.breedId,
+              g.gender,
+              animalData.animal_owner_id,
+              g.sireId,
+              g.damId,
+              g.pedigree,
+              reg_no,
+            );
+          }),
+        );
+
+        console.log("genData", genData);
         const generation = await this.animalRepository.upsert(genData, [
           "animal_id",
         ]);
-        console.log("generation", generation);
       }
 
       return result;
@@ -801,6 +805,17 @@ export class AnimalService {
         message: error?.message ?? "Failed to update animal data",
         serviceErrorCode: "AS-100",
       });
+    }
+  }
+
+  async getAnimalRegNo(animal_id: string) {
+    try {
+      const animal = await this.animalRepository.findOne({
+        where: { animal_id },
+      });
+      return animal?.animal_registration_number;
+    } catch (error) {
+      throw error;
     }
   }
 }

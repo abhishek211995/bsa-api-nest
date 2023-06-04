@@ -1,26 +1,20 @@
 import { HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { litterSireVerification } from "src/constants/otp.reasons.constant";
+import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
+import { decryptNumber, encryptNumber } from "src/utils/encryption";
+import { generateRegNo } from "src/utils/generateReg.util";
 import {
+  emailContainer,
   litterRegistrationRequest,
-  sireOwnerVerificationEmail,
 } from "src/utils/mailTemplate.util";
 import { Repository } from "typeorm";
+import { v4 as uuidv4 } from "uuid";
+import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
 import { BreLitterRegistration } from "./litterRegistration.entity";
-import { BreAnimal } from "../animal/animal.entity";
-import { generateRegNo } from "src/utils/generateReg.util";
-import { v4 as uuidv4 } from "uuid";
-import { animalRegistrationSource } from "src/constants/animal_registration.constant";
-import {
-  crypt,
-  decrypt,
-  decryptNumber,
-  encryptNumber,
-} from "src/utils/encryption";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -70,11 +64,14 @@ export class LitterRegistrationService {
       const link = `${process.env.WEB_URL}/litterRegistration?requestId=${encryptId}`;
 
       if (getLitter) {
-        const message = litterRegistrationRequest(
-          getLitter.sire_owner.user_name,
-          sire.animal_name,
-          getLitter.owner.user_name,
-          link,
+        const message = emailContainer(
+          litterRegistrationRequest(
+            getLitter.sire_owner.user_name,
+            sire.animal_name,
+            getLitter.owner.user_name,
+            link,
+          ),
+          "Sire Confirmation Request Received",
         );
 
         await this.mailService.sendMail(

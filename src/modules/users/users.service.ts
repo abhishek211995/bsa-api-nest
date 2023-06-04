@@ -13,6 +13,7 @@ import { IndividualUserDto, LoginUserDto } from "./users.dto";
 import { BreUser, UserStatus } from "./users.entity";
 import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
 import { SubscriptionService } from "../subscription/subscription.service";
+import { emailContainer, welcomeEmail } from "../../utils/mailTemplate.util";
 @Injectable()
 export class UsersService {
   constructor(
@@ -64,7 +65,16 @@ export class UsersService {
       if (Number(savedUser.user_role_id) === 1) {
         await this.breBreederService.createBreeder(savedUser.id);
       }
+      const message = emailContainer(
+        welcomeEmail(user.user_name),
+        "Welcome to Genuine Breeder Association",
+      );
 
+      await this.emailService.sendMail(
+        user.email,
+        "Welcome to Genuine Breeder Association",
+        message,
+      );
       return user;
     } catch (error) {
       throw new ServiceException({

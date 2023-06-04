@@ -7,7 +7,7 @@ import { AnimalService } from "../animal/animal.service";
 import { UsersService } from "../users/users.service";
 import { TransferOwnerDto } from "./transfer.dto";
 import { BreTransferOwnerRequest } from "./transfer.entity";
-import { transferMail } from "src/utils/mailTemplate.util";
+import { emailContainer, transferMail } from "src/utils/mailTemplate.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { BreUser } from "../users/users.entity";
 import { decryptNumber, encryptNumber } from "src/utils/encryption";
@@ -41,11 +41,14 @@ export class TransferService {
         );
         const encryptId = encryptNumber(newTransfer.transfer_id);
         const link = `${process.env.WEB_URL}/confirmTransfer?transferId=${encryptId}`;
-        const message = transferMail(
-          user.user_name,
-          animal.animal_name,
-          newOwner.user_name,
-          link,
+        const message = emailContainer(
+          transferMail(
+            user.user_name,
+            animal.animal_name,
+            newOwner.user_name,
+            link,
+          ),
+          "Transfer Request Received",
         );
         await this.mailService.sendMail(
           user.email,
