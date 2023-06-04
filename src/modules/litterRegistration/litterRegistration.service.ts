@@ -101,7 +101,6 @@ export class LitterRegistrationService {
         // where: { completed: false },
         relations: ["owner", "sire_owner"],
       });
-      console.log("Here", list);
       // @ts-expect-error changing number to string
       list = list.map((l) => ({ ...l, id: encryptNumber(l.id) }));
       return list;
