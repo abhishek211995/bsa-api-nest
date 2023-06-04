@@ -32,6 +32,7 @@ export class S3Service {
       );
       return uploadResult;
     } catch (error) {
+      console.log("upload single error", error);
       throw error;
     }
   }
@@ -54,6 +55,7 @@ export class S3Service {
       });
       return Promise.all(EndResult);
     } catch (error) {
+      console.log("upload multiple error", error);
       throw error;
     }
   }
@@ -64,10 +66,9 @@ export class S3Service {
         Bucket: process.env.BUCKET,
         Key: keys,
       });
-      // const result = await this.s3Client.send(command);
       return getSignedUrl(this.s3Client, command, { expiresIn: 3600 * 2 });
-      // return result;
     } catch (error) {
+      console.log("get url error", error);
       throw error;
     }
   }

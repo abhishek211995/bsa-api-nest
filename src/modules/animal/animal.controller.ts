@@ -111,7 +111,7 @@ export class AnimalController {
       );
       return { status: 200, data: result };
     } catch (error) {
-      return error;
+      throw error;
     }
   }
 
