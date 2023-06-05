@@ -3,7 +3,6 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
-import { decryptNumber, encryptNumber } from "src/utils/encryption";
 import { generateRegNo } from "src/utils/generateReg.util";
 import {
   emailContainer,
@@ -60,8 +59,7 @@ export class LitterRegistrationService {
       const sire = await this.animalRepository.findOne({
         where: { animal_id: getLitter.sire_id },
       });
-      const encryptId = encryptNumber(getLitter.id);
-      const link = `${process.env.WEB_URL}/litterRegistration?requestId=${encryptId}`;
+      const link = `${process.env.WEB_URL}/litterRegistration?requestId=${getLitter.id}`;
 
       if (getLitter) {
         const message = emailContainer(
@@ -94,17 +92,14 @@ export class LitterRegistrationService {
 
   async getAllLitters() {
     try {
-      let list = await this.litterRegistrationRepository.find({
-        // where: { completed: false },
+      const list = await this.litterRegistrationRepository.find({
         relations: ["owner", "sire_owner"],
       });
-      // @ts-expect-error changing number to string
-      list = list.map((l) => ({ ...l, id: encryptNumber(l.id) }));
       return list;
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch",
-        serviceErrorCode: "LRS-105",
+        serviceErrorCode: "LRS-101",
         httpStatusCode: HttpStatus.BAD_REQUEST,
       });
     }
@@ -112,9 +107,8 @@ export class LitterRegistrationService {
 
   async getLitterDetailsById(id: string, body?: any) {
     try {
-      const decryptedId = decryptNumber(id);
       const list = await this.litterRegistrationRepository.findOne({
-        where: { id: decryptedId },
+        where: { id: Number(id) },
         relations: [
           "owner",
           "dam",
@@ -148,9 +142,8 @@ export class LitterRegistrationService {
 
   async approveLitter(body: any) {
     try {
-      const decryptedId = decryptNumber(body.id);
       const update = await this.litterRegistrationRepository.update(
-        { id: decryptedId },
+        { id: body.id },
         { completed: true, remarks: body.remarks },
       );
       const litterDetails = await this.getLitterDetailsById(body.id, body);
@@ -226,10 +219,8 @@ export class LitterRegistrationService {
 
   async rejectLitter(id: string, remarks: Array<{ message: string }>) {
     try {
-      const decryptedId = decryptNumber(id);
-
       const update = await this.litterRegistrationRepository.update(
-        { id: decryptedId },
+        { id: Number(id) },
         { remarks },
       );
       return update.affected;
@@ -243,10 +234,9 @@ export class LitterRegistrationService {
 
   async sireApproval(id: string, remarks: Array<{ message: string }>) {
     try {
-      const decryptedId = decryptNumber(id);
       const date = new Date();
       await this.litterRegistrationRepository.update(
-        { id: decryptedId },
+        { id: Number(id) },
         {
           sire_approval: true,
           sire_action_taken: true,
@@ -273,10 +263,9 @@ export class LitterRegistrationService {
     remarks: Array<{ message: string }>;
   }) {
     try {
-      const decryptedId = decryptNumber(id);
       const date = new Date();
       await this.litterRegistrationRepository.update(
-        { id: decryptedId },
+        { id: Number(id) },
         {
           sire_approval: false,
           sire_action_taken: true,

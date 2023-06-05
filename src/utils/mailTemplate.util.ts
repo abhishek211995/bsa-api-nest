@@ -102,3 +102,72 @@ export const litterRegistrationRequest = (
 	<p>We have received sire confirmation request for animal ${animalName} from ${damOwner} and it is currently being processed.</p>
 	<p>Here is your sire confirmation link for more details and further action: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Sire</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
   `;
+
+export const userConfirmation = (userName: string, status: string) => `
+			<h1> User Confirmation</h1>
+			<p>Dear ${userName},</p>
+			<p>We are ${
+        status === "accepted" ? "glad" : "sorry"
+      } to say that your profile is ${
+  status === "accepted" ? "accepted" : "rejected"
+} by the admin.</p>
+			<p>For query please contact the admin.</p>
+			<p>Thank you for using our service.</p>
+			<p>Best regards,</p>
+			<p>Breeders Association</p>
+	
+	`;
+
+export const animalConfirmation = (
+  userName: string,
+  animal: string,
+  status: string,
+) => `
+                  <h1> Animal Confirmation</h1>
+                  <p>Dear ${userName},</p>
+                  <p>We are ${
+                    status === "accepted" ? "glad" : "sorry"
+                  } to say that your animal ${animal} is ${
+  status === "accepted" ? "accepted" : "rejected"
+} by the admin.</p>
+                  <p>For query please contact the admin.</p>
+                  <p>Thank you for using our service.</p>
+                  <p>Best regards,</p>
+                  <p>Breeders Association</p>
+          
+          `;
+
+export const litterConfirmation = (userName: string, status: string) => `
+                      <h1> Litter Confirmation</h1>
+                      <p>Dear ${userName},</p>
+                      <p>We are ${
+                        status === "accepted" ? "glad" : "sorry"
+                      } to say that your litter is ${
+  status === "accepted" ? "accepted" : "rejected"
+} by the admin.</p>
+                      <p>For query please contact the admin.</p>
+                      <p>Thank you for using our service.</p>
+                      <p>Best regards,</p>
+                      <p>Breeders Association</p>
+              
+              `;
+
+export const transferConfirmation = (
+  newOwner: string,
+  oldOwner: string,
+  animal: string,
+  status: string,
+) => `
+              <h1> Transfer Request Confirmation</h1>
+              <p>Dear ${newOwner},</p>
+              <p>We are ${
+                status === "accepted" ? "glad" : "sorry"
+              } to say that your transfer request for animal ${animal} is ${
+  status === "accepted" ? "accepted" : "rejected"
+} by the ${oldOwner}.</p>
+              <p>For query please contact the admin / ${oldOwner}.</p>
+              <p>Thank you for using our service.</p>
+              <p>Best regards,</p>
+              <p>Breeders Association</p>
+      
+      `;

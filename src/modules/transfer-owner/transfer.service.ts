@@ -10,7 +10,6 @@ import { BreTransferOwnerRequest } from "./transfer.entity";
 import { emailContainer, transferMail } from "src/utils/mailTemplate.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { BreUser } from "../users/users.entity";
-import { decryptNumber, encryptNumber } from "src/utils/encryption";
 @Injectable()
 export class TransferService {
   constructor(
@@ -39,8 +38,7 @@ export class TransferService {
         const animal = await this.animalService.getAnimalById(
           transferDto.animal_id,
         );
-        const encryptId = encryptNumber(newTransfer.transfer_id);
-        const link = `${process.env.WEB_URL}/confirmTransfer?transferId=${encryptId}`;
+        const link = `${process.env.WEB_URL}/confirmTransfer?transferId=${newTransfer.transfer_id}`;
         const message = emailContainer(
           transferMail(
             user.user_name,
@@ -68,9 +66,8 @@ export class TransferService {
 
   async getRequestById(id: string, user_id?: number) {
     try {
-      const decryptedId = decryptNumber(id);
       const transfer = await this.breTransferOwnerRequestRepository.findOne({
-        where: { transfer_id: decryptedId },
+        where: { transfer_id: Number(id) },
         relations: ["animal_id", "new_owner_id", "old_owner_id"],
       });
       if (!transfer) {
@@ -99,13 +96,11 @@ export class TransferService {
 
   async approveRequest({ transfer_id, request_rejection_reason }) {
     try {
-      const decryptedId = decryptNumber(transfer_id);
-
       const transferDetails = await this.getRequestById(transfer_id);
       console.log(transferDetails);
 
       const data = await this.breTransferOwnerRequestRepository.update(
-        { transfer_id: decryptedId },
+        { transfer_id: Number(transfer_id) },
         {
           request_status: "Approved",
           request_rejection_reason,
@@ -125,10 +120,8 @@ export class TransferService {
 
   async rejectRequest({ transfer_id, request_rejection_reason }) {
     try {
-      const decryptedId = decryptNumber(transfer_id);
-
       const data = await this.breTransferOwnerRequestRepository.update(
-        { transfer_id: decryptedId },
+        { transfer_id: Number(transfer_id) },
         {
           request_status: "Reject",
           request_rejection_reason,

@@ -29,9 +29,15 @@ export class LitterRegistrationController {
   @Get()
   async getAllLitters() {
     try {
+      console.log("get all litter");
+
       const result = await this.litterService.getAllLitters();
+      console.log("result", result);
+
       return makeHTTPResponse(result, 200, "Litters fetched successfully!");
     } catch (error) {
+      console.log("error", error);
+
       throw error;
     }
   }
