@@ -65,6 +65,8 @@ export class BreederFarmService {
     files: Array<Express.Multer.File>,
   ) {
     try {
+      console.log(files);
+
       const user = await this.userRepository.findOne({
         where: { id: data.user_id },
       });
@@ -88,7 +90,7 @@ export class BreederFarmService {
       });
       const logo = fileFilter(files, "logo")[0];
       const license_doc_name = fileFilter(files, "license_doc_name")[0];
-      await this.s3Service.uploadMultiple(files, user.user_name);
+      await this.s3Service.uploadMultiple(files, user.email);
 
       await this.breederFarmRepository.update(
         { breeder_id: data.breeder_id },
