@@ -63,7 +63,7 @@ export class AppModule implements NestModule {
           method: RequestMethod.POST,
         },
         {
-          path: "master/addCosts",
+          path: "master/getAllCosts",
           method: RequestMethod.POST,
         },
       )
