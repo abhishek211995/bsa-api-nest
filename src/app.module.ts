@@ -62,6 +62,10 @@ export class AppModule implements NestModule {
           path: "/auth/individual",
           method: RequestMethod.POST,
         },
+        {
+          path: "master/addCosts",
+          method: RequestMethod.POST,
+        },
       )
       .forRoutes("*");
   }
