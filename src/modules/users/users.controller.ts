@@ -217,9 +217,9 @@ export class UsersController {
     summary: "Test route for email",
   })
   @Post("/test-email-service")
-  async testEmail(@Body() body: { email: string }) {
+  async testEmail(@Body() body: { to: string }) {
     try {
-      const res = await this.usersService.testEmailService(body.email);
+      const res = await this.usersService.testEmailService(body.to);
       return makeHTTPResponse(res, 200, "Email sent successfully");
     } catch (error) {
       throw error;
