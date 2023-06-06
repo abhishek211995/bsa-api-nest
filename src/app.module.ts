@@ -64,7 +64,7 @@ export class AppModule implements NestModule {
         },
         {
           path: "master/getAllCosts",
-          method: RequestMethod.POST,
+          method: RequestMethod.GET,
         },
       )
       .forRoutes("*");
