@@ -24,6 +24,7 @@ import { AnyFilesInterceptor } from "@nestjs/platform-express";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
 import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
+import { async } from "rxjs";
 dotenv.config();
 
 @Controller("auth")
@@ -207,6 +208,19 @@ export class UsersController {
         queries,
       );
       return makeHTTPResponse(res, 200, "User details fetched successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Test route for email",
+  })
+  @Post("/test-email-service")
+  async testEmail(@Body() body: { email: string }) {
+    try {
+      const res = await this.usersService.testEmailService(body.email);
+      return makeHTTPResponse(res, 200, "Email sent successfully");
     } catch (error) {
       throw error;
     }

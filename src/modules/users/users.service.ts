@@ -361,4 +361,26 @@ export class UsersService {
       });
     }
   }
+
+  async testEmailService(to: string) {
+    try {
+      const message = emailContainer(
+        welcomeEmail("Test"),
+        "Welcome to Genuine Breeder Association",
+      );
+
+      await this.emailService.sendMail(
+        to,
+        "Welcome to Genuine Breeder Association",
+        message,
+      );
+      return true;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error while sending email",
+        serviceErrorCode: "US-500",
+        httpStatusCode: 400,
+      });
+    }
+  }
 }
