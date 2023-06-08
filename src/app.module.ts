@@ -24,6 +24,7 @@ import { OrdersModule } from "./modules/orders/orders.module";
 import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { UsersModule } from "./modules/users/users.module";
+import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwnerHistory.module";
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { UsersModule } from "./modules/users/users.module";
     BreederFarmModule,
     OrdersModule,
     SubscriptionModule,
+    AnimalOwnerHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -18,10 +18,6 @@ export class BreLitterRegistration {
   id: number;
 
   @ApiProperty()
-  @Column({ type: "json" })
-  litters: { litterName: string; colorMark: string; litterGender: string }[];
-
-  @ApiProperty()
   @Column({ type: "date" })
   dob: Date;
 
@@ -106,38 +102,30 @@ export class BreLitterRegistration {
   updated_at: Date;
 }
 
-// @Entity("bre_otp_mapping")
-// export class BreOtpMapping {
-//   @ApiProperty()
-//   @PrimaryGeneratedColumn()
-//   id: number;
+@Entity("bre_litters")
+export class BreLitters {
+  @ApiProperty()
+  @PrimaryGeneratedColumn()
+  id: number;
 
-//   @ApiProperty()
-//   @Column({ nullable: false })
-//   otp: number;
+  @ApiProperty()
+  @Column({ nullable: false, length: 250 })
+  litter_name: string;
 
-//   @ApiProperty()
-//   @CreateDateColumn()
-//   created_at: Date;
+  @ApiProperty()
+  @Column({ nullable: false, length: 250 })
+  litter_color_mark: string;
 
-//   @ApiProperty()
-//   @Column()
-//   validity: Date;
+  @ApiProperty()
+  @Column({ nullable: false, length: 250 })
+  litter_gender: string;
 
-//   @ApiProperty()
-//   @Column({ nullable: false })
-//   reason: string;
+  @ApiProperty()
+  @Column({ nullable: false })
+  litter_registration_id: number;
 
-//   @ApiProperty()
-//   @Column({ nullable: false })
-//   user_id: number;
-
-//   @ApiProperty()
-//   @JoinColumn({ name: "user_id" })
-//   @ManyToOne(() => BreUser)
-//   user: BreUser;
-
-//   @ApiProperty()
-//   @Column({ default: false })
-//   verified: boolean;
-// }
+  @ApiProperty()
+  @JoinColumn({ name: "litter_registration_id" })
+  @ManyToOne(() => BreLitterRegistration)
+  litter_registration: BreLitterRegistration;
+}
