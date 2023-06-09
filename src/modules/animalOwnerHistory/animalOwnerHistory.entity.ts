@@ -32,4 +32,8 @@ export class BreAnimalOwnerHistory {
   @ManyToOne(() => BreUser, (breUser) => breUser.id)
   @JoinColumn({ name: "owner_id" })
   owner: BreUser;
+
+  @ApiProperty()
+  @Column({ type: Boolean, default: true })
+  is_current_owner: boolean;
 }
