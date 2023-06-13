@@ -97,9 +97,6 @@ export class CostsServices {
 
   async updateCosts(id: number, costsDto: CostsDto) {
     try {
-      console.log("id", id);
-      console.log("costsDto", costsDto);
-
       // remove user from costDto
       delete costsDto["user"];
 
