@@ -176,8 +176,8 @@ export const transferConfirmation = (
 // Reset Forgot password template
 export const forgotPassword = (userName: string, link: string) =>
   `
-  <h1>Litter Sire Confirmation Request Received</h1>
+  <h1>Password Reset Request Received</h1>
 	<p>Dear ${userName},</p>
-	<p>We have received forgot password request from you and it is currently being processed.</p>
+	<p>We have received forgot password request.</p>
 	<p>Here is your reset password link for further action: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Sire</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
   `;
