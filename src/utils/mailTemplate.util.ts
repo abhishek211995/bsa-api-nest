@@ -179,5 +179,5 @@ export const forgotPassword = (userName: string, link: string) =>
   <h1>Password Reset Request Received</h1>
 	<p>Dear ${userName},</p>
 	<p>We have received forgot password request.</p>
-	<p>Here is your reset password link for further action: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Sire</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
+	<p>Here is your reset password link for further action: <a style="cursor:pointer" target="_blank" href=${link}>Change Password</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
   `;
