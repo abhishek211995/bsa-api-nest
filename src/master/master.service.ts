@@ -97,16 +97,12 @@ export class CostsServices {
 
   async updateCosts(id: number, costsDto: CostsDto) {
     try {
-      const update = await this.breCostsMasterRepository.update(
-        { id },
-        {
-          amount: costsDto.amount,
-          delivery_fee: costsDto.delivery_fee,
-          description: costsDto.description,
-          name: costsDto.name,
-          tax: costsDto.tax,
-        },
-      );
+      // remove user from costDto
+      delete costsDto["user"];
+
+      //  update cost by id
+      const update = await this.breCostsMasterRepository.update(id, costsDto);
+      console.log(update);
       return update;
     } catch (error) {
       throw new ServiceException({

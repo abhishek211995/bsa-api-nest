@@ -13,7 +13,7 @@ import { v4 as uuidv4 } from "uuid";
 import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
-import { BreLitterRegistration } from "./litterRegistration.entity";
+import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -24,12 +24,13 @@ export class LitterRegistrationService {
     private readonly animalRepository: Repository<BreAnimal>,
     private readonly userService: UsersService,
     private readonly mailService: EmailService,
+    @InjectRepository(BreLitters)
+    private readonly littersRepository: Repository<BreLitters>,
   ) {}
 
   async registerLitter(body: LitterRegistrationBody) {
     try {
       const payload = {
-        litters: body.litters,
         dob: body.dob,
         meeting_date: body.meeting_date,
         meeting_time: body.meeting_time,
@@ -51,6 +52,18 @@ export class LitterRegistrationService {
       const registration = await this.litterRegistrationRepository.save(
         payload,
       );
+
+      // Adding litters to new table of bre_litters
+      const litters = body.litters.map((l) => {
+        return {
+          litter_name: l.litterName,
+          litter_color_mark: l.colorMark,
+          litter_gender: l.litterGender,
+          litter_registration_id: registration.id,
+        };
+      });
+      const data = await this.littersRepository.insert(litters);
+
       const getLitter = await this.litterRegistrationRepository.findOne({
         where: { id: registration.id },
         relations: ["owner", "sire_owner"],
@@ -95,7 +108,16 @@ export class LitterRegistrationService {
       const list = await this.litterRegistrationRepository.find({
         relations: ["owner", "sire_owner"],
       });
-      return list;
+
+      // replace litters json with litters from table bre_litters
+      const litters = await this.littersRepository.find();
+      const data = list.map((l) => {
+        const litter = litters.filter(
+          (litter) => litter.litter_registration_id === l.id,
+        );
+        return { ...l, litters: litter };
+      });
+      return data;
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch",
@@ -107,7 +129,7 @@ export class LitterRegistrationService {
 
   async getLitterDetailsById(id: string, body?: any) {
     try {
-      const list = await this.litterRegistrationRepository.findOne({
+      let list = await this.litterRegistrationRepository.findOne({
         where: { id: Number(id) },
         relations: [
           "owner",
@@ -119,7 +141,14 @@ export class LitterRegistrationService {
           "sire.animal_owner_id",
         ],
       });
-      console.log("sadjgasjd", body?.user?.user_role_id?.role_id);
+
+      if (!list) {
+        throw new ServiceException({
+          message: "Litter not found",
+          serviceErrorCode: "LRS-102",
+          httpStatusCode: HttpStatus.BAD_REQUEST,
+        });
+      }
 
       if (body?.user?.user_role_id?.role_id !== 3)
         if (list.sire_owner_id !== body?.user?.id) {
@@ -129,8 +158,12 @@ export class LitterRegistrationService {
             httpStatusCode: HttpStatus.BAD_REQUEST,
           });
         }
+      const litters = await this.littersRepository.find({
+        where: { litter_registration_id: Number(id) },
+      });
 
-      return list;
+      const data = { ...list, litters: litters };
+      return data;
     } catch (error) {
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch",
@@ -148,12 +181,16 @@ export class LitterRegistrationService {
       );
       const litterDetails = await this.getLitterDetailsById(body.id, body);
       const animalsCount = await this.animalRepository.count();
-      const animals = litterDetails.litters.map((l, index) => {
+
+      const AllLitters = await this.littersRepository.find({
+        where: { litter_registration_id: body.id },
+      });
+      const animals = AllLitters.map((l, index) => {
         const damPedigree = litterDetails.dam.animal_pedigree;
         const sirePedigree = litterDetails.sire.animal_pedigree;
         const animal_id = uuidv4();
         const animalPedigree: Record<string, any> = {
-          name: l.litterName,
+          name: l.litter_name,
           attributes: {
             uuid: animal_id,
             level: 0,
@@ -187,12 +224,12 @@ export class LitterRegistrationService {
         }
         return {
           animal_id,
-          animal_name: l.litterName,
+          animal_name: l.litter_name,
           // @ts-expect-error because of relation in animal table
           animal_type_id: litterDetails.dam.animal_breed_id.animal_type_id,
           animal_breed_id: litterDetails.dam.animal_breed_id,
-          animal_color_and_markings: l.colorMark,
-          animal_gender: l.litterGender,
+          animal_color_and_markings: l.litter_color_mark,
+          animal_gender: l.litter_gender,
           animal_date_of_birth: litterDetails.dob,
           animal_owner_id: Number(litterDetails.owner_id),
           animal_registration_number: generateRegNo(
@@ -207,6 +244,65 @@ export class LitterRegistrationService {
           registration_source: animalRegistrationSource.litter,
         };
       });
+      // const animals = litterDetails.litters.map((l, index) => {
+      //   const damPedigree = litterDetails.dam.animal_pedigree;
+      //   const sirePedigree = litterDetails.sire.animal_pedigree;
+      //   const animal_id = uuidv4();
+      //   const animalPedigree: Record<string, any> = {
+      //     name: l.litterName,
+      //     attributes: {
+      //       uuid: animal_id,
+      //       level: 0,
+      //       parentType: "",
+      //     },
+      //     children: [],
+      //   };
+      //   if (damPedigree) {
+      //     animalPedigree.children.push(damPedigree);
+      //   } else {
+      //     animalPedigree.children.push({
+      //       name: litterDetails.dam.animal_name,
+      //       attributes: {
+      //         uuid: litterDetails.dam.animal_id,
+      //         level: 1,
+      //         parentType: "Dam",
+      //       },
+      //     });
+      //   }
+      //   if (sirePedigree) {
+      //     animalPedigree.children.push(sirePedigree);
+      //   } else {
+      //     animalPedigree.children.push({
+      //       name: litterDetails.sire.animal_name,
+      //       attributes: {
+      //         uuid: litterDetails.sire.animal_id,
+      //         level: 1,
+      //         parentType: "Sire",
+      //       },
+      //     });
+      //   }
+      //   return {
+      //     animal_id,
+      //     animal_name: l.litterName,
+      //     // @ts-expect-error because of relation in animal table
+      //     animal_type_id: litterDetails.dam.animal_breed_id.animal_type_id,
+      //     animal_breed_id: litterDetails.dam.animal_breed_id,
+      //     animal_color_and_markings: l.colorMark,
+      //     animal_gender: l.litterGender,
+      //     animal_date_of_birth: litterDetails.dob,
+      //     animal_owner_id: Number(litterDetails.owner_id),
+      //     animal_registration_number: generateRegNo(
+      //       // @ts-expect-error because of relation in animal table
+      //       litterDetails.dam.animal_breed_id.animal_breed_id,
+      //       animalsCount + index + 1,
+      //     ),
+      //     animal_sire_id: litterDetails.sire_id,
+      //     animal_dam_id: litterDetails.dam_id,
+      //     animal_pedigree: animalPedigree,
+      //     is_active: true,
+      //     registration_source: animalRegistrationSource.litter,
+      //   };
+      // });
       const animalsAdded = await this.animalRepository.insert(animals);
       return animalsAdded.generatedMaps.length;
     } catch (error) {

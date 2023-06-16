@@ -10,6 +10,7 @@ import { BreTransferOwnerRequest } from "./transfer.entity";
 import { emailContainer, transferMail } from "src/utils/mailTemplate.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { BreUser } from "../users/users.entity";
+import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
 @Injectable()
 export class TransferService {
   constructor(
@@ -18,6 +19,7 @@ export class TransferService {
     private readonly userService: UsersService,
     private readonly animalService: AnimalService,
     private readonly mailService: EmailService,
+    private readonly animalOwnerHistoryService: AnimalOwnerHistoryService,
   ) {}
 
   async addRequest(transferDto: TransferOwnerDto) {
@@ -80,8 +82,8 @@ export class TransferService {
       if (user_id && transfer.old_owner_id.id !== user_id) {
         throw new ServiceException({
           message: "You are not authorized to view this transfer request",
-          serviceErrorCode: "LRS-105",
-          httpStatusCode: HttpStatus.BAD_REQUEST,
+          serviceErrorCode: "TS-400",
+          httpStatusCode: 400,
         });
       }
       return transfer;
@@ -89,6 +91,8 @@ export class TransferService {
       console.log("Failed to fetch request", error?.message);
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch transfer request",
+        httpStatusCode:
+          error?.httpStatusCode ?? HttpStatus.INTERNAL_SERVER_ERROR,
         serviceErrorCode: "TS",
       });
     }
@@ -108,7 +112,12 @@ export class TransferService {
       );
       const animal = transferDetails.animal_id as unknown as BreAnimal;
       const newOwner = transferDetails.new_owner_id as unknown as BreUser;
-      await this.animalService.changeOwner(animal.animal_id, newOwner.id);
+
+      const animalOwnerHistory =
+        await this.animalOwnerHistoryService.createAnimalOwnerHistory({
+          animal_id: animal.animal_id,
+          owner_id: newOwner.id,
+        });
       return data;
     } catch (error) {
       throw new ServiceException({

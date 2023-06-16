@@ -62,11 +62,14 @@ export class S3Service {
 
   async getLink(keys: string) {
     try {
-      const command = new aws.GetObjectCommand({
+      const command = await new aws.GetObjectCommand({
         Bucket: process.env.BUCKET,
         Key: keys,
       });
-      return getSignedUrl(this.s3Client, command, { expiresIn: 3600 * 2 });
+      const link = await getSignedUrl(this.s3Client, command, {
+        expiresIn: 3600 * 2,
+      });
+      return link;
     } catch (error) {
       console.log("get url error", error);
       throw error;

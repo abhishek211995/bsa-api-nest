@@ -4,34 +4,70 @@ import { ServiceException } from "src/exception/base-exception";
 import { Repository } from "typeorm";
 import { AnimalBreedDto, EditAnimalBreed } from "./breedMaster.dto";
 import { BreAnimalBreedMaster } from "./breedMaster.entity";
+import { S3Service } from "src/lib/s3multer/s3.service";
+import { fileFilter } from "src/utils/fileFilter.util";
 
 @Injectable()
 export class AnimalBreedServices {
   constructor(
     @InjectRepository(BreAnimalBreedMaster)
     private readonly breAnimalBreedMasterRepository: Repository<BreAnimalBreedMaster>,
+    private readonly s3Service: S3Service,
   ) {}
 
   // Add animal breed
-  async addAnimalBreed(animalBreedDto: AnimalBreedDto) {
-    const existing = await this.breAnimalBreedMasterRepository.findOne({
-      where: {
-        animal_breed_name: animalBreedDto.animal_breed_name.trim(),
-        animal_type_id: animalBreedDto.animal_type_id,
-      },
-    });
+  async addAnimalBreed(
+    animalBreedDto: AnimalBreedDto,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const existing = await this.breAnimalBreedMasterRepository.findOne({
+        where: {
+          animal_breed_name: animalBreedDto.animal_breed_name.trim(),
+          animal_type_id: animalBreedDto.animal_type_id,
+        },
+      });
 
-    if (existing) {
+      if (existing) {
+        throw new ServiceException({
+          message: "Breed already added",
+          serviceErrorCode: "BMS",
+        });
+      }
+      const newBreed = await this.breAnimalBreedMasterRepository.create({
+        ...animalBreedDto,
+        animal_breed_name: animalBreedDto.animal_breed_name.trim(),
+      });
+
+      const breed = await this.breAnimalBreedMasterRepository.save(newBreed);
+
+      if (breed && files.length > 0) {
+        const AnimalType = await this.getAnimalBreedByAnimalType(
+          animalBreedDto.animal_type_id,
+        );
+
+        const animal_breed_image = fileFilter(files, "animal_breed_image")[0];
+        const upload = await this.s3Service.uploadSingle(
+          animal_breed_image,
+          `${(await AnimalType[0])?.animal_type?.animal_type_name}/${
+            animalBreedDto.animal_breed_name
+          }`,
+        );
+
+        const res = await this.breAnimalBreedMasterRepository.update(
+          { animal_breed_id: newBreed.animal_breed_id },
+          { animal_breed_image: animal_breed_image.originalname },
+        );
+      }
+
+      return newBreed;
+    } catch (error) {
       throw new ServiceException({
-        message: "Breed already added",
+        message: error?.message ?? "Error while adding animal breed",
         serviceErrorCode: "BMS",
+        httpStatusCode: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
-    const breed = this.breAnimalBreedMasterRepository.create({
-      ...animalBreedDto,
-      animal_breed_name: animalBreedDto.animal_breed_name.trim(),
-    });
-    return this.breAnimalBreedMasterRepository.save(breed);
   }
 
   // Get animal breed by animal type id
@@ -41,7 +77,29 @@ export class AnimalBreedServices {
         where: { animal_type_id: animal_type_id, is_deleted: false },
         relations: { animal_type: true },
       });
-      return breed;
+
+      if (!breed) {
+        throw new ServiceException({
+          message: "Animal Breed not found",
+          httpStatusCode: HttpStatus.BAD_REQUEST,
+          serviceErrorCode: `BM-${HttpStatus.BAD_REQUEST}`,
+        });
+      }
+
+      // function which returns the link of the images from s3 service getLink function by mapping the array of breed
+      const getLink = async (breed: BreAnimalBreedMaster[]) => {
+        const data = breed.map(async (breed) => {
+          const link = await this.s3Service.getLink(
+            `${breed.animal_type.animal_type_name}/${breed.animal_breed_name}/${breed.animal_breed_image}`,
+          );
+          return { ...breed, image_link: link };
+        });
+        return Promise.all(data);
+      };
+
+      const result = await getLink(breed);
+
+      return result;
     } catch (error) {
       throw new ServiceException({
         message: error.message,
@@ -90,13 +148,10 @@ export class AnimalBreedServices {
 
   async deleteAnimalBreedById(id: number) {
     try {
-      console.log("iddd", id);
-
       const res = await this.breAnimalBreedMasterRepository.update(
         { animal_breed_id: id },
         { is_deleted: true },
       );
-      console.log("ressss", res);
 
       return res;
     } catch (error) {

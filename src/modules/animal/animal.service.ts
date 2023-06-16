@@ -23,6 +23,7 @@ import { fileFilter } from "src/utils/fileFilter.util";
 import { ServiceException } from "src/exception/base-exception";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { BreederService } from "../breeder/breeder.service";
+import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
 
 @Injectable()
 export class AnimalService {
@@ -32,6 +33,7 @@ export class AnimalService {
     private transactionUtils: TransactionUtil,
     private readonly s3Service: S3Service,
     private readonly breederService: BreederService,
+    private readonly animalOwnerHistoryService: AnimalOwnerHistoryService,
   ) {}
 
   // single animal
@@ -325,6 +327,7 @@ export class AnimalService {
         animal_registration: "",
         animal_hded: "",
         animal_dna: "",
+        animal_current_owner: {},
       };
 
       if (animal.animal_front_view_image !== null) {
@@ -357,6 +360,17 @@ export class AnimalService {
           `${animal.animal_registration_number}/${animal.animal_dna_doc}`,
         );
       }
+
+      // get animal current owner
+      const current_owner =
+        await this.animalOwnerHistoryService.getAnimalCurrentOwner(
+          animal.animal_id,
+        );
+      if (current_owner) {
+        animalData.animal_current_owner = current_owner.owner;
+      } else {
+        animalData.animal_current_owner = animal.animal_owner_id;
+      }
       return animalData;
     } catch (error) {
       throw new ServiceException({
@@ -380,12 +394,13 @@ export class AnimalService {
         });
       }
 
-      const animalData = {
+      let animalData = {
         ...animal,
         animal_front_view: "",
         animal_right_view: "",
         animal_left_view: "",
         animal_registration: "",
+        animal_current_owner: {},
       };
 
       if (animal.animal_front_view_image !== null) {
@@ -408,6 +423,19 @@ export class AnimalService {
           `${animal.animal_registration_number}/${animal.animal_registration_doc}`,
         );
       }
+
+      // get animal current owner
+      const current_owner =
+        await this.animalOwnerHistoryService.getAnimalCurrentOwner(
+          animal.animal_id,
+        );
+      if (current_owner) {
+        animalData.animal_current_owner = current_owner.owner;
+      } else {
+        animalData.animal_current_owner = animal.animal_owner_id;
+      }
+      console.log("animalData", animalData);
+
       return animalData;
     } catch (error) {
       throw new ServiceException({

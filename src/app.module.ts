@@ -24,7 +24,7 @@ import { OrdersModule } from "./modules/orders/orders.module";
 import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { UsersModule } from "./modules/users/users.module";
-// redis
+import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwnerHistory.module";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
 
 @Module({
@@ -55,6 +55,7 @@ import { RedisModule } from "@liaoliaots/nestjs-redis";
     BreederFarmModule,
     OrdersModule,
     SubscriptionModule,
+    AnimalOwnerHistoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

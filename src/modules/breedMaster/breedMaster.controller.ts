@@ -7,20 +7,28 @@ import {
   Post,
   Put,
   Query,
+  UploadedFiles,
+  UseInterceptors,
 } from "@nestjs/common";
 import { AnimalBreedDto, EditAnimalBreed } from "./breedMaster.dto";
 import { AnimalBreedServices } from "./breedMaster.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("breedMaster")
 export class AnimalBreedMasterController {
   constructor(private readonly animalBreedServices: AnimalBreedServices) {}
 
   @Post()
-  async addAnimalBreed(@Body() animalBreedDto: AnimalBreedDto) {
+  @UseInterceptors(AnyFilesInterceptor())
+  async addAnimalBreed(
+    @Body() animalBreedDto: AnimalBreedDto,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
     try {
       const breed = await this.animalBreedServices.addAnimalBreed(
         animalBreedDto,
+        files,
       );
 
       return makeHTTPResponse(breed);
