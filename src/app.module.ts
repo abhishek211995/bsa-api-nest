@@ -25,6 +25,7 @@ import { SubscriptionModule } from "./modules/subscription/subscription.module";
 import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwnerHistory.module";
+import { RedisModule } from "@liaoliaots/nestjs-redis";
 
 @Module({
   imports: [
@@ -33,6 +34,12 @@ import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwn
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => dataSourceOptions,
       inject: [ConfigService],
+    }),
+    RedisModule.forRoot({
+      config: {
+        host: "localhost",
+        port: 6379,
+      },
     }),
     UsersModule,
     BreederModule,
@@ -67,6 +74,14 @@ export class AppModule implements NestModule {
         {
           path: "master/getAllCosts",
           method: RequestMethod.GET,
+        },
+        {
+          path: "auth/forgot-password",
+          method: RequestMethod.POST,
+        },
+        {
+          path: "auth/reset-password",
+          method: RequestMethod.PUT,
         },
       )
       .forRoutes("*");

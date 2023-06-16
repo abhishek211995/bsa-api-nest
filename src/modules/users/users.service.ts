@@ -13,9 +13,21 @@ import { IndividualUserDto, LoginUserDto } from "./users.dto";
 import { BreUser, UserStatus } from "./users.entity";
 import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
 import { SubscriptionService } from "../subscription/subscription.service";
-import { emailContainer, welcomeEmail } from "../../utils/mailTemplate.util";
+import {
+  emailContainer,
+  forgotPassword,
+  welcomeEmail,
+} from "../../utils/mailTemplate.util";
+// redis
+import {
+  RedisService,
+  DEFAULT_REDIS_NAMESPACE,
+} from "@liaoliaots/nestjs-redis";
+import Redis from "ioredis";
 @Injectable()
 export class UsersService {
+  private readonly redis: Redis;
+
   constructor(
     @InjectRepository(BreUser)
     private readonly breUsersRepository: Repository<BreUser>,
@@ -26,7 +38,10 @@ export class UsersService {
     private readonly s3Service: S3Service,
     private readonly emailService: EmailService,
     private readonly subscriptionService: SubscriptionService,
-  ) {}
+    private readonly redisService: RedisService,
+  ) {
+    this.redis = this.redisService.getClient();
+  }
 
   // generic
   async createIndividualUser(
@@ -380,6 +395,84 @@ export class UsersService {
         message: error?.message ?? "Error while sending email",
         serviceErrorCode: "US-500",
         httpStatusCode: 400,
+      });
+    }
+  }
+
+  // Redis with NestJS
+  async forgotPassword(email: string) {
+    try {
+      const user = await this.breUsersRepository.findOne({
+        where: { email: email },
+      });
+      if (!user) {
+        throw new ServiceException({
+          message: "User not found",
+          serviceErrorCode: "US-404",
+        });
+      }
+      const token = jwt.sign({ user_id: user.id }, process.env.TOKEN_SECRET, {
+        expiresIn: "1h",
+      });
+
+      await this.redis.set(email, token);
+      // link here
+      const link = `${process.env.WEB_URL}/reset-password?requestToken=${token}`;
+      const message = emailContainer(
+        forgotPassword(user?.user_name, link),
+        "Reset Password",
+      );
+      console.log(token);
+
+      await this.emailService.sendMail(user.email, "Reset Password", message);
+      return token;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error while creating user",
+        serviceErrorCode: "US-500",
+      });
+    }
+  }
+
+  async resetPassword(token: string, email: string, password: string) {
+    try {
+      const realToken = await this.redis.get(email);
+      console.log(token, realToken);
+
+      if (!realToken)
+        throw new ServiceException({
+          message: "Token expired or You have already reset the password.",
+          serviceErrorCode: "US-400",
+        });
+
+      if (token !== realToken) {
+        throw new ServiceException({
+          message: "You are not authorized to reset password.",
+          serviceErrorCode: "US-400",
+        });
+      }
+      await this.redis.del(email);
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+      const user = await this.getUserById(decoded["user_id"]);
+
+      const bcrypt_password = await this.bcryptService.hashPassword(password);
+
+      const update_password = await this.breUsersRepository.update(
+        { id: user.id },
+        {
+          password: bcrypt_password,
+        },
+      );
+
+      if (update_password.affected != 0) {
+        return user;
+      } else {
+        return null;
+      }
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error in resetting the password",
+        serviceErrorCode: "US-500",
       });
     }
   }

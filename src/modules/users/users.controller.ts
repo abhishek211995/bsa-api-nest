@@ -225,4 +225,38 @@ export class UsersController {
       throw error;
     }
   }
+
+  @ApiOperation({
+    summary: "Forgot password",
+  })
+  @Post("/forgot-password")
+  async forgotPassword(@Body() body: { email: string }) {
+    try {
+      const res = await this.usersService.forgotPassword(body.email);
+      return makeHTTPResponse(res, 200, "Email sent successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Reset password",
+  })
+  @Put("/reset-password")
+  async resetPassword(
+    @Query("token") token: string,
+    @Body() body: { email: string; password: string },
+  ) {
+    try {
+      const res = await this.usersService.resetPassword(
+        token,
+        body.email,
+        body.password,
+      );
+
+      return makeHTTPResponse(res, 200, "Changed password successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
 }
