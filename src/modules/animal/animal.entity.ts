@@ -80,11 +80,11 @@ export class BreAnimal {
   animal_registration_number: string;
 
   @ApiProperty()
-  @Column({ nullable: true, length: 50 })
+  @Column({ nullable: true, length: 150 })
   animal_dna_doc: string;
 
   @ApiProperty()
-  @Column({ nullable: true, length: 50 })
+  @Column({ nullable: true, length: 150 })
   animal_hded_doc: string;
 
   @ApiProperty()

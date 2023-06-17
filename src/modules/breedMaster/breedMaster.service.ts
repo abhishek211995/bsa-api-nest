@@ -109,7 +109,12 @@ export class AnimalBreedServices {
     }
   }
 
-  async editAnimalBreed(payload: EditAnimalBreed) {
+  async editAnimalBreed(
+    payload: EditAnimalBreed,
+    files: Array<Express.Multer.File>,
+  ) {
+    console.log("hi");
+
     try {
       const breed = await this.breAnimalBreedMasterRepository.findOne({
         where: { animal_breed_id: payload.breed_id },
@@ -133,7 +138,23 @@ export class AnimalBreedServices {
           animal_type_id: payload.animal_type_id,
         },
       );
+      if (files.length > 0) {
+        const AnimalType = await this.getAnimalBreedByAnimalType(
+          breed.animal_type_id,
+        );
+        const animal_breed_image = fileFilter(files, "animal_breed_image")[0];
+        const upload = await this.s3Service.uploadSingle(
+          animal_breed_image,
+          `${(await AnimalType[0])?.animal_type?.animal_type_name}/${
+            breed.animal_breed_name
+          }`,
+        );
 
+        const res = await this.breAnimalBreedMasterRepository.update(
+          { animal_breed_id: breed.animal_breed_id },
+          { animal_breed_image: animal_breed_image.originalname },
+        );
+      }
       return result;
     } catch (error) {
       throw error instanceof ServiceException

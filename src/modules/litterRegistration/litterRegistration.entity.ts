@@ -70,8 +70,8 @@ export class BreLitterRegistration {
   sire_owner: BreUser;
 
   @ApiProperty()
-  @Column({ type: "json" })
-  remarks: { message: string; user_name: string }[];
+  @Column({ type: "simple-array" })
+  remarks: string[];
 
   @ApiProperty()
   @Column({ default: false })

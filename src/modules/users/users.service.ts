@@ -19,10 +19,7 @@ import {
   welcomeEmail,
 } from "../../utils/mailTemplate.util";
 // redis
-import {
-  RedisService,
-  DEFAULT_REDIS_NAMESPACE,
-} from "@liaoliaots/nestjs-redis";
+import { RedisService } from "@liaoliaots/nestjs-redis";
 import Redis from "ioredis";
 @Injectable()
 export class UsersService {

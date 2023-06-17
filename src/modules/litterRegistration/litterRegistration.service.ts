@@ -8,12 +8,13 @@ import {
   emailContainer,
   litterRegistrationRequest,
 } from "src/utils/mailTemplate.util";
-import { Repository } from "typeorm";
+import { JsonContains, Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
 import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
+import { json } from "stream/consumers";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -41,10 +42,10 @@ export class LitterRegistrationService {
         mating_date: body.mating_date,
         completed: false,
         remarks: [
-          {
+          JSON.stringify({
             message: "Verification call scheduled",
             user_name: body.owner_name,
-          },
+          }),
         ],
       };
 
@@ -108,6 +109,7 @@ export class LitterRegistrationService {
       const list = await this.litterRegistrationRepository.find({
         relations: ["owner", "sire_owner"],
       });
+      console.log(list);
 
       // replace litters json with litters from table bre_litters
       const litters = await this.littersRepository.find();
@@ -115,6 +117,8 @@ export class LitterRegistrationService {
         const litter = litters.filter(
           (litter) => litter.litter_registration_id === l.id,
         );
+        console.log(litter);
+
         return { ...l, litters: litter };
       });
       return data;
@@ -244,65 +248,6 @@ export class LitterRegistrationService {
           registration_source: animalRegistrationSource.litter,
         };
       });
-      // const animals = litterDetails.litters.map((l, index) => {
-      //   const damPedigree = litterDetails.dam.animal_pedigree;
-      //   const sirePedigree = litterDetails.sire.animal_pedigree;
-      //   const animal_id = uuidv4();
-      //   const animalPedigree: Record<string, any> = {
-      //     name: l.litterName,
-      //     attributes: {
-      //       uuid: animal_id,
-      //       level: 0,
-      //       parentType: "",
-      //     },
-      //     children: [],
-      //   };
-      //   if (damPedigree) {
-      //     animalPedigree.children.push(damPedigree);
-      //   } else {
-      //     animalPedigree.children.push({
-      //       name: litterDetails.dam.animal_name,
-      //       attributes: {
-      //         uuid: litterDetails.dam.animal_id,
-      //         level: 1,
-      //         parentType: "Dam",
-      //       },
-      //     });
-      //   }
-      //   if (sirePedigree) {
-      //     animalPedigree.children.push(sirePedigree);
-      //   } else {
-      //     animalPedigree.children.push({
-      //       name: litterDetails.sire.animal_name,
-      //       attributes: {
-      //         uuid: litterDetails.sire.animal_id,
-      //         level: 1,
-      //         parentType: "Sire",
-      //       },
-      //     });
-      //   }
-      //   return {
-      //     animal_id,
-      //     animal_name: l.litterName,
-      //     // @ts-expect-error because of relation in animal table
-      //     animal_type_id: litterDetails.dam.animal_breed_id.animal_type_id,
-      //     animal_breed_id: litterDetails.dam.animal_breed_id,
-      //     animal_color_and_markings: l.colorMark,
-      //     animal_gender: l.litterGender,
-      //     animal_date_of_birth: litterDetails.dob,
-      //     animal_owner_id: Number(litterDetails.owner_id),
-      //     animal_registration_number: generateRegNo(
-      //       // @ts-expect-error because of relation in animal table
-      //       litterDetails.dam.animal_breed_id.animal_breed_id,
-      //       animalsCount + index + 1,
-      //     ),
-      //     animal_sire_id: litterDetails.sire_id,
-      //     animal_dam_id: litterDetails.dam_id,
-      //     animal_pedigree: animalPedigree,
-      //     is_active: true,
-      //     registration_source: animalRegistrationSource.litter,
-      //   };
-      // });
       const animalsAdded = await this.animalRepository.insert(animals);
       return animalsAdded.generatedMaps.length;
     } catch (error) {
@@ -315,9 +260,12 @@ export class LitterRegistrationService {
 
   async rejectLitter(id: string, remarks: Array<{ message: string }>) {
     try {
+      const remark = remarks.map((remark) => {
+        return JSON.stringify(remark);
+      });
       const update = await this.litterRegistrationRepository.update(
         { id: Number(id) },
-        { remarks },
+        { remarks: remark },
       );
       return update.affected;
     } catch (error) {
@@ -331,13 +279,16 @@ export class LitterRegistrationService {
   async sireApproval(id: string, remarks: Array<{ message: string }>) {
     try {
       const date = new Date();
+      const remark = remarks.map((remark) => {
+        return JSON.stringify(remark);
+      });
       await this.litterRegistrationRepository.update(
         { id: Number(id) },
         {
           sire_approval: true,
           sire_action_taken: true,
           sire_action_time: date,
-          remarks,
+          remarks: remark,
         },
       );
       return true;
@@ -360,6 +311,9 @@ export class LitterRegistrationService {
   }) {
     try {
       const date = new Date();
+      const remark = remarks.map((remark) => {
+        return JSON.stringify(remark);
+      });
       await this.litterRegistrationRepository.update(
         { id: Number(id) },
         {
@@ -367,7 +321,7 @@ export class LitterRegistrationService {
           sire_action_taken: true,
           sire_action_time: date,
           sire_rejection_reason: reason,
-          remarks,
+          remarks: remark,
         },
       );
       return true;
