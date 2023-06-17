@@ -431,10 +431,13 @@ export class UsersService {
     }
   }
 
-  async resetPassword(token: string, email: string, password: string) {
+  async resetPassword(token: string, password: string) {
     try {
-      const realToken = await this.redis.get(email);
-      console.log(token, realToken);
+      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
+
+      const user = await this.getUserById(decoded["user_id"]);
+
+      const realToken = await this.redis.get(user?.email);
 
       if (!realToken)
         throw new ServiceException({
@@ -448,9 +451,7 @@ export class UsersService {
           serviceErrorCode: "US-400",
         });
       }
-      await this.redis.del(email);
-      const decoded = jwt.verify(token, process.env.TOKEN_SECRET);
-      const user = await this.getUserById(decoded["user_id"]);
+      await this.redis.del(user?.email);
 
       const bcrypt_password = await this.bcryptService.hashPassword(password);
 

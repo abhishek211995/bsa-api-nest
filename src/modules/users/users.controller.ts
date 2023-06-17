@@ -245,14 +245,10 @@ export class UsersController {
   @Put("/reset-password")
   async resetPassword(
     @Query("token") token: string,
-    @Body() body: { email: string; password: string },
+    @Body() body: { password: string },
   ) {
     try {
-      const res = await this.usersService.resetPassword(
-        token,
-        body.email,
-        body.password,
-      );
+      const res = await this.usersService.resetPassword(token, body.password);
 
       return makeHTTPResponse(res, 200, "Changed password successfully");
     } catch (error) {
