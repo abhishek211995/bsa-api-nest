@@ -53,10 +53,15 @@ export class AnimalBreedMasterController {
   }
 
   @Put()
-  async editAnimalBreed(@Body() animalBreedDto: EditAnimalBreed) {
+  @UseInterceptors(AnyFilesInterceptor())
+  async editAnimalBreed(
+    @Body() animalBreedDto: EditAnimalBreed,
+    @UploadedFiles() files: Array<Express.Multer.File>,
+  ) {
     try {
       const breed = await this.animalBreedServices.editAnimalBreed(
         animalBreedDto,
+        files,
       );
       return makeHTTPResponse(breed);
     } catch (error) {

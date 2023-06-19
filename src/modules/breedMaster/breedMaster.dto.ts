@@ -14,4 +14,10 @@ export class AnimalBreedDto {
 export class EditAnimalBreed extends AnimalBreedDto {
   @IsNumber()
   breed_id: number;
+
+  @IsString()
+  animal_breed_name: string;
+
+  @IsString()
+  animal_breed_description: string;
 }
