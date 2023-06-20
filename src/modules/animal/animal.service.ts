@@ -102,10 +102,12 @@ export class AnimalService {
     animal_owner_id,
     animal_type_id,
     gender,
+    animal_breed_id,
   }: {
     animal_owner_id: number;
     animal_type_id: number;
     gender: string;
+    animal_breed_id: number;
   }) {
     try {
       const findWhereOptions: FindOptionsWhere<BreAnimal> = {};
@@ -122,6 +124,9 @@ export class AnimalService {
       }
       if (gender) {
         findWhereOptions.animal_gender = gender;
+      }
+      if (animal_breed_id) {
+        findWhereOptions.animal_breed_id = animal_breed_id;
       }
 
       let data = await this.animalRepository.find({
