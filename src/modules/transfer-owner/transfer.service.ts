@@ -118,6 +118,24 @@ export class TransferService {
           animal_id: animal.animal_id,
           owner_id: newOwner.id,
         });
+
+      if (animalOwnerHistory) {
+        const message = emailContainer(
+          transferMail(
+            newOwner.user_name,
+            // @ts-expect-error entity types
+            transferDetails.old_owner_id.user_name,
+            animal.animal_name,
+            "accepted",
+          ),
+          "Transfer Request Approved",
+        );
+        await this.mailService.sendMail(
+          newOwner.email,
+          "Transfer Request Approved",
+          message,
+        );
+      }
       return data;
     } catch (error) {
       throw new ServiceException({
@@ -136,6 +154,28 @@ export class TransferService {
           request_rejection_reason,
         },
       );
+
+      if (data.affected) {
+        const transferDetails = await this.getRequestById(transfer_id);
+        const newOwner = transferDetails.new_owner_id as unknown as BreUser;
+        const animal = transferDetails.animal_id as unknown as BreAnimal;
+
+        const message = emailContainer(
+          transferMail(
+            newOwner.user_name,
+            // @ts-expect-error entity types
+            transferDetails.old_owner_id.user_name,
+            animal.animal_name,
+            "rejected",
+          ),
+          "Transfer Request Rejected",
+        );
+        await this.mailService.sendMail(
+          newOwner.email,
+          "Transfer Request Rejected",
+          message,
+        );
+      }
       return data;
     } catch (error) {
       console.log("Failed to reject request", JSON.stringify(error));
