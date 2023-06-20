@@ -28,10 +28,19 @@ export class AnimalBreedServices {
         },
       });
 
-      if (existing) {
+      if (existing && !existing.is_deleted) {
         throw new ServiceException({
           message: "Breed already added",
           serviceErrorCode: "BMS",
+        });
+      } else if (existing && existing.is_deleted) {
+        await this.breAnimalBreedMasterRepository.update(
+          { animal_breed_id: existing.animal_breed_id },
+          { is_deleted: false },
+        );
+        throw new ServiceException({
+          message: "Breed was deleted and now restored. You can edit it now",
+          serviceErrorCode: "BMS-RESTORED",
         });
       }
       const newBreed = await this.breAnimalBreedMasterRepository.create({
@@ -89,6 +98,7 @@ export class AnimalBreedServices {
       // function which returns the link of the images from s3 service getLink function by mapping the array of breed
       const getLink = async (breed: BreAnimalBreedMaster[]) => {
         const data = breed.map(async (breed) => {
+          if (!breed.animal_breed_image) return breed;
           const link = await this.s3Service.getLink(
             `${breed.animal_type.animal_type_name}/${breed.animal_breed_name}/${breed.animal_breed_image}`,
           );
@@ -135,7 +145,6 @@ export class AnimalBreedServices {
         {
           animal_breed_description: payload.animal_breed_description,
           animal_breed_name: payload.animal_breed_name,
-          animal_type_id: payload.animal_type_id,
         },
       );
       if (files.length > 0) {

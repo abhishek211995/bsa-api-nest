@@ -108,6 +108,9 @@ export class LitterRegistrationService {
     try {
       const list = await this.litterRegistrationRepository.find({
         relations: ["owner", "sire_owner"],
+        order: {
+          updated_at: "ASC",
+        },
       });
       console.log(list);
 
