@@ -524,7 +524,7 @@ export class AnimalService {
 
   async getRegisteredAnimals() {
     try {
-      const animals = await this.animalRepository.find({
+      const data = await this.animalRepository.find({
         where: [
           {
             registration_source: animalRegistrationSource.registration,
@@ -541,6 +541,22 @@ export class AnimalService {
           is_active: "ASC",
           animal_rejection_reason: "ASC",
         },
+      });
+
+      const owners = await this.animalOwnerHistoryService.getAllOwners();
+
+      const animals = data.map((animal) => {
+        if (owners) {
+          const owner = owners.filter(
+            // @ts-ignore
+            (owner) => owner.animal_id === animal.animal_id,
+          );
+          if (owner.length > 0) {
+            return { ...animal, animal_current_owner: owner[0].owner };
+          } else {
+            return { ...animal, animal_current_owner: animal.animal_owner_id };
+          }
+        }
       });
       return animals;
     } catch (error) {
