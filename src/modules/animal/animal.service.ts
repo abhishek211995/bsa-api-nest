@@ -154,7 +154,6 @@ export class AnimalService {
 
       return data;
     } catch (error) {
-      console.log("error while fetching animal", error);
       throw new ServiceException({
         message: "Failed to fetch",
         serviceErrorCode: "AS-101",
@@ -189,8 +188,6 @@ export class AnimalService {
     files: Array<Express.Multer.File>,
   ) {
     try {
-      console.log("payload", payload);
-
       const animalData = JSON.parse(payload.animalData);
       const generations = JSON.parse(payload.generations);
       const { animalTypeId, breedId } = payload;
@@ -213,9 +210,6 @@ export class AnimalService {
         "",
         animalRegistrationSource.registration,
       );
-
-      console.log("pedigree", animalDataDto.animal_pedigree);
-      console.log("generations", generations);
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
         this.upsertAnimal([animalDataDto]),
@@ -252,7 +246,6 @@ export class AnimalService {
           );
         }
       }
-      console.log("generations", payload.generations);
 
       animalsCount++;
 
@@ -278,7 +271,6 @@ export class AnimalService {
 
       return { mainAnimalResult, result };
     } catch (error) {
-      console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to add animals",
         serviceErrorCode: "AS-100",
@@ -299,7 +291,6 @@ export class AnimalService {
         return upsertResult;
       };
     } catch (error) {
-      console.log("error", error);
       throw error;
     }
   }
@@ -449,7 +440,6 @@ export class AnimalService {
       } else {
         animalData.animal_current_owner = animal.animal_owner_id;
       }
-      console.log("animalData", animalData);
 
       return animalData;
     } catch (error) {
@@ -658,7 +648,6 @@ export class AnimalService {
 
       return { mainAnimalResult, result };
     } catch (error) {
-      console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to add animals",
         serviceErrorCode: "AS-100",
@@ -739,7 +728,15 @@ export class AnimalService {
         // @ts-expect-error type issue in repo
         animal.animal_owner_id?.id,
       );
-      console.log("farm", farm);
+
+      // get animal current owner
+      const current_owner =
+        await this.animalOwnerHistoryService.getAnimalCurrentOwner(animal_id);
+      if (current_owner) {
+        animal.animal_current_owner = current_owner.owner;
+      } else {
+        animal.animal_current_owner = null;
+      }
 
       return { animal, farm };
     } catch (error) {
@@ -770,8 +767,6 @@ export class AnimalService {
       // animalData is taken in payload without generations
       const { generations, ...payload } = animalData;
       if (Object.keys(payload).length !== 0) {
-        console.log("hi");
-
         result = await this.animalRepository.update(
           { animal_id },
           {
@@ -851,7 +846,6 @@ export class AnimalService {
       // take json of animalData.pedigree and update the previous animal data
       if (generations) {
         const pedigree = JSON.parse(animalData.generations);
-        console.log("pedigree", pedigree.length);
         const animalCount = await this.animalRepository.count();
         const genData = await Promise.all(
           pedigree.map(async (g, i) => {
@@ -874,7 +868,6 @@ export class AnimalService {
           }),
         );
 
-        console.log("genData", genData);
         const generation = await this.animalRepository.upsert(genData, [
           "animal_id",
         ]);
