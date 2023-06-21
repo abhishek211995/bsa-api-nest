@@ -7,7 +7,11 @@ import { AnimalService } from "../animal/animal.service";
 import { UsersService } from "../users/users.service";
 import { TransferOwnerDto } from "./transfer.dto";
 import { BreTransferOwnerRequest } from "./transfer.entity";
-import { emailContainer, transferMail } from "src/utils/mailTemplate.util";
+import {
+  emailContainer,
+  transferConfirmation,
+  transferMail,
+} from "src/utils/mailTemplate.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { BreUser } from "../users/users.entity";
 import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
@@ -121,7 +125,7 @@ export class TransferService {
 
       if (animalOwnerHistory) {
         const message = emailContainer(
-          transferMail(
+          transferConfirmation(
             newOwner.user_name,
             // @ts-expect-error entity types
             transferDetails.old_owner_id.user_name,
@@ -161,7 +165,7 @@ export class TransferService {
         const animal = transferDetails.animal_id as unknown as BreAnimal;
 
         const message = emailContainer(
-          transferMail(
+          transferConfirmation(
             newOwner.user_name,
             // @ts-expect-error entity types
             transferDetails.old_owner_id.user_name,
