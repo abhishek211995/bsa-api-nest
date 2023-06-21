@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import * as nodemailer from "nodemailer";
+import { MailOptions } from "nodemailer/lib/sendmail-transport";
+import path from "path";
 
 @Injectable()
 export class EmailService {
@@ -20,12 +22,20 @@ export class EmailService {
   }
 
   async sendMail(to: string, subject: string, message: string): Promise<void> {
-    const mailOptions = {
+    const mailOptions: MailOptions = {
       from: process.env.SMTP_USER,
       to,
       subject,
       html: message,
+      attachments: [
+        {
+          filename: "latest_logo.png",
+          cid: "logo",
+          path: path.join(__dirname, "../../../assets/images/latest_logo.png"),
+        },
+      ],
     };
+
     const result = await this.transporter.sendMail(mailOptions);
     console.log("result", result);
     return result;

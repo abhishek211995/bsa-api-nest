@@ -104,7 +104,6 @@ export class UsersService {
         where: { email: email },
         relations: ["user_role_id"],
       });
-      console.log("user", user);
 
       if (!user) {
         throw new ServiceException({
@@ -151,7 +150,6 @@ export class UsersService {
         breederDetails,
         subscription,
       };
-      console.log("data", data);
       return { user: data, token };
     } catch (error) {
       throw error;
@@ -269,6 +267,19 @@ export class UsersService {
       const update = await this.breUsersRepository.update(
         { id: Number(id) },
         { user_status: status, reject_reason: reason },
+      );
+      const message = emailContainer(
+        userConfirmation(
+          user.user_name,
+          status === 1 ? "accepted" : "rejected",
+        ),
+        "Welcome to Genuine Breeder Association",
+      );
+
+      await this.emailService.sendMail(
+        user.email,
+        "Welcome to Genuine Breeder Association",
+        message,
       );
 
       if (update.affected > 0) {
@@ -474,7 +485,6 @@ export class UsersService {
         forgotPassword(user?.user_name, link),
         "Reset Password",
       );
-      console.log(token);
 
       await this.emailService.sendMail(user.email, "Reset Password", message);
       return token;

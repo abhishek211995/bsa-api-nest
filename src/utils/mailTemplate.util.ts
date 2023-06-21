@@ -1,64 +1,64 @@
 export const emailContainer = (content: string, title: string) => `
-<!DOCTYPE html>
-<html>
-<head>
-	<meta charset="UTF-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>${title}</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background-color: #ffffff;
-            padding: 20px;
-            border: 1px solid #e9e9e9;
-        }
-
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .logo {
-            max-width: 200px;
-        }
-
-        .content {
-            font-size: 16px;
-            line-height: 1.5;
-        }
-
-        .footer {
-            margin-top: 20px;
-            text-align: center;
-            color: #999999;
-            font-size: 12px;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="logo.png" alt="Logo" class="logo">
-        </div>
-        ${content}
-		<p>Thank you for using our service.</p>
-		<p>Best regards,</p>
-		<p>Genuine Breeders Association</p>
-        <div class="footer">
-            This email was sent by Genuine Breeder Association. &copy; 2023 All rights reserved.
-        </div>
-    </div>
-</body>
-</html>
-`;
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${title}</title>
+      <style>
+          body {
+              font-family: Arial, sans-serif;
+              background-color: #f4f4f4;
+              margin: 0;
+              padding: 0;
+          }
+  
+          .container {
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #ffffff;
+              padding: 20px;
+              border: 1px solid #e9e9e9;
+          }
+  
+          .header {
+              text-align: center;
+              margin-bottom: 20px;
+          }
+  
+          .logo {
+              max-width: 200px;
+          }
+  
+          .content {
+              font-size: 16px;
+              line-height: 1.5;
+          }
+  
+          .footer {
+              margin-top: 20px;
+              text-align: center;
+              color: #999999;
+              font-size: 12px;
+          }
+      </style>
+  </head>
+  <body>
+      <div class="container">
+          <div class="header">
+              <img src="cid:logo" alt="Logo" class="logo">
+          </div>
+          ${content}
+      <p>Thank you for using our service.</p>
+      <p>Best regards,</p>
+      <p>Genuine Breeders Association</p>
+          <div class="footer">
+              This email was sent by Genuine Breeder Association. &copy; ${new Date().getFullYear()} All rights reserved.
+          </div>
+      </div>
+  </body>
+  </html>
+  `;
 
 export const transferMail = (
   userName: string,
