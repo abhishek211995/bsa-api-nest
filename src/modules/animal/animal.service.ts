@@ -163,9 +163,13 @@ export class AnimalService {
   }
 
   // get animal and owner details by animal microchip id or registration id
-  getAnimalAndOwner({ animal_microchip_id }: { animal_microchip_id: string }) {
+  async getAnimalAndOwner({
+    animal_microchip_id,
+  }: {
+    animal_microchip_id: string;
+  }) {
     try {
-      const data = this.animalRepository.findOne({
+      const data = await this.animalRepository.find({
         where: {
           animal_microchip_id,
         },
@@ -405,7 +409,7 @@ export class AnimalService {
         });
       }
 
-      let animalData = {
+      const animalData = {
         ...animal,
         animal_front_view: "",
         animal_right_view: "",
@@ -548,7 +552,6 @@ export class AnimalService {
       const animals = data.map((animal) => {
         if (owners) {
           const owner = owners.filter(
-            // @ts-ignore
             (owner) => owner.animal_id === animal.animal_id,
           );
           if (owner.length > 0) {
