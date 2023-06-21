@@ -178,10 +178,10 @@ export class UsersService {
         });
         query.where = { user_role_id: role };
       }
-
       const res = await this.breUsersRepository.find({
         ...query,
         relations: ["user_role_id"],
+        order: { user_updated_at: "ASC" },
       });
       const list = this.convertUsers(res);
       return list;
@@ -282,16 +282,29 @@ export class UsersService {
         message,
       );
 
+      if (update.affected > 0) {
+        const message = emailContainer(
+          userConfirmation(user.user_name, status ? "accepted" : "rejected"),
+          "User Confirmation",
+        );
+        await this.emailService.sendMail(
+          user.email,
+          "User Confirmation",
+          message,
+        );
+      }
+
       return update;
     } catch (error) {
       throw error;
     }
   }
+
   async updateUserDetails(
     body: {
       user_id: number;
       user_name: string;
-      user_address: string;
+      // user_address: string;
       identification_id_name: string;
       identification_id_no: string;
       contact_no: string;
@@ -308,14 +321,55 @@ export class UsersService {
           serviceErrorCode: "US-404",
         });
       }
+
+      // check if identification_id_no already exists and it is not the same user
+      const existingUser = await this.breUsersRepository.findOne({
+        where: {
+          identification_id_no: body.identification_id_no,
+        },
+      });
+      console.log("existingUser", existingUser, "user", user);
+
+      if (existingUser && existingUser.id !== user.id) {
+        throw new ServiceException({
+          message: "Identification number already exists",
+          serviceErrorCode: "US-400",
+        });
+      } else {
+        await this.breUsersRepository.update(
+          { id: body.user_id },
+          {
+            identification_id_no: body.identification_id_no,
+          },
+        );
+      }
+
+      // check if contact_no already exists and it is not the same user
+      const existingContact = await this.breUsersRepository.findOne({
+        where: {
+          contact_no: body.contact_no,
+        },
+      });
+      if (existingContact && existingContact.id !== user.id) {
+        throw new ServiceException({
+          message: "Contact number already exists",
+          serviceErrorCode: "US-400",
+        });
+      } else {
+        await this.breUsersRepository.update(
+          { id: body.user_id },
+          {
+            contact_no: body.contact_no,
+          },
+        );
+      }
+
       const updatedUser = await this.breUsersRepository.update(
         { id: body.user_id },
         {
           user_name: body.user_name,
-          user_address: body.user_address,
+          // user_address: body.user_address,
           identification_id_name: body.identification_id_name,
-          identification_id_no: body.identification_id_no,
-          contact_no: body.contact_no,
         },
       );
       if (files && files?.length > 0) {

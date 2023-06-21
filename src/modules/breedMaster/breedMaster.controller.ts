@@ -31,7 +31,7 @@ export class AnimalBreedMasterController {
         files,
       );
 
-      return makeHTTPResponse(breed);
+      return makeHTTPResponse(breed, 200, "Breed added successfully");
     } catch (error) {
       console.log(error);
       throw error;
@@ -63,7 +63,7 @@ export class AnimalBreedMasterController {
         animalBreedDto,
         files,
       );
-      return makeHTTPResponse(breed);
+      return makeHTTPResponse(breed, 200, "Breed updated successfully");
     } catch (error) {
       console.log(error);
       throw error;
@@ -73,7 +73,7 @@ export class AnimalBreedMasterController {
   async deleteAnimalBreed(@Param("id") id: number) {
     try {
       const result = await this.animalBreedServices.deleteAnimalBreedById(id);
-      return makeHTTPResponse(result);
+      return makeHTTPResponse(result, 200, "Breed deleted successfully");
     } catch (err) {
       throw err;
     }

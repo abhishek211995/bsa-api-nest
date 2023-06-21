@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { BreAnimalOwnerHistory } from "./animalOwnerHistory.entity";
 import { Repository } from "typeorm";
 import { AnimalOwnerHistoryDto } from "./animalOwnerHistory.dto";
+import { ServiceException } from "src/exception/base-exception";
 
 @Injectable()
 export class AnimalOwnerHistoryService {
@@ -61,11 +62,27 @@ export class AnimalOwnerHistoryService {
         where: { animal_id: animal_id, is_current_owner: true },
         relations: ["owner"],
       });
-      console.log("animalOwner", animalOwner);
 
       return animalOwner;
     } catch (error) {
       throw error;
+    }
+  }
+
+  async getAllOwners() {
+    try {
+      const owners = await this.animalOwnerHistoryRepository.find({
+        where: {
+          is_current_owner: true,
+        },
+        relations: ["owner"],
+      });
+      return owners;
+    } catch (error) {
+      throw new ServiceException({
+        message: error?.message ?? "Error in fetching owners",
+        serviceErrorCode: "AOHS",
+      });
     }
   }
 }

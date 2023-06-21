@@ -9,6 +9,7 @@ import { S3Module } from "src/lib/s3multer/s3.module";
 import { UsersModule } from "../users/users.module";
 import { BreederModule } from "../breeder/breeder.module";
 import { AnimalOwnerHistoryModule } from "../animalOwnerHistory/animalOwnerHistory.module";
+import { EmailModule } from "src/lib/mail/mail.module";
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { AnimalOwnerHistoryModule } from "../animalOwnerHistory/animalOwnerHisto
     UsersModule,
     BreederModule,
     AnimalOwnerHistoryModule,
+    EmailModule,
   ],
   controllers: [AnimalController],
   providers: [AnimalService],

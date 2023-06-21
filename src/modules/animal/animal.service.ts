@@ -24,6 +24,11 @@ import { ServiceException } from "src/exception/base-exception";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { BreederService } from "../breeder/breeder.service";
 import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
+import { EmailService } from "src/lib/mail/mail.service";
+import {
+  animalConfirmation,
+  emailContainer,
+} from "src/utils/mailTemplate.util";
 
 @Injectable()
 export class AnimalService {
@@ -34,6 +39,7 @@ export class AnimalService {
     private readonly s3Service: S3Service,
     private readonly breederService: BreederService,
     private readonly animalOwnerHistoryService: AnimalOwnerHistoryService,
+    private readonly emailService: EmailService,
   ) {}
 
   // single animal
@@ -96,10 +102,12 @@ export class AnimalService {
     animal_owner_id,
     animal_type_id,
     gender,
+    animal_breed_id,
   }: {
     animal_owner_id: number;
     animal_type_id: number;
     gender: string;
+    animal_breed_id: number;
   }) {
     try {
       const findWhereOptions: FindOptionsWhere<BreAnimal> = {};
@@ -116,6 +124,9 @@ export class AnimalService {
       }
       if (gender) {
         findWhereOptions.animal_gender = gender;
+      }
+      if (animal_breed_id) {
+        findWhereOptions.animal_breed_id = animal_breed_id;
       }
 
       let data = await this.animalRepository.find({
@@ -513,7 +524,7 @@ export class AnimalService {
 
   async getRegisteredAnimals() {
     try {
-      const animals = await this.animalRepository.find({
+      const data = await this.animalRepository.find({
         where: [
           {
             registration_source: animalRegistrationSource.registration,
@@ -526,6 +537,26 @@ export class AnimalService {
           },
         ],
         relations: ["animal_type_id", "animal_breed_id", "animal_owner_id"],
+        order: {
+          is_active: "ASC",
+          animal_rejection_reason: "ASC",
+        },
+      });
+
+      const owners = await this.animalOwnerHistoryService.getAllOwners();
+
+      const animals = data.map((animal) => {
+        if (owners) {
+          const owner = owners.filter(
+            // @ts-ignore
+            (owner) => owner.animal_id === animal.animal_id,
+          );
+          if (owner.length > 0) {
+            return { ...animal, animal_current_owner: owner[0].owner };
+          } else {
+            return { ...animal, animal_current_owner: animal.animal_owner_id };
+          }
+        }
       });
       return animals;
     } catch (error) {
@@ -638,7 +669,7 @@ export class AnimalService {
     animal_rejection_reason: string,
   ) {
     try {
-      await this.getAnimalById(animal_id);
+      const animal = await this.getAnimalById(animal_id);
       const result = await this.animalRepository.update(
         { animal_id: animal_id },
         {
@@ -646,6 +677,25 @@ export class AnimalService {
           animal_rejection_reason,
         },
       );
+
+      if (result.affected > 0) {
+        const message = emailContainer(
+          animalConfirmation(
+            // @ts-expect-error entity type issue
+            animal.animal_current_owner.user_name,
+            animal.animal_name,
+            status ? "accepted" : "rejected",
+          ),
+          "Animal Confirmation",
+        );
+
+        await this.emailService.sendMail(
+          // @ts-expect-error entity type issue
+          animal.animal_current_owner.user_email,
+          message,
+          "Animal Confirmation",
+        );
+      }
       return result;
     } catch (error) {
       throw new ServiceException({

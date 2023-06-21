@@ -94,9 +94,11 @@ export class MasterController {
   @Put("updateFarmType/:farm_id")
   async updateFarmType(
     @Param("farm_id") farm_id: number,
-    @Body() farmTypeDto: FarmTypeDto,
+    @Body() farmTypeDto: any,
   ) {
     try {
+      // delete user from farmTypeDto
+      delete farmTypeDto.user;
       const farm = await this.farmTypeServices.updateFarmType(
         farm_id,
         farmTypeDto,

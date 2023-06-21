@@ -55,17 +55,22 @@ export class AnimalController {
       animal_type_id,
       gender,
       user_id,
+      animal_breed_id,
     }: {
       animal_type_id: number;
       gender: string;
       user_id: number;
+      animal_breed_id: number;
     },
   ) {
     try {
+      console.log(animal_type_id, gender, user_id, animal_breed_id);
+
       const res = await this.animalService.getAllAnimalByAnimalType({
         animal_owner_id: user_id,
         animal_type_id,
         gender,
+        animal_breed_id,
       });
       if (res) {
         return {
