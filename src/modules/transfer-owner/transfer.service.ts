@@ -62,7 +62,6 @@ export class TransferService {
       }
       return newTransfer;
     } catch (error) {
-      console.log("Failed to add request", JSON.stringify(error));
       throw new ServiceException({
         message: "Failed to add transfer request",
         serviceErrorCode: "TS",
@@ -92,7 +91,6 @@ export class TransferService {
       }
       return transfer;
     } catch (error) {
-      console.log("Failed to fetch request", error?.message);
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch transfer request",
         httpStatusCode:
@@ -105,7 +103,6 @@ export class TransferService {
   async approveRequest({ transfer_id, request_rejection_reason }) {
     try {
       const transferDetails = await this.getRequestById(transfer_id);
-      console.log(transferDetails);
 
       const data = await this.breTransferOwnerRequestRepository.update(
         { transfer_id: Number(transfer_id) },
@@ -182,7 +179,6 @@ export class TransferService {
       }
       return data;
     } catch (error) {
-      console.log("Failed to reject request", JSON.stringify(error));
       throw new ServiceException({
         message: "Failed to reject transfer request",
         serviceErrorCode: "TS",
