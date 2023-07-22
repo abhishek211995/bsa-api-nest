@@ -26,6 +26,7 @@ import { TransferModule } from "./modules/transfer-owner/transfer.module";
 import { UsersModule } from "./modules/users/users.module";
 import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwnerHistory.module";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
+import { CcavenueModule } from "./modules/ccavenue/ccavenue.module";
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { RedisModule } from "@liaoliaots/nestjs-redis";
     OrdersModule,
     SubscriptionModule,
     AnimalOwnerHistoryModule,
+    CcavenueModule,
   ],
   controllers: [AppController],
   providers: [AppService],
