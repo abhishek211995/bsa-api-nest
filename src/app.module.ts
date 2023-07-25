@@ -83,6 +83,10 @@ export class AppModule implements NestModule {
           path: "auth/reset-password",
           method: RequestMethod.PUT,
         },
+        {
+          path: "auth/test-email-service",
+          method: RequestMethod.POST,
+        },
       )
       .forRoutes("*");
   }
