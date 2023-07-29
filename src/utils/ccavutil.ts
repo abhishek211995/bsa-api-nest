@@ -1,6 +1,7 @@
 import crypto from "crypto";
+
 function getAlgorithm(keyBase64) {
-  var key = Buffer.from(keyBase64, "base64");
+  const key = Buffer.from(keyBase64, "base64");
   switch (key.length) {
     case 16:
       return "aes-128-cbc";
@@ -26,6 +27,8 @@ export const decrypt = function (messagebase64, keyBase64, ivBase64) {
 
   const decipher = crypto.createDecipheriv(getAlgorithm(keyBase64), key, iv);
   let decrypted = decipher.update(messagebase64, "hex");
-  decrypted = Buffer.concat([decrypted, decipher.final()]);
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  decrypted += decipher.final();
   return decrypted;
 };

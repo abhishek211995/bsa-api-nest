@@ -5,9 +5,10 @@ import { OrdersController } from "./orders.controller";
 import { BreOrders } from "./orders.entity";
 import { OrdersService } from "./orders.service";
 import Razorpay from "razorpay";
+import { CcavenueModule } from "../ccavenue/ccavenue.module";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([BreOrders]), EmailModule],
+  imports: [TypeOrmModule.forFeature([BreOrders]), EmailModule, CcavenueModule],
   controllers: [OrdersController],
   providers: [
     {

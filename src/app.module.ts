@@ -85,6 +85,10 @@ export class AppModule implements NestModule {
           path: "auth/reset-password",
           method: RequestMethod.PUT,
         },
+        {
+          path: "orders/complete/ccAvenue",
+          method: RequestMethod.POST,
+        },
       )
       .forRoutes("*");
   }
