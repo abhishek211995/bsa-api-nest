@@ -14,6 +14,7 @@ import { BreUser, UserStatus } from "./users.entity";
 import { GetUserSubscriptionQueries } from "../subscription/subscription.dto";
 import { SubscriptionService } from "../subscription/subscription.service";
 import {
+  contactEmail,
   emailContainer,
   forgotPassword,
   userConfirmation,
@@ -22,6 +23,7 @@ import {
 // redis
 import { RedisService } from "@liaoliaots/nestjs-redis";
 import Redis from "ioredis";
+import { lastValueFrom } from "rxjs";
 @Injectable()
 export class UsersService {
   private readonly redis: Redis;
@@ -440,17 +442,23 @@ export class UsersService {
     }
   }
 
-  async testEmailService(to: string) {
+  async testEmailService(
+    first_name: string,
+    last_name: string,
+    email: string,
+    subject: string,
+    message: string,
+  ) {
     try {
-      const message = emailContainer(
-        welcomeEmail("Test"),
-        "Welcome to Genuine Breeder Association",
+      const messageContainer = emailContainer(
+        contactEmail(`${first_name} ${last_name}`, email, subject, message),
+        `New Message from ${first_name} ${last_name}`,
       );
 
       await this.emailService.sendMail(
-        to,
-        "Welcome to Genuine Breeder Association",
-        message,
+        "genuinebreederassociation@gmail.com",
+        `New Message from ${first_name} ${last_name}`,
+        messageContainer,
       );
       return true;
     } catch (error) {

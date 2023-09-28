@@ -89,6 +89,10 @@ export class AppModule implements NestModule {
           path: "orders/complete/ccAvenue",
           method: RequestMethod.POST,
         },
+        {
+           path: "auth/test-email-service",
+           method: RequestMethod.POST,
+        }
       )
       .forRoutes("*");
   }

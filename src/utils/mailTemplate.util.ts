@@ -83,6 +83,18 @@ export const sireOwnerVerificationEmail = (
 	<h1>${otp}</h1>
 `;
 
+export const contactEmail = (
+  user: string,
+  email: string,
+  subject: string,
+  message: string,
+) => `
+  <h1>New Message from ${user}</h1>
+  <p>Subject: ${subject}</p>
+  
+  <p>${message}</p>
+`;
+
 export const welcomeEmail = (userName: string) => `
 	<h1>Welcome to Genuine Breeder Association</h1>
     <p>Dear ${userName},</p>
