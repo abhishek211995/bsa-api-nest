@@ -62,7 +62,7 @@ export class S3Service {
 
   async getLink(keys: string) {
     try {
-      const command = await new aws.GetObjectCommand({
+      const command = new aws.GetObjectCommand({
         Bucket: process.env.BUCKET,
         Key: keys,
       });

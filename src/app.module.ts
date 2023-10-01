@@ -27,6 +27,7 @@ import { UsersModule } from "./modules/users/users.module";
 import { AnimalOwnerHistoryModule } from "./modules/animalOwnerHistory/animalOwnerHistory.module";
 import { RedisModule } from "@liaoliaots/nestjs-redis";
 import { CcavenueModule } from "./modules/ccavenue/ccavenue.module";
+import { CoursesModule } from "./modules/courses/courses.module";
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { CcavenueModule } from "./modules/ccavenue/ccavenue.module";
     SubscriptionModule,
     AnimalOwnerHistoryModule,
     CcavenueModule,
+    CoursesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
@@ -90,9 +92,9 @@ export class AppModule implements NestModule {
           method: RequestMethod.POST,
         },
         {
-           path: "auth/test-email-service",
-           method: RequestMethod.POST,
-        }
+          path: "auth/test-email-service",
+          method: RequestMethod.POST,
+        },
       )
       .forRoutes("*");
   }

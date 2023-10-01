@@ -330,7 +330,6 @@ export class UsersService {
           identification_id_no: body.identification_id_no,
         },
       });
-      console.log("existingUser", existingUser, "user", user);
 
       if (existingUser && existingUser.id !== user.id) {
         throw new ServiceException({
