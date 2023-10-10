@@ -30,4 +30,8 @@ export class BreCourses {
   @ApiProperty()
   @Column()
   image: string;
+
+  @ApiProperty()
+  @Column()
+  is_active: boolean;
 }

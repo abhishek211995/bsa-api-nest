@@ -20,13 +20,20 @@ export class CCAvenueService {
     userName: string,
     address: string,
     description: string,
+    redirectUrl?: string,
   ): string {
     const params = {
       merchant_id: this.merchantId,
       order_id: orderId,
       amount: amount,
-      redirect_url: `${process.env.API_URL}/orders/complete/ccAvenue`,
-      cancel_url: `${process.env.WEB_URL}/payment?order_id=${orderId}&status=CANCELLED&description=${description}`,
+      redirect_url: redirectUrl
+        ? `${process.env.API_URL}/${redirectUrl}`
+        : `${process.env.API_URL}/orders/complete/ccAvenue`,
+      cancel_url: `${
+        process.env.WEB_URL
+      }/payment?order_id=${orderId}&status=CANCELLED&description=${description}${
+        redirectUrl ? "&module=education" : ""
+      }`,
       currency: "INR",
       language: "EN",
       billing_name: userName,

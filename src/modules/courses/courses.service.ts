@@ -41,7 +41,7 @@ export class CoursesService {
     }
   }
 
-  async getCourses(startDate?: string, endDate?: string) {
+  async getCourses(startDate?: string, endDate?: string, is_active?: string) {
     try {
       const queryBuilder = this.coursesRepository.createQueryBuilder("c");
       if (startDate) {
@@ -49,6 +49,11 @@ export class CoursesService {
       }
       if (endDate) {
         queryBuilder.where("c.end_date <= :endDate", { endDate });
+      }
+      if (is_active) {
+        queryBuilder.where("c.is_active = :is_active", {
+          is_active: Boolean(is_active),
+        });
       }
       let courses = await queryBuilder.getMany();
       courses = await Promise.all(
@@ -105,7 +110,7 @@ export class CoursesService {
         });
       }
       let image = course.image;
-      if (files.length > 0) {
+      if (files?.length > 0) {
         const coverImage = fileFilter(files, "image")[0];
         await this.s3Service.uploadSingle(coverImage, `courses`);
         image = coverImage.originalname;
@@ -117,6 +122,7 @@ export class CoursesService {
 
       return update;
     } catch (error) {
+      console.log("error while updating course", error);
       throw new ServiceException({
         message: error?.message ?? "Error while updating single course",
         serviceErrorCode: "CS-500",

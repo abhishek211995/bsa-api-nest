@@ -42,9 +42,14 @@ export class CoursesController {
   async getCourses(
     @Query("startDate") startDate?: string,
     @Query("endDate") endDate?: string,
+    @Query("isActive") isActive?: string,
   ) {
     try {
-      const list = await this.coursesService.getCourses(startDate, endDate);
+      const list = await this.coursesService.getCourses(
+        startDate,
+        endDate,
+        isActive,
+      );
       return makeHTTPResponse(list, HttpStatus.OK);
     } catch (error) {
       throw error;
@@ -69,8 +74,10 @@ export class CoursesController {
     @Body() data: NewCourseDto,
   ) {
     try {
+      delete data["user"];
+
       const update = await this.coursesService.updateCourse(id, data, files);
-      return makeHTTPResponse(update, HttpStatus.OK);
+      return makeHTTPResponse(update, HttpStatus.OK, "Course updated!");
     } catch (error) {
       throw error;
     }

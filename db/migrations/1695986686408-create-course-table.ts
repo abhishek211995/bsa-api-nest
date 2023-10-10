@@ -10,6 +10,7 @@ export class CreateCourseTable1695986686408 implements MigrationInterface {
             fees INT NOT NULL DEFAULT 0,
             start_date DATE,
             end_date DATE,
+            is_active BOOLEAN DEFAULT TRUE,
             image VARCHAR(256)
         )
         `);

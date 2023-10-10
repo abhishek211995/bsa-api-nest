@@ -1,4 +1,4 @@
-import { IsDate, IsNumber, IsString } from "class-validator";
+import { IsBoolean, IsDate, IsNumber, IsString } from "class-validator";
 
 export class NewCourseDto {
   @IsString()
@@ -15,4 +15,7 @@ export class NewCourseDto {
 
   @IsDate()
   end_date: Date;
+
+  @IsBoolean()
+  is_active: boolean;
 }
