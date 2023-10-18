@@ -33,8 +33,6 @@ export class AnimalController {
     @Body() animalDto: AnimalDto,
   ) {
     try {
-      console.log(files);
-
       const res = await this.animalService.createAnimal(animalDto, files);
 
       if (res) {
