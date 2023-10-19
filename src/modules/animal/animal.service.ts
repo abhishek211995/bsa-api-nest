@@ -210,6 +210,7 @@ export class AnimalService {
         animalData.microchip,
         "",
         animalRegistrationSource.registration,
+        animalData.breeder_name,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
@@ -256,7 +257,6 @@ export class AnimalService {
           g.id,
           g.name,
           animalTypeId,
-
           breedId,
           g.gender,
           payload.userId,
@@ -588,6 +588,7 @@ export class AnimalService {
         animalData.microchip,
         "reg_doc",
         animalRegistrationSource.pedigree,
+        animalData.breeder_name,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
