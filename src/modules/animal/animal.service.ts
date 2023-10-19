@@ -4,6 +4,7 @@ import {
   FindOptionsWhere,
   In,
   InsertResult,
+  Like,
   QueryRunner,
   Raw,
   Repository,
@@ -170,7 +171,7 @@ export class AnimalService {
     try {
       const data = await this.animalRepository.find({
         where: {
-          animal_microchip_id,
+          animal_microchip_id: Like(animal_microchip_id),
         },
         relations: ["animal_owner_id"],
       });

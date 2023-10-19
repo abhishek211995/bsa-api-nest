@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
+  Query,
   UploadedFiles,
   UseInterceptors,
 } from "@nestjs/common";
@@ -23,6 +25,18 @@ export class BreederFarmController {
     try {
       const result = await this.breederFarmService.addBreederFarm(body, files);
       return makeHTTPResponse(result, 200, "Breeder Farm created successfully");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Get("search")
+  async fetchFarm(@Query() query: { reg_no: string }) {
+    try {
+      const farm = await this.breederFarmService.getBreederFarmByReg(
+        query.reg_no,
+      );
+      return makeHTTPResponse(farm);
     } catch (error) {
       throw error;
     }
