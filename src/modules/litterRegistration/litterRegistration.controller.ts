@@ -46,9 +46,7 @@ export class LitterRegistrationController {
   ) {
     try {
       const res = await this.litterService.registerLitterSemen(body, files);
-      if (res) {
-        return { status: 200, message: "Semen registered successfully" };
-      }
+      return makeHTTPResponse(res, 200, "Litter registered successfully!");
     } catch (error) {
       throw error;
     }
