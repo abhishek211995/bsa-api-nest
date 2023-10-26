@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from "@nestjs/common";
 import { LitterRegistrationService } from "./litterRegistration.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
@@ -6,6 +16,7 @@ import {
   ApproveLitterBody,
   LitterRegistrationBody,
 } from "./litterRegistration.dto";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("litter")
 export class LitterRegistrationController {
@@ -18,6 +29,26 @@ export class LitterRegistrationController {
     try {
       const result = await this.litterService.registerLitter(body);
       return makeHTTPResponse(result, 200, "Litter registered successfully!");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Litter Semen registration",
+  })
+  @Post("/registration/semen")
+  @UseInterceptors(AnyFilesInterceptor())
+  async addLitterSemen(
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
+    @Body() body: LitterRegistrationBody,
+  ) {
+    try {
+      const res = await this.litterService.registerLitterSemen(body, files);
+      if (res) {
+        return { status: 200, message: "Semen registered successfully" };
+      }
     } catch (error) {
       throw error;
     }

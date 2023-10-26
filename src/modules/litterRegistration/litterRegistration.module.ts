@@ -7,6 +7,7 @@ import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
 import { LitterRegistrationService } from "./litterRegistration.service";
 import { AnimalModule } from "../animal/animal.module";
 import { BreAnimal } from "../animal/animal.entity";
+import { S3Module } from "../../lib/s3multer/s3.module";
 
 @Module({
   controllers: [LitterRegistrationController],
@@ -15,6 +16,7 @@ import { BreAnimal } from "../animal/animal.entity";
     UsersModule,
     EmailModule,
     AnimalModule,
+    S3Module,
   ],
   providers: [LitterRegistrationService],
   exports: [LitterRegistrationService],

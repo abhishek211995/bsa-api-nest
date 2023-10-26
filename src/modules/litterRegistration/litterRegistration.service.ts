@@ -3,18 +3,19 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
+import { S3Service } from "src/lib/s3multer/s3.service";
 import { generateRegNo } from "src/utils/generateReg.util";
 import {
   emailContainer,
   litterRegistrationRequest,
 } from "src/utils/mailTemplate.util";
-import { JsonContains, Repository } from "typeorm";
+import { Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
+import { fileFilter } from "../../utils/fileFilter.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
 import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
-import { json } from "stream/consumers";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -27,6 +28,7 @@ export class LitterRegistrationService {
     private readonly mailService: EmailService,
     @InjectRepository(BreLitters)
     private readonly littersRepository: Repository<BreLitters>,
+    private readonly s3Service: S3Service,
   ) {}
 
   async registerLitter(body: LitterRegistrationBody) {
@@ -104,6 +106,64 @@ export class LitterRegistrationService {
     }
   }
 
+  async registerLitterSemen(
+    body: LitterRegistrationBody,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      await this.s3Service.uploadMultiple(files);
+      const semenBill = fileFilter(files, "semenBill")[0].originalname;
+      const vetCertificate = fileFilter(files, "vetCertificate")[0]
+        .originalname;
+      const payload = {
+        dob: body.dob,
+        meeting_date: body.meeting_date,
+        meeting_time: body.meeting_time,
+        sire_id: null,
+        dam_id: body.dam_id,
+        owner_id: body.owner_id,
+        sire_owner_id: null,
+        mating_date: body.mating_date,
+        completed: false,
+        remarks: [
+          JSON.stringify({
+            message: "Verification call scheduled",
+            user_name: body.owner_name,
+          }),
+        ],
+        semen_bill: semenBill,
+        vet_certificate: vetCertificate,
+        is_semen: true,
+      };
+
+      this.litterRegistrationRepository.create(payload);
+      const registration = await this.litterRegistrationRepository.save(
+        payload,
+      );
+
+      // Adding litters to new table of bre_litters
+      const litters = body.litters.map((l) => {
+        return {
+          litter_name: l.litterName,
+          litter_color_mark: l.colorMark,
+          litter_gender: l.litterGender,
+          litter_registration_id: registration.id,
+        };
+      });
+
+      await this.littersRepository.insert(litters);
+
+      return registration;
+    } catch (error) {
+      throw error instanceof ServiceException
+        ? error
+        : new ServiceException({
+            message: error?.message ?? "Failed to add semen litter",
+            serviceErrorCode: "LRS-100",
+          });
+    }
+  }
+
   async getAllLitters() {
     try {
       const list = await this.litterRegistrationRepository.find({
@@ -136,7 +196,7 @@ export class LitterRegistrationService {
 
   async getLitterDetailsById(id: string, body?: any) {
     try {
-      let list = await this.litterRegistrationRepository.findOne({
+      const list = await this.litterRegistrationRepository.findOne({
         where: { id: Number(id) },
         relations: [
           "owner",

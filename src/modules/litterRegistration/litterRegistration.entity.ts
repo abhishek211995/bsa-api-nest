@@ -100,6 +100,18 @@ export class BreLitterRegistration {
   @ApiProperty()
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  semen_bill: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  vet_certificate: string;
+
+  @ApiProperty()
+  @Column({ default: false })
+  is_semen: boolean;
 }
 
 @Entity("bre_litters")
