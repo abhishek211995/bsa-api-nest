@@ -9,13 +9,14 @@ import {
   emailContainer,
   litterRegistrationRequest,
 } from "src/utils/mailTemplate.util";
-import { Repository } from "typeorm";
+import { QueryRunner, Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
 import { fileFilter } from "../../utils/fileFilter.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
 import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
+import TransactionUtil from "../../lib/db_utils/transaction.utils";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -29,6 +30,7 @@ export class LitterRegistrationService {
     @InjectRepository(BreLitters)
     private readonly littersRepository: Repository<BreLitters>,
     private readonly s3Service: S3Service,
+    private transactionUtil: TransactionUtil,
   ) {}
 
   async registerLitter(body: LitterRegistrationBody) {
@@ -111,47 +113,9 @@ export class LitterRegistrationService {
     files: Array<Express.Multer.File>,
   ) {
     try {
-      await this.s3Service.uploadMultiple(files);
-      const semenBill = fileFilter(files, "semenBill")[0].originalname;
-      const vetCertificate = fileFilter(files, "vetCertificate")[0]
-        .originalname;
-      const payload = {
-        dob: body.dob,
-        meeting_date: body.meeting_date,
-        meeting_time: body.meeting_time,
-        sire_id: null,
-        dam_id: body.dam_id,
-        owner_id: body.owner_id,
-        sire_owner_id: null,
-        mating_date: body.mating_date,
-        completed: false,
-        remarks: [
-          JSON.stringify({
-            message: "Verification call scheduled",
-            user_name: body.owner_name,
-          }),
-        ],
-        semen_bill: semenBill,
-        vet_certificate: vetCertificate,
-        is_semen: true,
-      };
-
-      this.litterRegistrationRepository.create(payload);
-      const registration = await this.litterRegistrationRepository.save(
-        payload,
+      const registration = await this.transactionUtil.executeInTransaction(
+        this.addLitter(body, files),
       );
-
-      // Adding litters to new table of bre_litters
-      const litters = body.litters.map((l) => {
-        return {
-          litter_name: l.litterName,
-          litter_color_mark: l.colorMark,
-          litter_gender: l.litterGender,
-          litter_registration_id: registration.id,
-        };
-      });
-
-      await this.littersRepository.insert(litters);
 
       return registration;
     } catch (error) {
@@ -162,6 +126,65 @@ export class LitterRegistrationService {
             serviceErrorCode: "LRS-100",
           });
     }
+  }
+
+  addLitter(body: LitterRegistrationBody, files: Array<Express.Multer.File>) {
+    return async (queryRunner: QueryRunner) => {
+      try {
+        await this.s3Service.uploadMultiple(files);
+        const semenBill = fileFilter(files, "semenBill")[0].originalname;
+        const vetCertificate = fileFilter(files, "vetCertificate")[0]
+          .originalname;
+        const payload = {
+          dob: body.dob,
+          meeting_date: body.meeting_date,
+          meeting_time: body.meeting_time,
+          sire_id: null,
+          dam_id: body.dam_id,
+          owner_id: body.owner_id,
+          sire_owner_id: null,
+          mating_date: body.mating_date,
+          completed: false,
+          remarks: [
+            JSON.stringify({
+              message: "Verification call scheduled",
+              user_name: body.owner_name,
+            }),
+          ],
+          semen_bill: semenBill,
+          vet_certificate: vetCertificate,
+          is_semen: true,
+        };
+
+        let registration = queryRunner.manager.create(
+          BreLitterRegistration,
+          payload,
+        );
+
+        registration = await queryRunner.manager.save(
+          BreLitterRegistration,
+          payload,
+        );
+
+        // @ts-expect-error using common type class for normal litter and semen litter
+        const parseLitters = JSON.parse(body.litters);
+        const litters = parseLitters.map((l) => {
+          return {
+            litter_name: l.litterName,
+            litter_color_mark: l.colorMark,
+            litter_gender: l.litterGender,
+            litter_registration_id: registration.id,
+          };
+        });
+
+        await queryRunner.manager.insert(BreLitters, litters);
+
+        return registration;
+      } catch (error) {
+        console.log("error in create litter transaction", error);
+        queryRunner.rollbackTransaction();
+      }
+    };
   }
 
   async getAllLitters() {
