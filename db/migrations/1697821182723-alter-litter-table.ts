@@ -40,6 +40,10 @@ export class AlterLitterTable1697821182723 implements MigrationInterface {
           FOREIGN KEY (user_id) REFERENCES bre_user (id) MATCH SIMPLE ON UPDATE NO ACTION ON DELETE NO ACTION
         )
     `);
+
+    await queryRunner.query(`
+      INSERT INTO bre_role_master (role_id, role_name) VALUES ('4', 'company');
+    `);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {

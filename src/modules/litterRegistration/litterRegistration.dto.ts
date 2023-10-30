@@ -45,7 +45,7 @@ export class LitterRegistrationBody {
 
   @ApiProperty()
   @IsString()
-  sire_owner_id: string; // id of sire owner
+  sire_owner_id: number; // id of sire owner
 
   @ApiProperty()
   @IsString()

@@ -239,7 +239,10 @@ export class LitterRegistrationService {
           httpStatusCode: HttpStatus.BAD_REQUEST,
         });
       }
-
+      const semenBillLink = await this.s3Service.getLink(list.semen_bill);
+      const vetCertificateLink = await this.s3Service.getLink(
+        list.vet_certificate,
+      );
       if (body?.user?.user_role_id?.role_id !== 3)
         if (list.sire_owner_id !== body?.user?.id) {
           throw new ServiceException({
@@ -252,7 +255,12 @@ export class LitterRegistrationService {
         where: { litter_registration_id: Number(id) },
       });
 
-      const data = { ...list, litters: litters };
+      const data = {
+        ...list,
+        litters: litters,
+        semenBillLink,
+        vetCertificateLink,
+      };
       return data;
     } catch (error) {
       throw new ServiceException({
@@ -415,6 +423,38 @@ export class LitterRegistrationService {
       return new ServiceException({
         message: error?.message ?? "Failed to reject litter from sire owner",
         serviceErrorCode: "LRS",
+      });
+    }
+  }
+
+  async updateSemenSireCompany(companyId: number, litterId: number) {
+    try {
+      const result = await this.litterRegistrationRepository.update(
+        { id: litterId },
+        { sire_owner_id: companyId },
+      );
+      return result;
+    } catch (error) {
+      console.log("error while updating litter company", error);
+      throw new ServiceException({
+        message: "Failed to update litter sire company",
+        serviceErrorCode: "LRS-400",
+      });
+    }
+  }
+
+  async updateSemenSireAnimal(animalId: string, litterId: number) {
+    try {
+      const result = await this.litterRegistrationRepository.update(
+        { id: litterId },
+        { sire_id: animalId },
+      );
+      return result;
+    } catch (error) {
+      console.log("error while updating litter sire", error);
+      throw new ServiceException({
+        message: "Failed to update litter sire sire",
+        serviceErrorCode: "LRS-400",
       });
     }
   }

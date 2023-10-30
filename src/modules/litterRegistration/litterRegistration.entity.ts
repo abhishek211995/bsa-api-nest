@@ -62,7 +62,7 @@ export class BreLitterRegistration {
 
   @ApiProperty()
   @Column()
-  sire_owner_id: string;
+  sire_owner_id: number;
 
   @ApiProperty()
   @JoinColumn({ name: "sire_owner_id" })

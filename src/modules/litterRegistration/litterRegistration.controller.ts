@@ -183,4 +183,42 @@ export class LitterRegistrationController {
       throw error;
     }
   }
+
+  @Put("semen/updateCompany")
+  async updateSemenSireCompany(
+    @Body()
+    data: {
+      companyId: number;
+      litterId: number;
+    },
+  ) {
+    try {
+      const result = await this.litterService.updateSemenSireCompany(
+        data.companyId,
+        data.litterId,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Put("semen/updateSire")
+  async updateSemenSireAnimal(
+    @Body()
+    data: {
+      animalId: string;
+      litterId: number;
+    },
+  ) {
+    try {
+      const result = await this.litterService.updateSemenSireAnimal(
+        data.animalId,
+        data.litterId,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
 }
