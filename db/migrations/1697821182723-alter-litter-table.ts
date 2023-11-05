@@ -2,11 +2,11 @@ import { MigrationInterface, QueryRunner } from "typeorm";
 
 export class AlterLitterTable1697821182723 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    // await queryRunner.query(`
-    //     ALTER TABLE bre_litter_registration
-    //       DROP FOREIGN KEY FK_3a4443a160c780e65ae83cf0c2e,
-    //       DROP FOREIGN KEY FK_85e906894fb774e202c4b806aaf;
-    //   `);
+    await queryRunner.query(`
+        ALTER TABLE bre_litter_registration
+          DROP FOREIGN KEY FK_3a4443a160c780e65ae83cf0c2e,
+          DROP FOREIGN KEY FK_85e906894fb774e202c4b806aaf;
+      `);
 
     await queryRunner.query(`
         ALTER TABLE bre_litter_registration
