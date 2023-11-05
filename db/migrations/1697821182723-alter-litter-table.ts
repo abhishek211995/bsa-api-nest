@@ -12,6 +12,7 @@ export class AlterLitterTable1697821182723 implements MigrationInterface {
         ALTER TABLE bre_litter_registration
           CHANGE COLUMN sire_id sire_id VARCHAR(255) NULL,
           CHANGE COLUMN sire_owner_id sire_owner_id INT NULL;
+          CHANGE COLUMN remarks remarks json null;
       `);
 
     await queryRunner.query(`

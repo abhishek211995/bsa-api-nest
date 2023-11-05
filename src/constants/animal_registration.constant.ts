@@ -3,4 +3,5 @@ export const animalRegistrationSource = {
   registration: "Animal Registration",
   pedigree: "Pedigree Registration",
   semen: "Semen Registration",
+  adminRegistration: "Admin Registration",
 };

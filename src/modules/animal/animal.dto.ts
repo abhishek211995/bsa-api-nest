@@ -105,6 +105,7 @@ export class AnimalWithPedigreePayload {
   userId: number;
   animal_country: string;
   breeder_name: string;
+  registration_source: string;
 }
 
 export class CreateGenerationsDto {
@@ -192,6 +193,7 @@ export class CreateAnimalDto {
     animal_registration_doc: string,
     registration_source: string,
     breeder_name: string,
+    is_active: boolean,
   ) {
     this.animal_id = animal_id;
     this.animal_name = animal_name;
@@ -210,6 +212,7 @@ export class CreateAnimalDto {
     this.animal_registration_doc = animal_registration_doc;
     this.registration_source = registration_source;
     this.breeder_name = breeder_name;
+    this.is_active = is_active;
   }
 
   @IsString()
@@ -279,6 +282,10 @@ export class CreateAnimalDto {
   @IsString()
   @ApiProperty()
   breeder_name: string;
+
+  @IsBoolean()
+  @ApiProperty()
+  is_active: boolean;
 }
 
 export class ChangeNamePayload {

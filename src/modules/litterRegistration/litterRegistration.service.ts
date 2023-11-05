@@ -46,10 +46,10 @@ export class LitterRegistrationService {
         mating_date: body.mating_date,
         completed: false,
         remarks: [
-          JSON.stringify({
+          {
             message: "Verification call scheduled",
             user_name: body.owner_name,
-          }),
+          },
         ],
       };
 
@@ -146,10 +146,10 @@ export class LitterRegistrationService {
           mating_date: body.mating_date,
           completed: false,
           remarks: [
-            JSON.stringify({
+            {
               message: "Verification call scheduled",
               user_name: body.owner_name,
-            }),
+            },
           ],
           semen_bill: semenBill,
           vet_certificate: vetCertificate,
@@ -273,9 +273,15 @@ export class LitterRegistrationService {
 
   async approveLitter(body: any) {
     try {
+      console.log("body", body);
       const update = await this.litterRegistrationRepository.update(
-        { id: body.id },
-        { completed: true, remarks: body.remarks },
+        { id: Number(body.id) },
+        {
+          completed: true,
+          remarks: body.remarks,
+          sire_approval: true,
+          sire_action_taken: true,
+        },
       );
       const litterDetails = await this.getLitterDetailsById(body.id, body);
       const animalsCount = await this.animalRepository.count();
@@ -345,6 +351,7 @@ export class LitterRegistrationService {
       const animalsAdded = await this.animalRepository.insert(animals);
       return animalsAdded.generatedMaps.length;
     } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to approve litter",
         serviceErrorCode: "LRS",
@@ -359,7 +366,7 @@ export class LitterRegistrationService {
       });
       const update = await this.litterRegistrationRepository.update(
         { id: Number(id) },
-        { remarks: remark },
+        { remarks: remarks },
       );
       return update.affected;
     } catch (error) {
@@ -382,7 +389,7 @@ export class LitterRegistrationService {
           sire_approval: true,
           sire_action_taken: true,
           sire_action_time: date,
-          remarks: remark,
+          remarks: remarks,
         },
       );
       return true;
@@ -415,7 +422,7 @@ export class LitterRegistrationService {
           sire_action_taken: true,
           sire_action_time: date,
           sire_rejection_reason: reason,
-          remarks: remark,
+          remarks: remarks,
         },
       );
       return true;
