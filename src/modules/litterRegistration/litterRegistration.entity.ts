@@ -62,7 +62,7 @@ export class BreLitterRegistration {
 
   @ApiProperty()
   @Column()
-  sire_owner_id: string;
+  sire_owner_id: number;
 
   @ApiProperty()
   @JoinColumn({ name: "sire_owner_id" })
@@ -70,8 +70,8 @@ export class BreLitterRegistration {
   sire_owner: BreUser;
 
   @ApiProperty()
-  @Column({ type: "simple-array" })
-  remarks: string[];
+  @Column({ type: "json" })
+  remarks: Array<{ message: string }>;
 
   @ApiProperty()
   @Column({ default: false })
@@ -100,6 +100,18 @@ export class BreLitterRegistration {
   @ApiProperty()
   @UpdateDateColumn()
   updated_at: Date;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  semen_bill: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  vet_certificate: string;
+
+  @ApiProperty()
+  @Column({ default: false })
+  is_semen: boolean;
 }
 
 @Entity("bre_litters")

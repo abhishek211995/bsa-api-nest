@@ -4,10 +4,11 @@ import { ServiceException } from "src/exception/base-exception";
 import TransactionUtil from "src/lib/db_utils/transaction.utils";
 import { S3Service } from "src/lib/s3multer/s3.service";
 import { fileFilter } from "src/utils/fileFilter.util";
-import { InsertResult, QueryRunner, Repository } from "typeorm";
+import { InsertResult, Like, QueryRunner, Repository } from "typeorm";
 import { BreUser } from "../users/users.entity";
 import { BreederFarmDto, CreateBreederFarmDto } from "./breederFarm.dto";
 import { BreBreederFarm } from "./breederFarm.entity";
+import { generateRegNo } from "../../utils/generateReg.util";
 
 @Injectable()
 export class BreederFarmService {
@@ -65,8 +66,8 @@ export class BreederFarmService {
     files: Array<Express.Multer.File>,
   ) {
     try {
-      console.log(files);
-
+      const farmCount = await this.breederFarmRepository.count();
+      const registration_no = `F-${generateRegNo(data.farm_id, farmCount)}`;
       const user = await this.userRepository.findOne({
         where: { id: data.user_id },
       });
@@ -78,6 +79,7 @@ export class BreederFarmService {
         farm_name: data.farm_name,
         license_expiry_date: data.license_expiry_date,
         license_no: data.license_no,
+        registration_no,
       });
       breederFarm = await this.breederFarmRepository.save({
         breeder_id: data.breeder_id,
@@ -87,6 +89,7 @@ export class BreederFarmService {
         farm_name: data.farm_name,
         license_expiry_date: data.license_expiry_date,
         license_no: data.license_no,
+        registration_no,
       });
       const logo = fileFilter(files, "logo")[0];
       const license_doc_name = fileFilter(files, "license_doc_name")[0];
@@ -128,6 +131,28 @@ export class BreederFarmService {
 
       return farms;
     } catch (error) {
+      throw new ServiceException({
+        message: "Failed to fetch breeder farms",
+        serviceErrorCode: "BFS",
+      });
+    }
+  }
+
+  async getBreederFarmByReg(regNo: string) {
+    try {
+      const farm = await this.breederFarmRepository.findOne({
+        where: { registration_no: Like(regNo) },
+        relations: ["breeder", "breeder.user", "farm"],
+      });
+      if (farm) {
+        const logo = await this.s3Service.getLink(
+          `${farm.breeder.user.email}/${farm.logo}`,
+        );
+        farm.logo = logo;
+      }
+      return farm;
+    } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: "Failed to fetch breeder farms",
         serviceErrorCode: "BFS",

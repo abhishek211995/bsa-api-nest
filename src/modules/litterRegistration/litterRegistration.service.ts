@@ -3,18 +3,20 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { animalRegistrationSource } from "src/constants/animal_registration.constant";
 import { ServiceException } from "src/exception/base-exception";
 import { EmailService } from "src/lib/mail/mail.service";
+import { S3Service } from "src/lib/s3multer/s3.service";
 import { generateRegNo } from "src/utils/generateReg.util";
 import {
   emailContainer,
   litterRegistrationRequest,
 } from "src/utils/mailTemplate.util";
-import { JsonContains, Repository } from "typeorm";
+import { QueryRunner, Repository } from "typeorm";
 import { v4 as uuidv4 } from "uuid";
+import { fileFilter } from "../../utils/fileFilter.util";
 import { BreAnimal } from "../animal/animal.entity";
 import { UsersService } from "../users/users.service";
 import { LitterRegistrationBody } from "./litterRegistration.dto";
 import { BreLitterRegistration, BreLitters } from "./litterRegistration.entity";
-import { json } from "stream/consumers";
+import TransactionUtil from "../../lib/db_utils/transaction.utils";
 
 @Injectable()
 export class LitterRegistrationService {
@@ -27,6 +29,8 @@ export class LitterRegistrationService {
     private readonly mailService: EmailService,
     @InjectRepository(BreLitters)
     private readonly littersRepository: Repository<BreLitters>,
+    private readonly s3Service: S3Service,
+    private transactionUtil: TransactionUtil,
   ) {}
 
   async registerLitter(body: LitterRegistrationBody) {
@@ -42,10 +46,10 @@ export class LitterRegistrationService {
         mating_date: body.mating_date,
         completed: false,
         remarks: [
-          JSON.stringify({
+          {
             message: "Verification call scheduled",
             user_name: body.owner_name,
-          }),
+          },
         ],
       };
 
@@ -104,6 +108,85 @@ export class LitterRegistrationService {
     }
   }
 
+  async registerLitterSemen(
+    body: LitterRegistrationBody,
+    files: Array<Express.Multer.File>,
+  ) {
+    try {
+      const registration = await this.transactionUtil.executeInTransaction(
+        this.addLitter(body, files),
+      );
+
+      return registration;
+    } catch (error) {
+      throw error instanceof ServiceException
+        ? error
+        : new ServiceException({
+            message: error?.message ?? "Failed to add semen litter",
+            serviceErrorCode: "LRS-100",
+          });
+    }
+  }
+
+  addLitter(body: LitterRegistrationBody, files: Array<Express.Multer.File>) {
+    return async (queryRunner: QueryRunner) => {
+      try {
+        await this.s3Service.uploadMultiple(files);
+        const semenBill = fileFilter(files, "semenBill")[0].originalname;
+        const vetCertificate = fileFilter(files, "vetCertificate")[0]
+          .originalname;
+        const payload = {
+          dob: body.dob,
+          meeting_date: body.meeting_date,
+          meeting_time: body.meeting_time,
+          sire_id: null,
+          dam_id: body.dam_id,
+          owner_id: body.owner_id,
+          sire_owner_id: null,
+          mating_date: body.mating_date,
+          completed: false,
+          remarks: [
+            {
+              message: "Verification call scheduled",
+              user_name: body.owner_name,
+            },
+          ],
+          semen_bill: semenBill,
+          vet_certificate: vetCertificate,
+          is_semen: true,
+        };
+
+        let registration = queryRunner.manager.create(
+          BreLitterRegistration,
+          payload,
+        );
+
+        registration = await queryRunner.manager.save(
+          BreLitterRegistration,
+          payload,
+        );
+
+        // @ts-expect-error using common type class for normal litter and semen litter
+        const parseLitters = JSON.parse(body.litters);
+        const litters = parseLitters.map((l) => {
+          return {
+            litter_name: l.litterName,
+            litter_color_mark: l.colorMark,
+            litter_gender: l.litterGender,
+            litter_registration_id: registration.id,
+          };
+        });
+
+        await queryRunner.manager.insert(BreLitters, litters);
+
+        return registration;
+      } catch (error) {
+        console.log("error in create litter transaction", error);
+        queryRunner.rollbackTransaction();
+      }
+    };
+  }
+
   async getAllLitters() {
     try {
       const list = await this.litterRegistrationRepository.find({
@@ -136,7 +219,7 @@ export class LitterRegistrationService {
 
   async getLitterDetailsById(id: string, body?: any) {
     try {
-      let list = await this.litterRegistrationRepository.findOne({
+      const list = await this.litterRegistrationRepository.findOne({
         where: { id: Number(id) },
         relations: [
           "owner",
@@ -156,7 +239,10 @@ export class LitterRegistrationService {
           httpStatusCode: HttpStatus.BAD_REQUEST,
         });
       }
-
+      const semenBillLink = await this.s3Service.getLink(list.semen_bill);
+      const vetCertificateLink = await this.s3Service.getLink(
+        list.vet_certificate,
+      );
       if (body?.user?.user_role_id?.role_id !== 3)
         if (list.sire_owner_id !== body?.user?.id) {
           throw new ServiceException({
@@ -169,7 +255,12 @@ export class LitterRegistrationService {
         where: { litter_registration_id: Number(id) },
       });
 
-      const data = { ...list, litters: litters };
+      const data = {
+        ...list,
+        litters: litters,
+        semenBillLink,
+        vetCertificateLink,
+      };
       return data;
     } catch (error) {
       throw new ServiceException({
@@ -182,9 +273,15 @@ export class LitterRegistrationService {
 
   async approveLitter(body: any) {
     try {
+      console.log("body", body);
       const update = await this.litterRegistrationRepository.update(
-        { id: body.id },
-        { completed: true, remarks: body.remarks },
+        { id: Number(body.id) },
+        {
+          completed: true,
+          remarks: body.remarks,
+          sire_approval: true,
+          sire_action_taken: true,
+        },
       );
       const litterDetails = await this.getLitterDetailsById(body.id, body);
       const animalsCount = await this.animalRepository.count();
@@ -254,6 +351,7 @@ export class LitterRegistrationService {
       const animalsAdded = await this.animalRepository.insert(animals);
       return animalsAdded.generatedMaps.length;
     } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to approve litter",
         serviceErrorCode: "LRS",
@@ -268,7 +366,7 @@ export class LitterRegistrationService {
       });
       const update = await this.litterRegistrationRepository.update(
         { id: Number(id) },
-        { remarks: remark },
+        { remarks: remarks },
       );
       return update.affected;
     } catch (error) {
@@ -291,7 +389,7 @@ export class LitterRegistrationService {
           sire_approval: true,
           sire_action_taken: true,
           sire_action_time: date,
-          remarks: remark,
+          remarks: remarks,
         },
       );
       return true;
@@ -324,7 +422,7 @@ export class LitterRegistrationService {
           sire_action_taken: true,
           sire_action_time: date,
           sire_rejection_reason: reason,
-          remarks: remark,
+          remarks: remarks,
         },
       );
       return true;
@@ -332,6 +430,38 @@ export class LitterRegistrationService {
       return new ServiceException({
         message: error?.message ?? "Failed to reject litter from sire owner",
         serviceErrorCode: "LRS",
+      });
+    }
+  }
+
+  async updateSemenSireCompany(companyId: number, litterId: number) {
+    try {
+      const result = await this.litterRegistrationRepository.update(
+        { id: litterId },
+        { sire_owner_id: companyId },
+      );
+      return result;
+    } catch (error) {
+      console.log("error while updating litter company", error);
+      throw new ServiceException({
+        message: "Failed to update litter sire company",
+        serviceErrorCode: "LRS-400",
+      });
+    }
+  }
+
+  async updateSemenSireAnimal(animalId: string, litterId: number) {
+    try {
+      const result = await this.litterRegistrationRepository.update(
+        { id: litterId },
+        { sire_id: animalId },
+      );
+      return result;
+    } catch (error) {
+      console.log("error while updating litter sire", error);
+      throw new ServiceException({
+        message: "Failed to update litter sire sire",
+        serviceErrorCode: "LRS-400",
       });
     }
   }

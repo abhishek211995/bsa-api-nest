@@ -4,6 +4,7 @@ import {
   FindOptionsWhere,
   In,
   InsertResult,
+  Like,
   QueryRunner,
   Raw,
   Repository,
@@ -115,6 +116,7 @@ export class AnimalService {
         animalRegistrationSource.litter,
         animalRegistrationSource.pedigree,
         animalRegistrationSource.registration,
+        animalRegistrationSource.adminRegistration,
       ]);
       if (animal_owner_id) {
         findWhereOptions.animal_owner_id = Number(animal_owner_id);
@@ -170,7 +172,7 @@ export class AnimalService {
     try {
       const data = await this.animalRepository.find({
         where: {
-          animal_microchip_id,
+          animal_microchip_id: Like(animal_microchip_id),
         },
         relations: ["animal_owner_id"],
       });
@@ -209,6 +211,8 @@ export class AnimalService {
         animalData.microchip,
         "",
         animalRegistrationSource.registration,
+        animalData.breeder_name,
+        false,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
@@ -255,7 +259,6 @@ export class AnimalService {
           g.id,
           g.name,
           animalTypeId,
-
           breedId,
           g.gender,
           payload.userId,
@@ -586,7 +589,10 @@ export class AnimalService {
         new Date(animalData.dob),
         animalData.microchip,
         "reg_doc",
-        animalRegistrationSource.pedigree,
+        payload.registration_source,
+        animalData.breeder_name,
+        payload.registration_source ===
+          animalRegistrationSource.adminRegistration,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(

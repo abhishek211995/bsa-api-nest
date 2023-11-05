@@ -66,4 +66,8 @@ export class BreBreederFarm {
   @ApiProperty()
   @Column({ nullable: true })
   logo: string;
+
+  @ApiProperty()
+  @Column({ nullable: false })
+  registration_no: string;
 }

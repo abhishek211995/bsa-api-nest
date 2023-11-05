@@ -29,6 +29,7 @@ import { RedisModule } from "@liaoliaots/nestjs-redis";
 import { CcavenueModule } from "./modules/ccavenue/ccavenue.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { UserCourseModule } from "./modules/user-course/user-course.module";
+import { CompanyModule } from "./modules/company/company.module";
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { UserCourseModule } from "./modules/user-course/user-course.module";
     CcavenueModule,
     CoursesModule,
     UserCourseModule,
+    CompanyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

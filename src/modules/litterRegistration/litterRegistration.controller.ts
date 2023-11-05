@@ -1,4 +1,14 @@
-import { Body, Controller, Get, Param, Post, Put, Query } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  UploadedFiles,
+  UseInterceptors,
+} from "@nestjs/common";
 import { LitterRegistrationService } from "./litterRegistration.service";
 import { makeHTTPResponse } from "src/utils/httpResponse.util";
 import { ApiOperation } from "@nestjs/swagger";
@@ -6,6 +16,7 @@ import {
   ApproveLitterBody,
   LitterRegistrationBody,
 } from "./litterRegistration.dto";
+import { AnyFilesInterceptor } from "@nestjs/platform-express";
 
 @Controller("litter")
 export class LitterRegistrationController {
@@ -18,6 +29,24 @@ export class LitterRegistrationController {
     try {
       const result = await this.litterService.registerLitter(body);
       return makeHTTPResponse(result, 200, "Litter registered successfully!");
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @ApiOperation({
+    summary: "Litter Semen registration",
+  })
+  @Post("/registration/semen")
+  @UseInterceptors(AnyFilesInterceptor())
+  async addLitterSemen(
+    @UploadedFiles()
+    files: Array<Express.Multer.File>,
+    @Body() body: LitterRegistrationBody,
+  ) {
+    try {
+      const res = await this.litterService.registerLitterSemen(body, files);
+      return makeHTTPResponse(res, 200, "Litter registered successfully!");
     } catch (error) {
       throw error;
     }
@@ -150,6 +179,44 @@ export class LitterRegistrationController {
         200,
         "Litter Rejected by sire owner Successfully!",
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Put("semen/updateCompany")
+  async updateSemenSireCompany(
+    @Body()
+    data: {
+      companyId: number;
+      litterId: number;
+    },
+  ) {
+    try {
+      const result = await this.litterService.updateSemenSireCompany(
+        data.companyId,
+        data.litterId,
+      );
+      return makeHTTPResponse(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Put("semen/updateSire")
+  async updateSemenSireAnimal(
+    @Body()
+    data: {
+      animalId: string;
+      litterId: number;
+    },
+  ) {
+    try {
+      const result = await this.litterService.updateSemenSireAnimal(
+        data.animalId,
+        data.litterId,
+      );
+      return makeHTTPResponse(result);
     } catch (error) {
       throw error;
     }
