@@ -455,7 +455,7 @@ export class UsersService {
       );
 
       await this.emailService.sendMail(
-        "genuinebreederassociation@gmail.com",
+        "abhimanyu.patil39@gmail.com",
         `New Message from ${first_name} ${last_name}`,
         messageContainer,
       );

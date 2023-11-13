@@ -2,6 +2,7 @@ import { Injectable, Logger } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import {
   FindOptionsWhere,
+  ILike,
   In,
   InsertResult,
   Like,
@@ -172,7 +173,7 @@ export class AnimalService {
     try {
       const data = await this.animalRepository.find({
         where: {
-          animal_microchip_id: Like(animal_microchip_id),
+          animal_microchip_id: ILike(`%${animal_microchip_id}%`),
         },
         relations: ["animal_owner_id"],
       });

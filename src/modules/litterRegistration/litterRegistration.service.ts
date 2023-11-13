@@ -239,10 +239,13 @@ export class LitterRegistrationService {
           httpStatusCode: HttpStatus.BAD_REQUEST,
         });
       }
-      const semenBillLink = await this.s3Service.getLink(list.semen_bill);
-      const vetCertificateLink = await this.s3Service.getLink(
-        list.vet_certificate,
-      );
+      let semenBillLink;
+      let vetCertificateLink;
+      if (list.is_semen) {
+        semenBillLink = await this.s3Service.getLink(list.semen_bill);
+        vetCertificateLink = await this.s3Service.getLink(list.vet_certificate);
+      }
+
       if (body?.user?.user_role_id?.role_id !== 3)
         if (list.sire_owner_id !== body?.user?.id) {
           throw new ServiceException({

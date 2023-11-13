@@ -233,7 +233,7 @@ export class UsersController {
         body.last_name,
         body.email,
         body.subject,
-        body.subject,
+        body.message,
       );
       return makeHTTPResponse(res, 200, "Email sent successfully");
     } catch (error) {
