@@ -30,6 +30,7 @@ import { CcavenueModule } from "./modules/ccavenue/ccavenue.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { UserCourseModule } from "./modules/user-course/user-course.module";
 import { CompanyModule } from "./modules/company/company.module";
+import { TransferFarmModule } from "src/modules/farmTransfer/farmTransfer.module";
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { CompanyModule } from "./modules/company/company.module";
     CoursesModule,
     UserCourseModule,
     CompanyModule,
+    TransferFarmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -159,4 +159,21 @@ export class BreederFarmService {
       });
     }
   }
+
+  async getBreederFarmById(id: number) {
+    try {
+      const farm = await this.breederFarmRepository.findOne({
+        where: { id: Number(id) },
+        relations: ["breeder", "breeder.user", "farm"],
+      });
+
+      return farm;
+    } catch (error) {
+      console.log("error", error);
+      throw new ServiceException({
+        message: "Failed to fetch breeder farms",
+        serviceErrorCode: "BFS",
+      });
+    }
+  }
 }

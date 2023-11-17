@@ -106,7 +106,6 @@ export class UsersService {
         where: { email: email },
         relations: ["user_role_id"],
       });
-
       if (!user) {
         throw new ServiceException({
           message: "User not found",
@@ -130,9 +129,12 @@ export class UsersService {
       const identification_doc = await this.s3Service.getLink(
         `${user.email}/${user.identity_doc_name}`,
       );
-      const profile_pic = await this.s3Service.getLink(
-        `${user.email}/${user.profile_pic}`,
-      );
+      let profile_pic;
+      if (user.profile_pic) {
+        profile_pic = await this.s3Service.getLink(
+          `${user.email}/${user.profile_pic}`,
+        );
+      }
 
       const isPasswordCorrect: boolean =
         await this.bcryptService.comparePassword(password, user.password);
@@ -224,9 +226,13 @@ export class UsersService {
       const identification_doc = await this.s3Service.getLink(
         `${user.email}/${user.identity_doc_name}`,
       );
-      const profile_pic = await this.s3Service.getLink(
-        `${user.email}/${user.profile_pic}`,
-      );
+
+      let profile_pic;
+      if (user.profile_pic) {
+        profile_pic = await this.s3Service.getLink(
+          `${user.email}/${user.profile_pic}`,
+        );
+      }
 
       const data = {
         ...user,
