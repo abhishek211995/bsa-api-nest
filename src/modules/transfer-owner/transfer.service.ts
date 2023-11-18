@@ -113,7 +113,7 @@ export class TransferService {
       );
       const animal = transferDetails.animal_id as unknown as BreAnimal;
       const newOwner = transferDetails.new_owner_id as unknown as BreUser;
-
+      await this.animalService.changeOwner(animal.animal_id, newOwner.id);
       const animalOwnerHistory =
         await this.animalOwnerHistoryService.createAnimalOwnerHistory({
           animal_id: animal.animal_id,
@@ -128,6 +128,7 @@ export class TransferService {
             transferDetails.old_owner_id.user_name,
             animal.animal_name,
             "accepted",
+            "animal",
           ),
           "Transfer Request Approved",
         );
@@ -168,6 +169,7 @@ export class TransferService {
             transferDetails.old_owner_id.user_name,
             animal.animal_name,
             "rejected",
+            "animal",
           ),
           "Transfer Request Rejected",
         );

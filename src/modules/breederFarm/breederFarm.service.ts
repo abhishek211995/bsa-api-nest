@@ -176,4 +176,21 @@ export class BreederFarmService {
       });
     }
   }
+
+  async changeFarmOwner(farmId: number, breederId: number) {
+    try {
+      const update = await this.breederFarmRepository.update(
+        { id: farmId },
+        { breeder_id: breederId },
+      );
+      console.log("update", update);
+      return update;
+    } catch (error) {
+      console.log("error", error);
+      throw new ServiceException({
+        message: "Failed to update owner",
+        serviceErrorCode: "BFS",
+      });
+    }
+  }
 }

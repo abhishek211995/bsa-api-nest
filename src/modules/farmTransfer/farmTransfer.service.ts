@@ -14,6 +14,7 @@ import {
 import { Repository } from "typeorm";
 import { BreUser } from "../users/users.entity";
 import { UsersService } from "../users/users.service";
+import { BreederService } from "src/modules/breeder/breeder.service";
 @Injectable()
 export class TransferFarmService {
   constructor(
@@ -22,6 +23,7 @@ export class TransferFarmService {
     private readonly userService: UsersService,
     private readonly breederFarmService: BreederFarmService,
     private readonly mailService: EmailService,
+    private readonly breederService: BreederService,
   ) {}
 
   async addRequest(transferDto: TransferFarmDto) {
@@ -60,6 +62,7 @@ export class TransferFarmService {
       }
       return newTransfer;
     } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: "Failed to add transfer request",
         serviceErrorCode: "TS",
@@ -71,7 +74,7 @@ export class TransferFarmService {
     try {
       const transfer = await this.breTransferFarmRequestRepository.findOne({
         where: { transfer_id: Number(id) },
-        relations: ["farm_id", "new_owner_id", "old_owner_id"],
+        relations: ["farm", "new_owner_id", "old_owner_id"],
       });
       if (!transfer) {
         throw new ServiceException({
@@ -89,6 +92,7 @@ export class TransferFarmService {
       }
       return transfer;
     } catch (error) {
+      console.log("error", error);
       throw new ServiceException({
         message: error?.message ?? "Failed to fetch transfer request",
         httpStatusCode:
@@ -111,7 +115,12 @@ export class TransferFarmService {
       );
       const farm = transferDetails.farm;
       const newOwner = transferDetails.new_owner_id as unknown as BreUser;
+      const breederDetails = await this.breederService.getBreeder(newOwner.id);
 
+      await this.breederFarmService.changeFarmOwner(
+        farm.id,
+        breederDetails.breeder.breeder_id,
+      );
       const message = emailContainer(
         transferFarmConfirmation(
           newOwner.user_name,
@@ -158,6 +167,7 @@ export class TransferFarmService {
             transferDetails.old_owner_id.user_name,
             farm.farm_name,
             "rejected",
+            "farm",
           ),
           "Transfer Request Rejected",
         );

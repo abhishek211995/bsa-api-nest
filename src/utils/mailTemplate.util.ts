@@ -80,7 +80,7 @@ export const transferFarmMail = (
 ) => `
 	<h1>Transfer Request Received</h1>
 	<p>Dear ${userName},</p>
-	<p>We have received your transfer request for farm ${farmName} from ${newOwner} and it is currently being processed.</p>
+	<p>We have received a transfer request for your farm ${farmName} from ${newOwner} and it is currently being processed.</p>
 	<p>Here is your transfer confirmation link: <a style="cursor:pointer" target="_blank" href=${link}>Confirm Transfer</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
 `;
 
@@ -136,9 +136,7 @@ export const userConfirmation = (userName: string, status: string) => `
   status === "accepted" ? "accepted" : "rejected"
 } by the admin.</p>
 			<p>For query please contact the admin.</p>
-			<p>Thank you for using our service.</p>
-			<p>Best regards,</p>
-			<p>Breeders Association</p>
+			
 	
 	`;
 
@@ -155,9 +153,7 @@ export const animalConfirmation = (
   status === "accepted" ? "accepted" : "rejected"
 } by the admin.</p>
                   <p>For query please contact the admin.</p>
-                  <p>Thank you for using our service.</p>
-                  <p>Best regards,</p>
-                  <p>Breeders Association</p>
+                 
           
           `;
 
@@ -170,9 +166,7 @@ export const litterConfirmation = (userName: string, status: string) => `
   status === "accepted" ? "accepted" : "rejected"
 } by the admin.</p>
                       <p>For query please contact the admin.</p>
-                      <p>Thank you for using our service.</p>
-                      <p>Best regards,</p>
-                      <p>Breeders Association</p>
+                     
               
               `;
 
@@ -181,19 +175,18 @@ export const transferConfirmation = (
   oldOwner: string,
   animal: string,
   status: string,
+  type: string,
 ) =>
   `
               <h1> Transfer Request Confirmation</h1>
               <p>Dear ${newOwner},</p>
               <p>We are ${
                 status === "accepted" ? "glad" : "sorry"
-              } to say that your transfer request for animal ${animal} is ${
+              } to say that your transfer request for ${type} ${animal} is ${
     status === "accepted" ? "accepted" : "rejected"
   } by the ${oldOwner}.</p>
               <p>For query please contact the admin / ${oldOwner}.</p>
-              <p>Thank you for using our service.</p>
-              <p>Best regards,</p>
-              <p>Breeders Association</p>
+             
       
       `;
 
@@ -212,9 +205,7 @@ export const transferFarmConfirmation = (
     status === "accepted" ? "accepted" : "rejected"
   } by the ${oldOwner}.</p>
               <p>For query please contact the admin / ${oldOwner}.</p>
-              <p>Thank you for using our service.</p>
-              <p>Best regards,</p>
-              <p>Breeders Association</p>
+        
       
       `;
 
