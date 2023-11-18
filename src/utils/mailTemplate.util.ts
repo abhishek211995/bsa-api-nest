@@ -1,3 +1,5 @@
+import { BreUser } from "src/modules/users/users.entity";
+
 export const emailContainer = (content: string, title: string) => `
   <!DOCTYPE html>
   <html>
@@ -216,4 +218,19 @@ export const forgotPassword = (userName: string, link: string) =>
 	<p>Dear ${userName},</p>
 	<p>We have received forgot password request.</p>
 	<p>Here is your reset password link for further action: <a style="cursor:pointer" target="_blank" href=${link}>Change Password</a> or click <span style="color:#0F53AD;cursor:pointer">${link}</span></p>
+  `;
+
+// Searched Microchip Email
+
+export const searchByMicrochipEmail = (
+  searchedUser: BreUser,
+  forUser: BreUser,
+  microchipNo: string,
+) =>
+  `
+    <h1>Animal Search</h1>
+    <p>Hi ${forUser.user_name},</p>
+    <p>There was a recent search by microchip number - ${microchipNo}, by registered user on our platform. Below are the user details</p>
+    <p>Name: ${searchedUser.user_name}</p>
+    <p>Contact: ${searchedUser.contact_no}</p>
   `;

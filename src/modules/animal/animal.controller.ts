@@ -86,11 +86,16 @@ export class AnimalController {
   async getAnimalAndOwner(
     @Query()
     { animal_microchip_id }: { animal_microchip_id: string },
+    @Body() body,
   ) {
+    const { user } = body;
+
     try {
       const res = await this.animalService.getAnimalAndOwner({
         animal_microchip_id,
+        user,
       });
+
       return makeHTTPResponse(res, 200, "Animal data fetched successfully");
     } catch (error) {
       throw error;

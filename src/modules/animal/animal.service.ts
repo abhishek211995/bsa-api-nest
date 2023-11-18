@@ -1,15 +1,27 @@
-import { Injectable, Logger } from "@nestjs/common";
+import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
+import { animalRegistrationSource } from "src/constants/animal_registration.constant";
+import { ServiceException } from "src/exception/base-exception";
+import TransactionUtil from "src/lib/db_utils/transaction.utils";
+import { EmailService } from "src/lib/mail/mail.service";
+import { S3Service } from "src/lib/s3multer/s3.service";
+import { BreUser } from "src/modules/users/users.entity";
+import { fileFilter } from "src/utils/fileFilter.util";
+import { generateRegNo } from "src/utils/generateReg.util";
+import {
+  animalConfirmation,
+  emailContainer,
+  searchByMicrochipEmail,
+} from "src/utils/mailTemplate.util";
 import {
   FindOptionsWhere,
-  ILike,
   In,
   InsertResult,
-  Like,
   QueryRunner,
-  Raw,
   Repository,
 } from "typeorm";
+import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
+import { BreederService } from "../breeder/breeder.service";
 import {
   AnimalDto,
   AnimalWithPedigreePayload,
@@ -18,19 +30,6 @@ import {
   CreateGenerationsDto,
 } from "./animal.dto";
 import { BreAnimal } from "./animal.entity";
-import TransactionUtil from "src/lib/db_utils/transaction.utils";
-import { generateRegNo } from "src/utils/generateReg.util";
-import { S3Service } from "src/lib/s3multer/s3.service";
-import { fileFilter } from "src/utils/fileFilter.util";
-import { ServiceException } from "src/exception/base-exception";
-import { animalRegistrationSource } from "src/constants/animal_registration.constant";
-import { BreederService } from "../breeder/breeder.service";
-import { AnimalOwnerHistoryService } from "../animalOwnerHistory/animalOwnerHistory.service";
-import { EmailService } from "src/lib/mail/mail.service";
-import {
-  animalConfirmation,
-  emailContainer,
-} from "src/utils/mailTemplate.util";
 
 @Injectable()
 export class AnimalService {
@@ -167,16 +166,33 @@ export class AnimalService {
   // get animal and owner details by animal microchip id or registration id
   async getAnimalAndOwner({
     animal_microchip_id,
+    user,
   }: {
     animal_microchip_id: string;
+    user: BreUser;
   }) {
     try {
       const data = await this.animalRepository.find({
         where: {
-          animal_microchip_id: ILike(`%${animal_microchip_id}%`),
+          animal_microchip_id: animal_microchip_id,
         },
         relations: ["animal_owner_id"],
       });
+      if (data.length === 1) {
+        const animal = data[0] as BreAnimal;
+        const animalOwner = animal.animal_owner_id as unknown as BreUser;
+
+        const message = emailContainer(
+          searchByMicrochipEmail(user, animalOwner, animal_microchip_id),
+          "Animal Search",
+        );
+        await this.emailService.sendMail(
+          animalOwner.email,
+          message,
+          "Animal Confirmation",
+        );
+      }
+
       return data;
     } catch (error) {
       throw new ServiceException({
@@ -690,7 +706,7 @@ export class AnimalService {
 
         await this.emailService.sendMail(
           // @ts-expect-error entity type issue
-          animal.animal_current_owner.user_email,
+          animal.animal_current_owner.email,
           message,
           "Animal Confirmation",
         );
