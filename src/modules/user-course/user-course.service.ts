@@ -29,7 +29,8 @@ export class UserCourseService {
       if (id) {
         options.where = { id: Number(id) };
       }
-      options.relations = ["course"];
+      options.relations = ["course", "user"];
+      options.order = { created_at: "DESC" };
       const list = await this.userCoursesRepository.find(options);
       return list;
     } catch (error) {
