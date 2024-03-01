@@ -110,4 +110,8 @@ export class BreAnimal {
   @ApiProperty()
   @Column({ nullable: true })
   breeder_name: string;
+
+  @ApiProperty()
+  @Column({ nullable: true })
+  animal_tag: string;
 }

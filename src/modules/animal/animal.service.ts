@@ -230,6 +230,7 @@ export class AnimalService {
         animalRegistrationSource.registration,
         animalData.breeder_name,
         false,
+        animalData.animal_tag,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
@@ -610,6 +611,7 @@ export class AnimalService {
         animalData.breeder_name,
         payload.registration_source ===
           animalRegistrationSource.adminRegistration,
+        animalData.animal_tag,
       );
 
       const mainAnimalResult = await this.transactionUtils.executeInTransaction(
