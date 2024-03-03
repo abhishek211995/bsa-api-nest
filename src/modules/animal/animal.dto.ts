@@ -59,6 +59,9 @@ export class AnimalDto {
 
   @IsString()
   breeder_name: string;
+
+  @IsString()
+  animal_tag: string;
 }
 
 export class AnimalDataDto {
@@ -194,6 +197,7 @@ export class CreateAnimalDto {
     registration_source: string,
     breeder_name: string,
     is_active: boolean,
+    animal_tag: string,
   ) {
     this.animal_id = animal_id;
     this.animal_name = animal_name;
@@ -213,6 +217,7 @@ export class CreateAnimalDto {
     this.registration_source = registration_source;
     this.breeder_name = breeder_name;
     this.is_active = is_active;
+    this.animal_tag = animal_tag;
   }
 
   @IsString()
@@ -286,6 +291,10 @@ export class CreateAnimalDto {
   @IsBoolean()
   @ApiProperty()
   is_active: boolean;
+
+  @IsString()
+  @ApiProperty()
+  animal_tag: string;
 }
 
 export class ChangeNamePayload {
