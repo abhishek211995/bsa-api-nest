@@ -9,7 +9,7 @@ import {
 } from "typeorm";
 
 @Entity("bre_draft")
-export class BreCourses {
+export class BreDraft {
   @ApiProperty()
   @PrimaryGeneratedColumn()
   id: number;
