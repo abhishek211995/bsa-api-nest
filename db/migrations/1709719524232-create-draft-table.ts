@@ -6,8 +6,9 @@ export class CreateDraftTable1709719524232 implements MigrationInterface {
             CREATE TABLE bre_drafts (
                 id INT AUTO_INCREMENT PRIMARY KEY,
                 user_id INT,
-                draftType VARCHAR(255),
-                draftValues JSON
+                draft_type VARCHAR(255),
+                draft_values JSON,
+                created_at DATETIME DEFAULT now(),
             )
         `);
     await queryRunner.query(
