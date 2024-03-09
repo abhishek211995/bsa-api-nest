@@ -30,6 +30,7 @@ import {
   CreateGenerationsDto,
 } from "./animal.dto";
 import { BreAnimal } from "./animal.entity";
+import { UsersService } from "src/modules/users/users.service";
 
 @Injectable()
 export class AnimalService {
@@ -41,6 +42,7 @@ export class AnimalService {
     private readonly breederService: BreederService,
     private readonly animalOwnerHistoryService: AnimalOwnerHistoryService,
     private readonly emailService: EmailService,
+    private readonly userService: UsersService,
   ) {}
 
   // single animal
@@ -748,12 +750,20 @@ export class AnimalService {
   async getAnimalDataForCertificate(animal_id: string) {
     try {
       const animal = await this.getAnimalById(animal_id);
-
-      const farm = await this.breederService.getBreeder(
+      const user = await this.userService.getUserById(
         // @ts-expect-error type issue in repo
         animal.animal_owner_id?.id,
       );
 
+      let farm;
+      // @ts-expect-error type issue in repo
+      if (user.user_role_id.role_name === "breeder") {
+        // owner is user
+        farm = await this.breederService.getBreeder(
+          // @ts-expect-error type issue in repo
+          animal.animal_owner_id?.id,
+        );
+      }
       // get animal current owner
       const current_owner =
         await this.animalOwnerHistoryService.getAnimalCurrentOwner(animal_id);
